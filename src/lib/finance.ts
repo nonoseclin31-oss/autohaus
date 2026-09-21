@@ -38,6 +38,9 @@ export const REFERENCE_KM = 15000;
 /** Annual percentage rate applied when a vehicle does not set its own. */
 export const DEFAULT_FINANCE_RATE = 0.049;
 
+/** German VAT. Showroom prices are stated inclusive of it. */
+export const VAT_RATE = 0.19;
+
 export const DURATIONS = [24, 36, 48, 60, 72] as const;
 export const MILEAGES = [10000, 15000, 20000, 25000, 30000, 40000] as const;
 
@@ -71,6 +74,13 @@ export type FinanceResult = {
   /** Everything paid over the term, the down payment included. */
   totalCost: number;
   residualRate: number;
+  /** Charged per kilometre beyond the contracted allowance. */
+  excessKmRate: number;
+  /** Credited per kilometre left unused, at half the excess rate. */
+  unusedKmRate: number;
+  /** The same monthly excluding VAT, which is what a company books. */
+  monthlyNet: number;
+  totalCostNet: number;
 };
 
 /**
@@ -158,18 +168,54 @@ export function quote(input: FinanceInput): FinanceResult {
   // Rounded to five so a quote reads like a quote rather than a calculation.
   const monthly = Math.max(49, Math.round((depreciation + financeCharge + services) / 5) * 5);
 
+  const excessKmRate = excessKmRateFor(price, months);
+
   return {
     monthly,
+    monthlyNet: Math.round(monthly / (1 + VAT_RATE)),
+    excessKmRate,
+    // Unused kilometres come back at half the rate: the car is worth more
+    // than the contract assumed, but reselling it still costs something.
+    unusedKmRate: Math.round((excessKmRate / 2) * 100) / 100,
     depreciation,
     financeCharge,
     services,
     residual,
     purchaseOption: formula === "LOA" ? residual : null,
     totalCost: downPayment + monthly * months,
+    totalCostNet: Math.round((downPayment + monthly * months) / (1 + VAT_RATE)),
     residualRate,
   };
 }
 
 function clamp(value: number, min: number, max: number): number {
   return Math.min(max, Math.max(min, value));
+}
+
+/**
+ * What a kilometre over the allowance costs.
+ *
+ * Derived from the residual model rather than invented: the curve says a
+ * thousand extra kilometres a year costs 0.35% of the price per year of
+ * contract, softened by the same exponent. Spread over the kilometres
+ * actually driven, that is the per-kilometre figure. The floor keeps a cheap
+ * car from quoting a rate too small to cover the handling.
+ */
+export function excessKmRateFor(price: number, months: number): number {
+  const years = Math.max(1, months / 12);
+  const rate = (price * 0.0035) / (1000 * years ** 0.3);
+  return Math.max(0.08, Math.round(rate * 100) / 100);
+}
+
+/**
+ * Both formulas on the same terms.
+ *
+ * The choice between renting and keeping the option to buy is the one a
+ * customer actually has to make, and it is only meaningful side by side.
+ */
+export function compare(input: Omit<FinanceInput, "formula">): Record<Formula, FinanceResult> {
+  return {
+    LLD: quote({ ...input, formula: "LLD" }),
+    LOA: quote({ ...input, formula: "LOA" }),
+  };
 }

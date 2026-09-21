@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getDictionary, resolveLocale, localePath, formatDate, formatNumber } from "@/i18n";
+import { getDictionary, resolveLocale, localePath, formatDate, formatCurrency, formatNumber } from "@/i18n";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth";
 import { can } from "@/lib/rbac";
@@ -178,6 +178,22 @@ export default async function AdminLeadsPage({
                       {lead.rentalDuration && lead.rentalMileage ? " · " : ""}
                       {lead.rentalMileage ? `${formatNumber(lead.rentalMileage, locale)} ${t.common.km}` : ""}
                     </p>
+                  ) : null}
+
+                  {/* The offer they had on screen, so the advisor answers that
+                      quote rather than building a fresh one. */}
+                  {lead.quotedMonthly ? (
+                    <div className="rounded-sm border border-gold/45 bg-gold-wash px-3 py-2.5 text-sm">
+                      <p className="font-semibold">
+                        {lead.financeFormula === "LOA" ? t.rental.loa : t.rental.lld}
+                        {lead.forBusiness ? ` · ${t.rental.businessCustomer}` : ""}
+                      </p>
+                      <p className="mt-0.5 text-muted tabular-nums">
+                        {formatCurrency(lead.quotedMonthly, locale)}{t.common.perMonth}
+                        {lead.downPayment ? ` · ${t.rental.deposit} ${formatCurrency(lead.downPayment, locale)}` : ""}
+                        {lead.purchaseOption ? ` · ${t.rental.purchaseOption} ${formatCurrency(lead.purchaseOption, locale)}` : ""}
+                      </p>
+                    </div>
                   ) : null}
 
                   {lead.message ? (

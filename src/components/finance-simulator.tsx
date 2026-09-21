@@ -2,9 +2,10 @@
 
 import { useMemo, useState } from "react";
 import { getDictionary, formatCurrency, formatNumber, type Locale } from "@/i18n";
-import { DURATIONS, MILEAGES, quote, type Formula } from "@/lib/finance";
+import { DURATIONS, MILEAGES, compare, type Formula } from "@/lib/finance";
+import { LeadForm } from "./lead-form";
 import { cn } from "@/lib/utils";
-import { IconEuro, IconInfo, IconKey, IconCheck } from "./icons";
+import { IconEuro, IconInfo, IconKey, IconCheck, IconRoad, IconUser, IconUsers, IconArrowRight } from "./icons";
 
 export type FinanceVehicle = {
   id: string;
@@ -49,21 +50,33 @@ export function FinanceSimulator({
   const loaOffered = selected?.loaAvailable ?? true;
   const activeFormula: Formula = loaOffered ? formula : "LLD";
 
-  const result = useMemo(
+  const [forBusiness, setForBusiness] = useState(false);
+  const [asking, setAsking] = useState(false);
+
+  // Both formulas are priced on every change: the choice between them is the
+  // one the customer actually has to make, and it only means anything side by
+  // side.
+  const both = useMemo(
     () =>
-      quote({
+      compare({
         price,
         months,
         annualKm,
         downPayment,
-        formula: activeFormula,
         rate: selected?.financeRate ?? undefined,
         residualRate: selected?.residualRate ?? undefined,
         servicesMonthly: selected?.servicesMonthly ?? undefined,
         withServices,
       }),
-    [price, months, annualKm, downPayment, activeFormula, selected, withServices],
+    [price, months, annualKm, downPayment, selected, withServices],
   );
+
+  const result = both[activeFormula];
+  const other = both[activeFormula === "LLD" ? "LOA" : "LLD"];
+
+  // A company books the rent net of VAT and recovers it; a private customer
+  // pays the inclusive figure. Same quote, two ways of reading it.
+  const money = (gross: number, net: number) => (forBusiness ? net : gross);
 
   // A third of the price is as far as a deposit usefully goes; beyond that the
   // customer is buying the car rather than leasing it.
@@ -72,6 +85,32 @@ export function FinanceSimulator({
   return (
     <div className={cn("grid grid-cols-1 gap-6", compact ? "" : "lg:grid-cols-[minmax(0,1fr)_22rem]")}>
       <div className="space-y-6 rounded-sm border border-line bg-surface p-6">
+        {/* Who is signing decides whether the figures read gross or net. */}
+        <div>
+          <span className="label">{t.rental.customerType}</span>
+          <div className="mt-2 grid grid-cols-2 gap-2">
+            {[
+              { business: false, label: t.rental.privateCustomer, Icon: IconUser },
+              { business: true, label: t.rental.businessCustomer, Icon: IconUsers },
+            ].map(({ business, label, Icon }) => (
+              <button
+                key={label}
+                type="button"
+                aria-pressed={forBusiness === business}
+                onClick={() => setForBusiness(business)}
+                className={cn(
+                  "flex min-h-10 cursor-pointer items-center justify-center gap-2 rounded-sm border px-3 text-sm font-medium transition-colors duration-200",
+                  forBusiness === business ? "border-red bg-red-wash" : "border-line hover:border-line-strong",
+                )}
+              >
+                <Icon size={15} />
+                {label}
+              </button>
+            ))}
+          </div>
+          <p className="field-help">{forBusiness ? t.rental.businessHelp : t.rental.privateHelp}</p>
+        </div>
+
         {/* Formula */}
         <div>
           <span className="label">{t.rental.formula}</span>
@@ -172,10 +211,15 @@ export function FinanceSimulator({
         <p className="text-xs font-semibold uppercase tracking-[0.14em] text-subtle">
           {t.rental.estimatedMonthly}
         </p>
-        <p className="flex items-baseline gap-1.5">
+        <p className="flex flex-wrap items-baseline gap-1.5">
           <IconEuro size={20} className="text-red" />
-          <span className="display text-4xl tabular-nums">{formatCurrency(result.monthly, locale)}</span>
+          <span className="display text-4xl tabular-nums">
+            {formatCurrency(money(result.monthly, result.monthlyNet), locale)}
+          </span>
           <span className="text-sm text-muted">{t.common.perMonth}</span>
+          <span className="w-full text-xs text-subtle">
+            {forBusiness ? t.rental.excludingVat : t.rental.includingVat}
+          </span>
         </p>
 
         <dl className="space-y-2 border-t border-line pt-4 text-sm">
@@ -191,8 +235,40 @@ export function FinanceSimulator({
               strong
             />
           ) : null}
-          <Row label={t.rental.rowTotal} value={formatCurrency(result.totalCost, locale)} />
+          <Row
+            label={t.rental.rowExcessKm}
+            value={`${formatCurrency(result.excessKmRate, locale)}/${t.common.km}`}
+          />
+          <Row
+            label={t.rental.rowTotal}
+            value={formatCurrency(money(result.totalCost, result.totalCostNet), locale)}
+          />
         </dl>
+
+        {/* The other formula, on the same terms. */}
+        <button
+          type="button"
+          onClick={() => setFormula(activeFormula === "LLD" ? "LOA" : "LLD")}
+          disabled={!loaOffered}
+          className={cn(
+            "flex items-center justify-between gap-3 rounded-sm border border-line bg-surface px-3 py-2.5 text-start text-xs transition-colors duration-200",
+            loaOffered ? "cursor-pointer hover:border-line-strong" : "cursor-not-allowed opacity-45",
+          )}
+        >
+          <span className="min-w-0">
+            <span className="block font-semibold">
+              {activeFormula === "LLD" ? t.rental.loa : t.rental.lld}
+            </span>
+            <span className="block text-muted">
+              {formatCurrency(money(other.monthly, other.monthlyNet), locale)}
+              {t.common.perMonth}
+              {other.purchaseOption !== null
+                ? ` · ${t.rental.purchaseOption} ${formatCurrency(other.purchaseOption, locale)}`
+                : ` · ${t.rental.rowServices}`}
+            </span>
+          </span>
+          <IconArrowRight size={14} className="shrink-0 text-subtle" />
+        </button>
 
         <p className="flex items-start gap-2 rounded-sm bg-surface px-3 py-2.5 text-xs leading-relaxed text-muted">
           {activeFormula === "LLD" ? (
@@ -202,6 +278,32 @@ export function FinanceSimulator({
           )}
           <span>{activeFormula === "LLD" ? t.rental.lldNote : t.rental.loaNote}</span>
         </p>
+
+        {asking ? (
+          <div className="border-t border-line pt-4">
+            <LeadForm
+              locale={locale}
+              type="RENTAL"
+              compact
+              vehicleId={selected?.id}
+              vehicleLabel={selected?.label}
+              rentalDuration={months}
+              rentalMileage={annualKm}
+              finance={{
+                formula: activeFormula,
+                downPayment,
+                quotedMonthly: result.monthly,
+                purchaseOption: result.purchaseOption,
+                forBusiness,
+              }}
+            />
+          </div>
+        ) : (
+          <button type="button" onClick={() => setAsking(true)} className="btn btn-primary w-full cursor-pointer">
+            <IconRoad size={16} />
+            {t.rental.requestThisOffer}
+          </button>
+        )}
 
         <p className="flex items-start gap-2 text-xs leading-relaxed text-subtle">
           <IconInfo size={14} className="mt-0.5 shrink-0" />

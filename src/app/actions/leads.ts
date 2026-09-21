@@ -18,6 +18,13 @@ const leadSchema = z.object({
   vehicleId: z.string().trim().max(40).optional().nullable(),
   rentalDuration: z.number().int().positive().max(120).optional().nullable(),
   rentalMileage: z.number().int().positive().max(200000).optional().nullable(),
+  // The quote the visitor configured. Bounded like everything else: these
+  // arrive from the page, so they are input, not facts.
+  financeFormula: z.enum(["LLD", "LOA"]).optional().nullable(),
+  downPayment: z.number().int().min(0).max(100000000).optional().nullable(),
+  quotedMonthly: z.number().int().min(0).max(1000000).optional().nullable(),
+  purchaseOption: z.number().int().min(0).max(100000000).optional().nullable(),
+  forBusiness: z.boolean().default(false),
 });
 
 export type LeadFormState = { status: "idle" | "success" | "error"; message?: string };
@@ -51,6 +58,11 @@ export async function submitLead(
     vehicleId: optional(formData.get("vehicleId")),
     rentalDuration: optionalInt(formData.get("rentalDuration")),
     rentalMileage: optionalInt(formData.get("rentalMileage")),
+    financeFormula: optional(formData.get("financeFormula")),
+    downPayment: optionalInt(formData.get("downPayment")),
+    quotedMonthly: optionalInt(formData.get("quotedMonthly")),
+    purchaseOption: optionalInt(formData.get("purchaseOption")),
+    forBusiness: formData.get("forBusiness") === "1",
   });
 
   if (!parsed.success) {
@@ -80,6 +92,12 @@ export async function submitLead(
         vehicleId: data.vehicleId,
         rentalDuration: data.rentalDuration,
         rentalMileage: data.rentalMileage,
+        // Only LLD and LOA exist; anything else is a stale or forged field.
+        financeFormula: data.financeFormula === "LLD" || data.financeFormula === "LOA" ? data.financeFormula : null,
+        downPayment: data.downPayment,
+        quotedMonthly: data.quotedMonthly,
+        purchaseOption: data.purchaseOption,
+        forBusiness: data.forBusiness,
         assignedToId: advisor?.id ?? null,
       },
     });

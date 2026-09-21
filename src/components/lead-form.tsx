@@ -23,6 +23,8 @@ export function LeadForm({
   vehicleLabel,
   rentalDuration,
   rentalMileage,
+  /** The quote the visitor had on screen, sent with the request. */
+  finance,
   compact = false,
 }: {
   locale: Locale;
@@ -31,6 +33,13 @@ export function LeadForm({
   vehicleLabel?: string;
   rentalDuration?: number;
   rentalMileage?: number;
+  finance?: {
+    formula: string;
+    downPayment: number;
+    quotedMonthly: number;
+    purchaseOption: number | null;
+    forBusiness: boolean;
+  };
   compact?: boolean;
 }) {
   const t = getDictionary(locale);
@@ -51,6 +60,19 @@ export function LeadForm({
       <input type="hidden" name="type" value={type} />
       <input type="hidden" name="locale" value={locale} />
       {vehicleId ? <input type="hidden" name="vehicleId" value={vehicleId} /> : null}
+      {/* The configured offer travels with the request, so the advisor answers
+          the quote the customer was looking at rather than a fresh one. */}
+      {finance ? (
+        <>
+          <input type="hidden" name="financeFormula" value={finance.formula} />
+          <input type="hidden" name="downPayment" value={finance.downPayment} />
+          <input type="hidden" name="quotedMonthly" value={finance.quotedMonthly} />
+          {finance.purchaseOption !== null ? (
+            <input type="hidden" name="purchaseOption" value={finance.purchaseOption} />
+          ) : null}
+          <input type="hidden" name="forBusiness" value={finance.forBusiness ? "1" : "0"} />
+        </>
+      ) : null}
       {rentalDuration ? <input type="hidden" name="rentalDuration" value={rentalDuration} /> : null}
       {rentalMileage ? <input type="hidden" name="rentalMileage" value={rentalMileage} /> : null}
 

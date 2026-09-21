@@ -222,6 +222,14 @@ model Lead {
   rentalDuration Int?
   rentalMileage  Int?
 
+  /// The offer the visitor had on screen when they asked for it, so the
+  /// advisor answers the quote the customer saw rather than a fresh one.
+  financeFormula String? // LLD | LOA
+  downPayment    Int?
+  quotedMonthly  Int?
+  purchaseOption Int?
+  forBusiness    Boolean @default(false)
+
   vehicleId String?
   vehicle   Vehicle? @relation(fields: [vehicleId], references: [id], onDelete: SetNull)
 
