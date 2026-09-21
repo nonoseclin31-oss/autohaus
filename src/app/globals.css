@@ -22,6 +22,11 @@
      vanish on a dark canvas, so it is a token rather than a constant. */
   --color-flag-dark: #1c1917;
 
+  /* Hero wash and the faint grid over it: both need to move with the
+     canvas rather than assume a light one. */
+  --color-studio-top: #ffffff;
+  --color-hairline: rgba(12, 10, 9, 0.035);
+
   /* Dark counterpart, used sparingly (scrims, stamps, inverted chips) */
   --color-ink: #1c1917;
   --color-ink-soft: #292524;
@@ -101,6 +106,8 @@
   --color-line-strong: #4a4441;
 
   --color-flag-dark: #e7e3df;
+  --color-studio-top: #1c1a18;
+  --color-hairline: rgba(245, 242, 239, 0.045);
 
   /* Inverted chips and bands: still set apart from the canvas, now by
      being lighter rather than darker. */
@@ -264,6 +271,15 @@
 
   /* ── Brand marks ─────────────────────────────────────────── */
 
+  /* Background images rather than <img>: the browser fetches only the variant
+     whose rule applies, so the unused one costs nothing. */
+  .logo-wordmark { background-image: url("/brand/logo-wordmark.png"); }
+  .logo-full { background-image: url("/brand/logo-full.png"); }
+
+  [data-theme="dark"] .logo-wordmark { background-image: url("/brand/logo-wordmark-dark.png"); }
+  [data-theme="dark"] .logo-full { background-image: url("/brand/logo-full-dark.png"); }
+
+
   .flag-rule {
     height: 3px;
     width: 100%;
@@ -290,13 +306,15 @@
     background-image:
       radial-gradient(ellipse 70% 55% at 12% 0%, rgba(200, 16, 46, 0.07), transparent 62%),
       radial-gradient(ellipse 60% 50% at 92% 8%, rgba(202, 138, 4, 0.09), transparent 60%),
-      linear-gradient(180deg, #ffffff 0%, var(--color-canvas) 60%);
+      /* The top of the wash is one step off the canvas, whichever way the
+         canvas goes; a literal white lit up the dark hero. */
+      linear-gradient(180deg, var(--color-studio-top) 0%, var(--color-canvas) 60%);
   }
 
   .hairlines {
     background-image:
-      linear-gradient(to right, rgba(12, 10, 9, 0.035) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(12, 10, 9, 0.035) 1px, transparent 1px);
+      linear-gradient(to right, var(--color-hairline) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--color-hairline) 1px, transparent 1px);
     background-size: 72px 72px;
   }
 

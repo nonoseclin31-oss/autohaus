@@ -90,3 +90,46 @@ main().catch((error) => {
   console.error(error);
   process.exit(1);
 });
+
+/**
+ * Light-on-dark variants.
+ *
+ * The wordmark's "AUTO" is near-black, which disappears on the dark theme's
+ * canvas. Only the dark ink is lifted to the off-white the dark theme uses for
+ * text — the red of "HAUS", the gold bar and the circuit outline keep their
+ * exact values, so the mark stays the same mark.
+ */
+async function buildDarkVariants() {
+  const INK_MAX_LIFT = 120; // below this on every channel counts as the black ink
+  const LIFT = [245, 242, 239]; // --color-fg of the dark theme
+
+  for (const name of ["logo-wordmark.png", "logo-full.png"]) {
+    const file = path.join(OUT, name);
+    const { data, info } = await sharp(file).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
+    const { width, height } = info;
+
+    for (let p = 0; p < width * height; p++) {
+      const i = p * 4;
+      if (data[i + 3] === 0) continue;
+      const r = data[i], g = data[i + 1], b = data[i + 2];
+      // Only neutral dark pixels: leaves red and gold untouched, and keeps the
+      // anti-aliased edges neutral by scaling rather than flattening.
+      const max = Math.max(r, g, b);
+      const spread = max - Math.min(r, g, b);
+      if (max > INK_MAX_LIFT || spread > 26) continue;
+      const k = 1 - max / INK_MAX_LIFT;
+      data[i] = Math.round(r + (LIFT[0] - r) * k);
+      data[i + 1] = Math.round(g + (LIFT[1] - g) * k);
+      data[i + 2] = Math.round(b + (LIFT[2] - b) * k);
+    }
+
+    const target = path.join(OUT, name.replace(".png", "-dark.png"));
+    await sharp(data, { raw: { width, height, channels: 4 } })
+      .png({ compressionLevel: 9, palette: true, colours: 64, dither: 0 })
+      .toFile(target);
+    const { size } = await sharp(target).metadata().then(async (m) => ({ size: m.size ?? 0 }));
+    console.log(`  · ${path.basename(target)}  ${width}×${height}  ${Math.round((size || 0) / 1024)} kB`);
+  }
+}
+
+await buildDarkVariants();
