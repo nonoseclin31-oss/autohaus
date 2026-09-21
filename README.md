@@ -177,8 +177,28 @@ Vercel's Hobby plan.
 | Image uploads | Cloudflare R2 | 10 GB storage, no egress fees |
 | URL | `autohaus-motion.<you>.workers.dev` | free, HTTPS included |
 
-Measured on this app: **1.71 MB gzipped**, against the free plan's 3 MB Worker
-limit — it fits with room to spare.
+#### Bundle size — the one real constraint
+
+The free Workers plan caps a script at **3 MB gzipped**. This app measures:
+
+| Part | gzipped |
+| --- | --- |
+| Application code | 1697 KiB |
+| Prisma WASM query engine | 866 KiB |
+| **Total** | **2564 KiB** (83% of the limit) |
+
+It fits, with roughly 500 KiB spare. Prisma's WASM engine is the single
+biggest item and is unavoidable while Prisma runs on Workers. Re-check after
+adding any sizeable dependency:
+
+```bash
+npm run cf:build && npx wrangler deploy --dry-run --outdir=.wrangler-dryrun
+```
+
+If it ever exceeds the limit, in increasing order of effort: upgrade to Workers
+Paid ($5/month, 10 MB limit); move Prisma behind Accelerate, which replaces the
+WASM engine with a thin client; or drop Prisma on the Worker and query Neon
+directly with SQL.
 
 ### Requirements
 
@@ -257,15 +277,61 @@ npm run db:migrate -- --name what_changed   # local, writes a migration
 npm run db:deploy                           # apply to production
 ```
 
-### Your own domain
+### Attaching autohaus-motion.com
 
-`autohaus-motion.de` is already registered (since 2022, nameservers at
-All-Inkl), so it needs pointing, not buying. In the Cloudflare dashboard:
-**Workers & Pages → your worker → Settings → Domains & Routes → Add custom
-domain**.
+`autohaus-motion.com` was registered at IONOS on 25 Aug 2026 and is parked —
+nothing is served from it, so pointing it at the Worker breaks no live site.
+(`autohaus-motion.de` runs a Wix site and is left alone for now.)
 
-Point a subdomain such as `neu.autohaus-motion.de` at it first, so the existing
-site keeps serving until you are ready to move the apex.
+Cloudflare Workers custom domains require the zone to be on Cloudflare, so the
+nameservers move from IONOS to Cloudflare. That means Cloudflare takes over
+**all** DNS for the domain, including mail — so the existing records have to
+come across or email stops.
+
+#### DNS as it stands (captured before the move)
+
+| Type | Name | Value | Keep? |
+| --- | --- | --- | --- |
+| A | `@` | `217.160.0.254` | ✗ IONOS parking — the Worker replaces it |
+| AAAA | `@` | `2001:8d8:100f:f000::200` | ✗ same |
+| MX | `@` | `10 mx00.ionos.de` | **✓ keep — email** |
+| MX | `@` | `10 mx01.ionos.de` | **✓ keep — email** |
+| TXT | `@` | `v=spf1 include:_spf-eu.ionos.com ~all` | **✓ keep — email** |
+| CNAME | `autodiscover` | `adsredir.ionos.info` | **✓ keep — Outlook autoconfig** |
+| CNAME | `_dmarc` | `dmarc.ionos.de` | **✓ keep — email** |
+
+No CAA record, no DKIM record, and **no `www`** — `www.autohaus-motion.com`
+does not currently resolve.
+
+#### Steps
+
+1. **Cloudflare → Add a site → `autohaus-motion.com` → Free plan.**
+   Cloudflare scans IONOS and imports what it finds. Check every ✓ row above
+   is present before continuing — this is the step where email gets lost.
+
+2. **Delete the `A` and `AAAA` records** for `@`. They point at the IONOS
+   parking page; the Worker takes over the apex.
+
+3. **Confirm MX and the two CNAMEs are "DNS only"** (grey cloud, not orange).
+   Cloudflare cannot proxy mail.
+
+4. **IONOS → Domains → `autohaus-motion.com` → Nameservers**, replace the four
+   `ui-dns.*` entries with the two Cloudflare gives you. Propagation is usually
+   under an hour.
+
+5. Once Cloudflare reports the zone **Active**:
+   **Workers & Pages → autohaus-motion → Settings → Domains & Routes → Add
+   custom domain** → `autohaus-motion.com`, then repeat for
+   `www.autohaus-motion.com`.
+
+6. Cloudflare issues the TLS certificate automatically. Neither domain serves
+   working HTTPS today, so this is a real fix, not just a move.
+
+#### Rolling back
+
+Nameservers are the only destructive change. Putting the four `ui-dns.*`
+entries back at IONOS restores the previous setup entirely. Keep the table
+above until you are happy.
 
 ### Notes on the Cloudflare setup
 

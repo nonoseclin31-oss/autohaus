@@ -2,7 +2,8 @@ import type { Metadata, Viewport } from "next";
 import { notFound } from "next/navigation";
 import { Inter, Playfair_Display, Barlow_Condensed } from "next/font/google";
 import "../globals.css";
-import { LOCALES, LOCALE_META, getDictionary, isLocale, type Locale } from "@/i18n";
+import { LOCALES, LOCALE_META, DEFAULT_LOCALE, getDictionary, isLocale, type Locale } from "@/i18n";
+import { COMPANY } from "@/lib/utils";
 
 /* Inter carries the interface and all data; Playfair gives the editorial
    display voice; Barlow Condensed is reserved for the racing wordmark. */
@@ -46,15 +47,24 @@ export async function generateMetadata({
   const { locale } = await params;
   const t = getDictionary(locale);
   return {
+    // Makes every canonical, hreflang and Open Graph URL absolute. Without it
+    // link previews and search engines see relative paths and guess.
+    metadataBase: new URL(COMPANY.siteUrl),
     title: { default: t.meta.title, template: `%s · Autohaus Motion` },
     description: t.meta.description,
     alternates: {
-      languages: Object.fromEntries(LOCALES.map((l) => [LOCALE_META[l].htmlLang, `/${l}`])),
+      canonical: `/${locale}`,
+      languages: {
+        ...Object.fromEntries(LOCALES.map((l) => [LOCALE_META[l].htmlLang, `/${l}`])),
+        "x-default": `/${DEFAULT_LOCALE}`,
+      },
     },
     openGraph: {
       title: t.meta.title,
       description: t.meta.description,
       siteName: "Autohaus Motion",
+      url: `/${locale}`,
+      locale: LOCALE_META[locale as Locale]?.htmlLang,
       type: "website",
     },
   };

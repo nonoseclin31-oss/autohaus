@@ -93,4 +93,5 @@ export const COMPANY = {
   phone: "+49 2471 000 000",
   email: "contact@autohaus-motion.de",
   mapsQuery: "Bundesstraße 124, 52159 Roetgen, Germany",
+  siteUrl: process.env.NEXT_PUBLIC_SITE_URL ?? "https://autohaus-motion.com",
 } as const;
