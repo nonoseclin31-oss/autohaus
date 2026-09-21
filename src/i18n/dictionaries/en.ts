@@ -73,6 +73,8 @@ const en = {
     previous: "Previous",
     next: "Next",
     language: "Language",
+    themeLight: "Light theme",
+    themeDark: "Dark theme",
     showing: "Showing",
     error: "Something went wrong",
     success: "Saved successfully",

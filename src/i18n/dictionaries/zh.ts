@@ -75,6 +75,8 @@ const zh: Dictionary = {
     previous: "上一页",
     next: "下一页",
     language: "语言",
+    themeLight: "浅色主题",
+    themeDark: "深色主题",
     showing: "显示",
     error: "出错了",
     success: "保存成功",

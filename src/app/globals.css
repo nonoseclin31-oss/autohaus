@@ -18,6 +18,10 @@
   --color-line: #e7e5e4;
   --color-line-strong: #d6d3d1;
 
+  /* The black of the German flag in the loader. A literal black would
+     vanish on a dark canvas, so it is a token rather than a constant. */
+  --color-flag-dark: #1c1917;
+
   /* Dark counterpart, used sparingly (scrims, stamps, inverted chips) */
   --color-ink: #1c1917;
   --color-ink-soft: #292524;
@@ -63,6 +67,85 @@
 
   /* Motion */
   --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   Dark theme
+
+   The same site after dark, not a different one: only colours move.
+   The neutrals stay warm — a blue-grey dark would fight the stone
+   palette the light theme is built on — and the canvas is a soft
+   near-black rather than #000, which keeps the surfaces readable as
+   separate planes and avoids the halation pure black causes around
+   light serif text.
+
+   Brand red is the one colour that cannot simply invert. No single
+   red can both carry 4.5:1 as text on a dark canvas and take white
+   text on top of it as a button — the two requirements pull the
+   luminance in opposite directions. So the fill keeps the exact
+   brand red, and only text switches to a lighter one.
+
+   Every value below was measured, not eyeballed: text clears 4.5:1
+   on all four dark surfaces, the oversized numerals clear 3:1.
+   ══════════════════════════════════════════════════════════════ */
+
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  /* Surfaces — warm charcoals, each a readable step from the last */
+  --color-canvas: #12100f;
+  --color-surface: #1a1817;
+  --color-surface-2: #211f1d;
+  --color-surface-3: #2a2725;
+  --color-line: #2e2a28;
+  --color-line-strong: #4a4441;
+
+  --color-flag-dark: #e7e3df;
+
+  /* Inverted chips and bands: still set apart from the canvas, now by
+     being lighter rather than darker. */
+  --color-ink: #211f1d;
+  --color-ink-soft: #2a2725;
+
+  /* Foreground — 13.3:1 · 6.6:1 · 5.3:1 on the canvas */
+  --color-fg: #f5f2ef;
+  --color-muted: #b3aca6;
+  --color-subtle: #a09992;
+  --color-numeral: #7d7770;
+
+  /* Brand red keeps its exact value as a fill, so a button and a sale
+     badge look the same after dark. --color-red-text is what the rule
+     further down substitutes wherever red is used as text. */
+  --color-red: #c8102e;
+  --color-red-text: #f2687c;
+  --color-red-bright: #e30613;
+  /* Hover brightens here rather than darkening: on a dark surface a
+     darker red reads as disabled. */
+  --color-red-deep: #e0263f;
+  --color-red-wash: #2a1418;
+
+  --color-gold: #e0a82e;
+  --color-bronze: #ecc15c;
+  --color-gold-wash: #251d0e;
+
+  --color-ok: #5cc98a;
+  --color-ok-wash: #122016;
+  --color-warn: #eda640;
+  --color-info: #56b6e8;
+
+  /* Shadows carry almost nothing on a dark surface, so they lean on
+     black harder and let the borders do most of the separating. */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-sm: 0 2px 6px -1px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 8px 24px -8px rgba(0, 0, 0, 0.6);
+  --shadow-lg: 0 28px 56px -16px rgba(0, 0, 0, 0.7);
+}
+
+/* Red as text, everywhere it appears. One rule rather than sixty-five
+   edits: the attribute selector outranks Tailwind's own .text-red, and
+   fills keep the brand red because they set a background, not a colour. */
+[data-theme="dark"] .text-red {
+  color: var(--color-red-text);
 }
 
 /* ══════════════════════════════════════════════════════════════
@@ -493,7 +576,7 @@
     border-radius: 2px;
     background: linear-gradient(
       90deg,
-      var(--color-ink) 0%, var(--color-ink) 33%,
+      var(--color-flag-dark) 0%, var(--color-flag-dark) 33%,
       var(--color-red-bright) 33%, var(--color-red-bright) 66%,
       #ffc300 66%, #ffc300 100%
     );

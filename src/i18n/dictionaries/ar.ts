@@ -75,6 +75,8 @@ const ar: Dictionary = {
     previous: "السابق",
     next: "التالي",
     language: "اللغة",
+    themeLight: "المظهر الفاتح",
+    themeDark: "المظهر الداكن",
     showing: "عرض",
     error: "حدث خطأ ما",
     success: "تم الحفظ بنجاح",

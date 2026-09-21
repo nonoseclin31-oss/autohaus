@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Logo } from "./logo";
+import { ThemeToggle } from "./theme-toggle";
 import { LanguageSwitcher } from "./language-switcher";
 import { IconMenu, IconX, IconPhone, IconUser } from "./icons";
 import { localePath, type Locale } from "@/i18n";
@@ -90,6 +91,7 @@ export function SiteHeader({
               <span className="tabular-nums">{COMPANY.phone}</span>
             </a>
 
+            <ThemeToggle locale={locale} />
             <LanguageSwitcher locale={locale} label={languageLabel} />
 
             <Link

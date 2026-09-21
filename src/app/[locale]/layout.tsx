@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { ThemeScript } from "@/components/theme-toggle";
 import { notFound } from "next/navigation";
 import { Inter, Playfair_Display, Barlow_Condensed } from "next/font/google";
 import "../globals.css";
@@ -84,6 +85,11 @@ export default async function LocaleLayout({
 
   return (
     <html lang={meta.htmlLang} dir={meta.dir} className={`${inter.variable} ${playfair.variable} ${barlowCondensed.variable}`}>
+      <head>
+        {/* Applies the saved theme before the first paint. An effect would
+            run after it, and the light theme would flash on every load. */}
+        <ThemeScript />
+      </head>
       <body>
         <a
           href="#main"

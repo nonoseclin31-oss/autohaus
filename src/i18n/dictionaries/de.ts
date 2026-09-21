@@ -75,6 +75,8 @@ const de: Dictionary = {
     previous: "Zurück",
     next: "Weiter",
     language: "Sprache",
+    themeLight: "Helles Design",
+    themeDark: "Dunkles Design",
     showing: "Anzeige",
     error: "Ein Fehler ist aufgetreten",
     success: "Erfolgreich gespeichert",

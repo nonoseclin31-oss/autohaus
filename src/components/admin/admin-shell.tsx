@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { Logo } from "../logo";
+import { ThemeToggle } from "../theme-toggle";
 import { LanguageSwitcher } from "../language-switcher";
 import { signOut } from "@/app/actions/auth";
 import { localePath, type Locale } from "@/i18n";
@@ -161,6 +162,7 @@ export function AdminShell({
             {labels.backOffice}
           </span>
           <div className="ms-auto flex items-center gap-2">
+            <ThemeToggle locale={locale} />
             <LanguageSwitcher locale={locale} label={labels.language} compact />
           </div>
         </header>
