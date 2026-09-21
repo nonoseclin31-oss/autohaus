@@ -77,7 +77,9 @@ export function dealerSchema(locale: string, description: string) {
       addressLocality: COMPANY.city,
       addressCountry: COMPANY.countryCode,
     },
-    areaServed: "EU",
+    // The showroom is in Germany, but cars are sourced beyond Europe and
+    // shipped anywhere, so the served area is not a region.
+    areaServed: "Worldwide",
     currenciesAccepted: "EUR",
   };
 }

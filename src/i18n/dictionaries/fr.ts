@@ -7,16 +7,16 @@ const fr: Dictionary = {
       "Concessionnaire allemand basé à Francfort. Véhicules premium et sportifs sélectionnés à la vente, ainsi que des solutions de location longue durée sur mesure.",
     // Search snippets. Kept apart from the page copy: a subtitle reads
     // well on screen but is too short to fill a result.
-    vehicles: "Parcourez notre stock de véhicules premium et sportifs, tous contrôlés, certifiés et prêts à rouler. Livraison dans toute l'Europe depuis Roetgen.",
+    vehicles: "Parcourez notre stock de véhicules premium et sportifs, tous contrôlés, certifiés et prêts à rouler. Livraison dans le monde entier depuis Roetgen.",
     rental: "La location longue durée avec un loyer mensuel fixe couvrant le véhicule, l'entretien, la garantie et l'assistance. De 24 à 60 mois, sans surprise.",
-    about: "Autohaus Motion GmbH, concession allemande à Roetgen près d'Aix-la-Chapelle. Véhicules premium et sportifs, à la vente et en location longue durée.",
-    contact: "Parlez à notre équipe d'un véhicule, d'une location longue durée ou d'une reprise. Showroom Bundesstraße 124 à Roetgen, livraison partout en Europe.",
+    about: "Autohaus Motion GmbH, concession allemande à Roetgen près d'Aix-la-Chapelle. Véhicules premium et sportifs recherchés en Europe et au-delà, livrés dans le monde entier.",
+    contact: "Parlez à notre équipe d'un véhicule, d'une location longue durée ou d'une reprise. Showroom Bundesstraße 124 à Roetgen, livraison dans le monde entier.",
     // Short enough that the title template does not push it past what a
     // result shows; the page keeps its longer heading on screen.
     aboutTitle: "Notre concession à Roetgen",
     // Closes a listing snippet built from the facts when the listing has no
     // written description of its own.
-    listingSuffix: "Contrôlée, certifiée et prête à rouler. Livraison dans toute l'Europe.",
+    listingSuffix: "Contrôlée, certifiée et prête à rouler. Livraison dans le monde entier.",
   },
   nav: {
     home: "Accueil",
@@ -96,7 +96,10 @@ const fr: Dictionary = {
     statVehicles: "Véhicules en stock",
     statYears: "Années d'expérience",
     statClients: "Clients livrés",
-    statDelivery: "Livraison en Europe",
+    statDelivery: "Livraison mondiale",
+    // Shown as the figure above the label, where the other three are
+    // numbers — so it has to stay short enough to sit at that size.
+    statDeliveryValue: "Monde",
     quickSearch: "Trouvez votre véhicule",
     featuredTitle: "Véhicules à la une",
     featuredSubtitle: "Une sélection de notre stock actuel, mise à jour chaque jour.",
@@ -113,8 +116,8 @@ const fr: Dictionary = {
     why2Body: "Carnet d'entretien complet, kilométrage certifié et historique des sinistres sur chaque annonce.",
     why3Title: "Financement & location",
     why3Body: "Achat, leasing ou location longue durée — nous construisons l'offre autour de votre usage.",
-    why4Title: "Livraison en Europe",
-    why4Body: "Livraison à domicile avec immatriculation prise en charge, partout dans l'UE.",
+    why4Title: "Livrée dans le monde entier",
+    why4Body: "Livraison à domicile, où que vous soyez. Transport, formalités douanières et immatriculation pris en charge.",
     processTitle: "Comment cela se passe",
     step1Title: "Choisissez",
     step1Body: "Filtrez le stock et présélectionnez les véhicules qui correspondent à votre besoin.",
@@ -125,7 +128,7 @@ const fr: Dictionary = {
     step4Title: "Repartez au volant",
     step4Body: "Démarches, immatriculation et livraison gérées de bout en bout.",
     ctaTitle: "Vous recherchez un véhicule précis ?",
-    ctaBody: "Décrivez-nous votre besoin : nous le recherchons dans notre réseau de concessionnaires allemands.",
+    ctaBody: "Décrivez-nous votre besoin : nous le recherchons d'abord dans notre réseau européen, puis partout ailleurs s'il le faut.",
   },
   vehicles: {
     title: "Véhicules à vendre",
@@ -291,7 +294,7 @@ const fr: Dictionary = {
   },
   contact: {
     title: "Nous contacter",
-    subtitle: "Showroom à Roetgen, livraisons dans toute l'Europe.",
+    subtitle: "Showroom à Roetgen, livraisons dans le monde entier.",
     address: "Adresse",
     openingHours: "Horaires d'ouverture",
     weekdays: "Lundi – Vendredi",
@@ -310,7 +313,7 @@ const fr: Dictionary = {
     body1:
       "À l'origine d'Autohaus Motion, des passionnés qui ont passé plus de week-ends au Nürburgring que derrière un bureau. Cette obsession guide encore notre sélection : l'intégrité mécanique d'abord, les documents ensuite, l'esthétique en dernier.",
     body2:
-      "Nous achetons sur tout le marché allemand, contrôlons selon un standard de 150 points et publions l'historique complet de chaque voiture. Ce que vous lisez sur l'annonce, c'est ce que vous trouvez au showroom.",
+      "Nous achetons dans toute l'Europe — l'Allemagne d'abord, mais partout où se trouve la bonne voiture, y compris hors du continent — contrôlons selon un standard de 150 points et publions l'historique complet de chaque véhicule. Ce que vous lisez sur l'annonce, c'est ce que vous trouvez au showroom.",
     valuesTitle: "Nos engagements",
     v1Title: "Des rapports d'état honnêtes",
     v1Body: "Les défauts sont photographiés et déclarés. Aucune surprise à la livraison.",

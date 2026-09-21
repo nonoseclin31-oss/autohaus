@@ -9,7 +9,7 @@ const de: Dictionary = {
     // well on screen but is too short to fill a result.
     vehicles: "Unser Bestand an Premium- und Sportfahrzeugen, jedes geprüft, zertifiziert und fahrbereit. Lieferung europaweit ab unserem Showroom in Roetgen.",
     rental: "Langzeitmiete mit einer festen Monatsrate für Fahrzeug, Wartung, Garantie und Pannenhilfe. Von 24 bis 60 Monaten, ohne Überraschungen.",
-    about: "Autohaus Motion GmbH, deutsches Autohaus in Roetgen bei Aachen. Premium- und Sportfahrzeuge, Verkauf und Langzeitmiete in ganz Europa.",
+    about: "Autohaus Motion GmbH, deutsches Autohaus in Roetgen bei Aachen. Premium- und Sportfahrzeuge, europaweit und darüber hinaus beschafft, weltweit geliefert.",
     contact: "Sprechen Sie mit uns über ein Fahrzeug, eine Langzeitmiete oder Ihre Inzahlungnahme. Showroom Bundesstraße 124 in Roetgen, Lieferung europaweit.",
     // Short enough that the title template does not push it past what a
     // result shows; the page keeps its longer heading on screen.
@@ -96,7 +96,10 @@ const de: Dictionary = {
     statVehicles: "Fahrzeuge im Bestand",
     statYears: "Jahre Erfahrung",
     statClients: "Ausgelieferte Kunden",
-    statDelivery: "Europaweite Lieferung",
+    statDelivery: "Weltweite Lieferung",
+    // Shown as the figure above the label, where the other three are
+    // numbers — so it has to stay short enough to sit at that size.
+    statDeliveryValue: "Weltweit",
     quickSearch: "Finden Sie Ihr Fahrzeug",
     featuredTitle: "Ausgewählte Fahrzeuge",
     featuredSubtitle: "Eine Auswahl aus unserem aktuellen Bestand, täglich aktualisiert.",
@@ -113,8 +116,8 @@ const de: Dictionary = {
     why2Body: "Vollständiges Scheckheft, geprüfter Kilometerstand und Unfallhistorie bei jedem Inserat.",
     why3Title: "Finanzierung & Miete",
     why3Body: "Kauf, Leasing oder Langzeitmiete — wir bauen das Paket um Ihre Nutzung herum.",
-    why4Title: "Europaweite Lieferung",
-    why4Body: "Lieferung bis vor die Tür inklusive Zulassung, überall in der EU.",
+    why4Title: "Weltweit geliefert",
+    why4Body: "Bis vor die Tür, wo immer Sie sind. Transport, Zollformalitäten und Zulassung übernehmen wir.",
     processTitle: "So funktioniert es",
     step1Title: "Auswählen",
     step1Body: "Filtern Sie den Bestand und wählen Sie die passenden Fahrzeuge aus.",
@@ -125,7 +128,7 @@ const de: Dictionary = {
     step4Title: "Losfahren",
     step4Body: "Papiere, Zulassung und Lieferung übernehmen wir komplett.",
     ctaTitle: "Suchen Sie ein bestimmtes Fahrzeug?",
-    ctaBody: "Nennen Sie uns Ihre Wünsche — wir beschaffen es über unser deutsches Händlernetz.",
+    ctaBody: "Nennen Sie uns Ihre Wünsche. Wir suchen zuerst in unserem europäischen Netz — und darüber hinaus, wenn es nötig ist.",
   },
   vehicles: {
     title: "Fahrzeuge zum Verkauf",
@@ -291,7 +294,7 @@ const de: Dictionary = {
   },
   contact: {
     title: "Kontakt",
-    subtitle: "Showroom in Roetgen, Lieferung in ganz Europa.",
+    subtitle: "Showroom in Roetgen, Lieferung weltweit.",
     address: "Anschrift",
     openingHours: "Öffnungszeiten",
     weekdays: "Montag – Freitag",
@@ -310,7 +313,7 @@ const de: Dictionary = {
     body1:
       "Autohaus Motion wurde von Enthusiasten gegründet, die mehr Wochenenden am Nürburgring verbracht haben als am Schreibtisch. Diese Leidenschaft bestimmt bis heute unsere Auswahl: technische Substanz zuerst, Papiere danach, Optik zuletzt.",
     body2:
-      "Wir kaufen auf dem gesamten deutschen Markt, prüfen nach einem 150-Punkte-Standard und veröffentlichen die vollständige Historie jedes Fahrzeugs. Was im Inserat steht, steht auch in der Einfahrt.",
+      "Wir kaufen in ganz Europa — zuerst in Deutschland, aber überall dort, wo das richtige Fahrzeug steht, auch außerhalb des Kontinents —, prüfen nach einem 150-Punkte-Standard und veröffentlichen die vollständige Historie jedes Fahrzeugs. Was im Inserat steht, steht auch im Showroom.",
     valuesTitle: "Wofür wir stehen",
     v1Title: "Ehrliche Zustandsberichte",
     v1Body: "Mängel werden fotografiert und offengelegt. Keine Überraschungen bei der Übergabe.",

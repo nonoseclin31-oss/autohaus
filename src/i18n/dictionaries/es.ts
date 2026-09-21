@@ -7,16 +7,16 @@ const es: Dictionary = {
       "Concesionario alemán con sede en Fráncfort. Vehículos premium y deportivos seleccionados a la venta, además de soluciones de alquiler a largo plazo a medida.",
     // Search snippets. Kept apart from the page copy: a subtitle reads
     // well on screen but is too short to fill a result.
-    vehicles: "Nuestro stock de coches premium y deportivos, todos revisados, certificados y listos para rodar. Entrega en toda Europa desde Roetgen.",
+    vehicles: "Nuestro stock de coches premium y deportivos, todos revisados, certificados y listos para rodar. Entrega en todo el mundo desde Roetgen.",
     rental: "Alquiler a largo plazo con una cuota mensual fija que cubre el vehículo, el mantenimiento, la garantía y la asistencia. De 24 a 60 meses.",
     about: "Autohaus Motion GmbH, concesionario alemán en Roetgen, cerca de Aquisgrán. Coches premium y deportivos, en venta y alquiler a largo plazo.",
-    contact: "Hable con nuestro equipo sobre un coche, un alquiler a largo plazo o su vehículo actual. Showroom en Bundesstrasse 124, Roetgen. Entrega en Europa.",
+    contact: "Hable con nuestro equipo sobre un coche, un alquiler a largo plazo o su vehículo actual. Showroom en Bundesstraße 124, Roetgen. Entrega en todo el mundo.",
     // Short enough that the title template does not push it past what a
     // result shows; the page keeps its longer heading on screen.
     aboutTitle: "Quiénes somos — Roetgen",
     // Closes a listing snippet built from the facts when the listing has no
     // written description of its own.
-    listingSuffix: "Revisado, certificado y listo para rodar. Entrega en toda Europa.",
+    listingSuffix: "Revisado, certificado y listo para rodar. Entrega en todo el mundo.",
   },
   nav: {
     home: "Inicio",
@@ -96,7 +96,10 @@ const es: Dictionary = {
     statVehicles: "Vehículos en stock",
     statYears: "Años de experiencia",
     statClients: "Clientes entregados",
-    statDelivery: "Entrega en toda Europa",
+    statDelivery: "Entrega mundial",
+    // Shown as the figure above the label, where the other three are
+    // numbers — so it has to stay short enough to sit at that size.
+    statDeliveryValue: "Mundial",
     quickSearch: "Encuentra tu vehículo",
     featuredTitle: "Vehículos destacados",
     featuredSubtitle: "Una selección de nuestro stock actual, actualizada a diario.",
@@ -113,7 +116,7 @@ const es: Dictionary = {
     why2Body: "Libro de mantenimiento completo, kilometraje certificado e historial de siniestros en cada anuncio.",
     why3Title: "Financiación y alquiler",
     why3Body: "Compra, leasing o alquiler a largo plazo: construimos la fórmula según tu uso.",
-    why4Title: "Entrega en toda Europa",
+    why4Title: "Entregado en todo el mundo",
     why4Body: "Entrega a domicilio con la matriculación gestionada, en cualquier punto de la UE.",
     processTitle: "Cómo funciona",
     step1Title: "Elige",
@@ -125,7 +128,7 @@ const es: Dictionary = {
     step4Title: "Conduce",
     step4Body: "Gestionamos trámites, matriculación y entrega de principio a fin.",
     ctaTitle: "¿Buscas un vehículo concreto?",
-    ctaBody: "Cuéntanos qué necesitas y lo localizamos a través de nuestra red de concesionarios alemanes.",
+    ctaBody: "Cuéntanos qué necesitas. Lo buscamos primero en nuestra red europea y, si hace falta, en cualquier parte del mundo.",
   },
   vehicles: {
     title: "Vehículos en venta",
@@ -291,7 +294,7 @@ const es: Dictionary = {
   },
   contact: {
     title: "Contacto",
-    subtitle: "Showroom en Roetgen, entregas en toda Europa.",
+    subtitle: "Showroom en Roetgen, entregas en todo el mundo.",
     address: "Dirección",
     openingHours: "Horario",
     weekdays: "Lunes – Viernes",
@@ -310,7 +313,7 @@ const es: Dictionary = {
     body1:
       "Autohaus Motion nació de la mano de apasionados que pasaron más fines de semana en Nürburgring que detrás de un escritorio. Esa obsesión sigue guiando nuestra selección: primero la integridad mecánica, después la documentación y por último la estética.",
     body2:
-      "Compramos en todo el mercado alemán, revisamos con un estándar de 150 puntos y publicamos el historial completo de cada coche. Lo que lees en el anuncio es lo que encuentras en la entrega.",
+      "Compramos en toda Europa — primero en Alemania, pero allí donde esté el coche adecuado, incluso fuera del continente —, revisamos con un estándar de 150 puntos y publicamos el historial completo de cada coche. Lo que lees en el anuncio es lo que encuentras en el showroom.",
     valuesTitle: "Nuestros compromisos",
     v1Title: "Informes de estado honestos",
     v1Body: "Los defectos se fotografían y se declaran. Sin sorpresas en la entrega.",

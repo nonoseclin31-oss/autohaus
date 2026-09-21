@@ -2,7 +2,7 @@
  * Creates the listing templates for the performance models the showroom sells.
  *
  * Figures are the manufacturers' published ones, WLTP combined where the car
- * is sold in Europe. They are a starting point, not a quote: a template is
+ * sold in Europe. They are a starting point, not a quote: a template is
  * copied into a listing and the car in front of you is what gets edited.
  *
  * Photos are deliberately absent — a template describes a kind of car.
@@ -26,7 +26,7 @@ const T = {
     hp: "hp", sec: "s", to100: "0–100 km/h in", top: "top speed",
     phev: "Plug-in hybrid: it runs on electricity alone for short journeys and recharges from a wall box.",
     mhev: "A 48-volt system smooths the stop-start and recovers energy under braking.",
-    closing: "Inspected and certified to German standards, delivered anywhere in Europe.",
+    closing: "Inspected and certified to German standards, delivered anywhere in the world.",
   },
   fr: {
     layout: { V12: "V12 atmosphérique", V8T: "V8 biturbo", V8: "V8", V6T: "V6 biturbo", I6: "six cylindres en ligne turbo", I5: "cinq cylindres turbo" },
@@ -35,7 +35,7 @@ const T = {
     hp: "ch", sec: "s", to100: "0–100 km/h en", top: "vitesse maximale",
     phev: "Hybride rechargeable : elle roule en tout électrique sur les trajets courts et se recharge sur une borne.",
     mhev: "Un réseau 48 volts adoucit le stop-and-start et récupère l'énergie au freinage.",
-    closing: "Contrôlée et certifiée selon les standards allemands, livrée partout en Europe.",
+    closing: "Contrôlée et certifiée selon les standards allemands, livrée partout dans le monde.",
   },
   de: {
     layout: { V12: "V12-Saugmotor", V8T: "V8-Biturbo", V8: "V8", V6T: "V6-Biturbo", I6: "Reihensechszylinder mit Turbo", I5: "Fünfzylinder-Turbo" },
@@ -44,7 +44,7 @@ const T = {
     hp: "PS", sec: "s", to100: "0–100 km/h in", top: "Höchstgeschwindigkeit",
     phev: "Plug-in-Hybrid: rein elektrisch auf kurzen Strecken, Aufladung an der Wallbox.",
     mhev: "Ein 48-Volt-System glättet die Start-Stopp-Automatik und rekuperiert beim Bremsen.",
-    closing: "Nach deutschen Standards geprüft und zertifiziert, Lieferung europaweit.",
+    closing: "Nach deutschen Standards geprüft und zertifiziert, Lieferung weltweit.",
   },
   zh: {
     layout: { V12: "自然吸气 V12", V8T: "双涡轮增压 V8", V8: "V8", V6T: "双涡轮增压 V6", I6: "涡轮增压直列六缸", I5: "涡轮增压五缸" },
@@ -53,7 +53,7 @@ const T = {
     hp: "马力", sec: "秒", to100: "0–100 公里/小时加速", top: "最高时速",
     phev: "插电式混合动力：短途可纯电行驶，可通过充电桩充电。",
     mhev: "48 伏系统让启停更平顺，并在制动时回收能量。",
-    closing: "按德国标准检测认证，配送至全欧洲。",
+    closing: "按德国标准检测认证，配送至全球。",
   },
   ar: {
     layout: { V12: "محرك V12 بسحب طبيعي", V8T: "V8 بشاحنين توربو", V8: "V8", V6T: "V6 بشاحنين توربو", I6: "ستة أسطوانات على التوالي بتوربو", I5: "خمس أسطوانات بتوربو" },
@@ -62,7 +62,7 @@ const T = {
     hp: "حصان", sec: "ثانية", to100: "من 0 إلى 100 كم/س في", top: "السرعة القصوى",
     phev: "هجينة قابلة للشحن: تسير كهربائيًا بالكامل في المشاوير القصيرة وتُشحن من محطة منزلية.",
     mhev: "نظام 48 فولت يجعل التشغيل والإيقاف أكثر سلاسة ويستعيد الطاقة عند الفرملة.",
-    closing: "مفحوصة ومعتمدة وفق المعايير الألمانية، مع التوصيل في أنحاء أوروبا.",
+    closing: "مفحوصة ومعتمدة وفق المعايير الألمانية، مع التوصيل إلى أنحاء العالم.",
   },
   es: {
     layout: { V12: "V12 atmosférico", V8T: "V8 biturbo", V8: "V8", V6T: "V6 biturbo", I6: "seis cilindros en línea turbo", I5: "cinco cilindros turbo" },
@@ -71,7 +71,7 @@ const T = {
     hp: "CV", sec: "s", to100: "0–100 km/h en", top: "velocidad máxima",
     phev: "Híbrido enchufable: circula en eléctrico puro en trayectos cortos y se recarga en un punto de carga.",
     mhev: "Un sistema de 48 voltios suaviza el arranque-parada y recupera energía al frenar.",
-    closing: "Revisado y certificado según estándares alemanes, con entrega en toda Europa.",
+    closing: "Revisado y certificado según estándares alemanes, con entrega en todo el mundo.",
   },
 };
 

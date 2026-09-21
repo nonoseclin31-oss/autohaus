@@ -155,7 +155,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
               { value: formatNumber(stockCount, locale), label: t.home.statVehicles },
               { value: "18", label: t.home.statYears },
               { value: "2 400+", label: t.home.statClients },
-              { value: "EU", label: t.home.statDelivery },
+              { value: t.home.statDeliveryValue, label: t.home.statDelivery },
             ].map((stat) => (
               <div key={stat.label} className="border-b border-line px-1 py-6 sm:px-2 lg:border-b-0">
                 <dt className="sr-only">{stat.label}</dt>

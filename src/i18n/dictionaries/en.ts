@@ -5,16 +5,16 @@ const en = {
       "German dealership based in Frankfurt. Curated premium and performance vehicles for sale, plus tailor-made long-term rental solutions.",
     // Search snippets. Kept apart from the page copy: a subtitle reads
     // well on screen but is too short to fill a result.
-    vehicles: "Browse our stock of premium and performance cars, each inspected, certified and road-ready. Delivery across Europe from our Roetgen showroom.",
+    vehicles: "Browse our stock of premium and performance cars, each inspected, certified and road-ready. Worldwide delivery from our Roetgen showroom.",
     rental: "Long-term car rental with one fixed monthly payment covering the vehicle, servicing, warranty and roadside assistance. 24 to 60 months, no surprises.",
-    about: "Autohaus Motion GmbH, a German dealership in Roetgen near Aachen. Premium and performance cars, sold and rented long-term across Europe.",
-    contact: "Talk to our team about a car, a long-term rental or a trade-in. Showroom at Bundesstrasse 124, Roetgen, and delivery throughout Europe.",
+    about: "Autohaus Motion GmbH, a German dealership in Roetgen near Aachen. Premium and performance cars, sourced across Europe and beyond, delivered worldwide.",
+    contact: "Talk to our team about a car, a long-term rental or a trade-in. Showroom at Bundesstraße 124, Roetgen, and delivery worldwide.",
     // Short enough that the title template does not push it past what a
     // result shows; the page keeps its longer heading on screen.
     aboutTitle: "About us — Roetgen, Germany",
     // Closes a listing snippet built from the facts when the listing has no
     // written description of its own.
-    listingSuffix: "Inspected, certified and ready to drive. Delivery across Europe.",
+    listingSuffix: "Inspected, certified and ready to drive. Worldwide delivery.",
   },
   nav: {
     home: "Home",
@@ -94,7 +94,10 @@ const en = {
     statVehicles: "Vehicles in stock",
     statYears: "Years of expertise",
     statClients: "Clients delivered",
-    statDelivery: "Europe-wide delivery",
+    statDelivery: "Worldwide delivery",
+    // Shown as the figure above the label, where the other three are
+    // numbers — so it has to stay short enough to sit at that size.
+    statDeliveryValue: "Worldwide",
     quickSearch: "Find your vehicle",
     featuredTitle: "Featured vehicles",
     featuredSubtitle: "A selection from our current stock, updated daily.",
@@ -111,8 +114,8 @@ const en = {
     why2Body: "Full service records, mileage certification and accident history provided on every listing.",
     why3Title: "Financing & rental",
     why3Body: "Purchase, lease or long-term rental — we build the package around your usage.",
-    why4Title: "Europe-wide delivery",
-    why4Body: "Door-to-door delivery with registration handled for you, anywhere in the EU.",
+    why4Title: "Delivered worldwide",
+    why4Body: "Door to door, wherever you are. Transport, customs formalities and registration handled for you.",
     processTitle: "How it works",
     step1Title: "Choose",
     step1Body: "Filter the stock and shortlist the vehicles that fit your brief.",
@@ -123,7 +126,7 @@ const en = {
     step4Title: "Drive away",
     step4Body: "Paperwork, registration and delivery handled end to end.",
     ctaTitle: "Looking for a specific vehicle?",
-    ctaBody: "Tell us your brief and we will source it through our German dealer network.",
+    ctaBody: "Tell us your brief. We look first across our European network, and further afield when that is what it takes.",
   },
   vehicles: {
     title: "Vehicles for sale",
@@ -289,7 +292,7 @@ const en = {
   },
   contact: {
     title: "Contact us",
-    subtitle: "Showroom in Roetgen, deliveries across Europe.",
+    subtitle: "Showroom in Roetgen, deliveries worldwide.",
     address: "Address",
     openingHours: "Opening hours",
     weekdays: "Monday – Friday",
@@ -308,7 +311,7 @@ const en = {
     body1:
       "Autohaus Motion was founded by enthusiasts who spent more weekends at the Nürburgring than behind a desk. That obsession still drives how we select every vehicle: mechanical integrity first, paperwork second, appearance third.",
     body2:
-      "We buy across the German market, inspect to a 150-point standard, and publish the full history of every car we list. What you read on the listing is what you get on the driveway.",
+      "We buy across Europe — Germany first, but wherever the right car is, including outside it — inspect to a 150-point standard, and publish the full history of every car we list. What you read on the listing is what you get in the showroom.",
     valuesTitle: "What we stand for",
     v1Title: "Honest condition reports",
     v1Body: "Defects are photographed and disclosed. No surprises at handover.",
