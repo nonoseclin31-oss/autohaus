@@ -594,6 +594,40 @@ node scripts/audit-a11y.mjs --theme dark
 node scripts/audit-locales.mjs --base https://autohausmotion.com --theme dark
 ```
 
+## Company details and the legal pages
+
+`COMPANY` in `lib/utils` is only the default. `getCompany()` in `lib/company`
+merges whatever the back office has stored in `Setting` over it, cached per
+request, and that is what the header, footer, contact page, legal pages and
+structured data all read. The day the showroom moves or a number changes it
+takes a minute in `/admin/settings` and no deploy.
+
+Editable: contact e-mail, phone, address, and the four legal identifiers the
+German imprint needs — register court, register number, managing director and
+VAT number. Anything left blank appears on the imprint as outstanding rather
+than being omitted, because only a visible gap gets filled.
+
+The three legal texts live in `lib/legal.ts`, built from the company record in
+all six languages. They are not written into the page, so filling in a missing
+field updates every language at once.
+
+Two things keep the site free of a consent banner, and both are easy to undo
+by accident:
+
+The fonts are loaded through `next/font/google`, which self-hosts them at
+build time. Switching to a stylesheet link would start sending every visitor's
+IP to Google on page load.
+
+And the Google map on the contact page is held behind a click
+(`components/consent-map.tsx`). Embedding the iframe directly sends the
+visitor's IP to Google before they have agreed to anything — which is what
+German businesses get warned over. Any other third-party embed added to the
+public site would need the same treatment, and would otherwise make the cookie
+section untrue.
+
+The only cookie is the staff session; the theme preference is local storage
+that never leaves the device.
+
 ## Finance: LLD and LOA
 
 `src/lib/finance.ts` is the only place either formula is priced. The public
