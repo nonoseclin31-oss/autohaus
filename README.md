@@ -11,20 +11,26 @@ statuses, handling enquiries and assigning staff roles.
 | Framework | Next.js 15 (App Router, React 19, server actions) |
 | Language  | TypeScript                                        |
 | Styling   | Tailwind CSS v4 with brand tokens in `globals.css` |
-| Database  | SQLite via Prisma 6 (swap the datasource for Postgres in production) |
+| Database  | PostgreSQL via Prisma 6                           |
 | Auth      | JWT session cookie (`jose`) + bcrypt password hashes |
-| Uploads   | Local filesystem under `public/uploads`           |
+| Uploads   | Vercel Blob in production, local filesystem in development |
 
 ## Getting started
 
 ```bash
 npm install
-npm run db:migrate   # creates dev.db from prisma/schema.prisma
-npm run db:seed      # demo catalogue, staff accounts and leads
+cp .env.example .env     # then put a Postgres URL in DATABASE_URL
+npm run db:migrate       # creates the schema
+npm run db:seed          # demo catalogue, staff accounts and leads
 npm run dev
 ```
 
 Open http://localhost:3000 — you are redirected to your browser's language.
+
+Postgres is required even locally, because Prisma cannot switch provider per
+environment. A free [Neon](https://neon.com) database takes a couple of minutes
+and works for both development and production. Uploads stay on your local disk
+until `BLOB_READ_WRITE_TOKEN` is set, so development needs no storage account.
 
 ### Demo accounts
 
@@ -145,16 +151,132 @@ src/
 
 ## Before going live
 
-- [ ] Replace `AUTH_SECRET` in `.env` with a random 32+ character value
+- [x] Prisma datasource switched to Postgres, initial migration committed
+- [x] Uploads behind a storage adapter — Vercel Blob in production
+- [x] `AUTH_SECRET` validated at boot; a placeholder or short value refuses to start
+- [ ] Set a fresh `AUTH_SECRET` in the host's environment variables
 - [ ] Change every seeded password, or delete the demo accounts
-- [ ] Switch the Prisma datasource from SQLite to Postgres and run `prisma migrate deploy`
-- [ ] Move uploads to object storage (S3/R2) — the local `public/uploads` folder does not
-      survive a redeploy on most hosts
 - [ ] Wire real email delivery for new leads (currently stored in the database only)
 - [ ] Complete `/legal/imprint`, `/legal/privacy` and `/legal/terms` — German law (TMG §5,
       DSGVO) prescribes mandatory content, and the current text is a placeholder
 - [ ] Replace the seeded placeholder graphics with real photography
 - [ ] Set the real phone number and email in `COMPANY` (`src/lib/utils.ts`)
+
+## Deploying (free)
+
+The app needs a Node host, a Postgres database and somewhere to keep uploaded
+images. This combination is free and deploys on every `git push`:
+
+| Piece | Service | Cost |
+| --- | --- | --- |
+| Hosting | Vercel | free (Hobby) |
+| Database | Neon Postgres | free tier |
+| Image uploads | Vercel Blob | free allowance |
+| URL | `your-project.vercel.app` | free, HTTPS included |
+
+> **Before going commercial:** Vercel's Hobby plan is for non-commercial use.
+> It is fine for testing and for showing the client. A live dealership site
+> needs Pro (about $20/month). If you want free *and* commercially permitted,
+> Cloudflare Workers or Render are the alternatives — Render's free tier sleeps
+> after inactivity, so the first visit takes roughly 50 seconds.
+
+### 1. Push to GitHub
+
+Create an empty repository (no README, no .gitignore), then:
+
+```bash
+git remote add origin https://github.com/<you>/autohaus-motion.git
+git branch -M main
+git push -u origin main
+```
+
+`.env`, `prisma/dev.db`, `public/uploads` and `public/avatars` are all ignored,
+so no secrets or local data go up.
+
+### 2. Import into Vercel
+
+At [vercel.com/new](https://vercel.com/new), import the repository. Vercel
+detects Next.js on its own — leave the build settings alone. The first deploy
+will fail because there is no database yet; that is expected.
+
+### 3. Add the database
+
+In the project's **Storage** tab, add **Neon** from the marketplace and pick the
+free plan. Vercel sets `DATABASE_URL` for you.
+
+### 4. Add image storage
+
+Same tab: create a **Blob** store. Vercel sets `BLOB_READ_WRITE_TOKEN`.
+Its presence is what switches uploads from the local disk to Blob — no code
+change needed.
+
+### 5. Add the auth secret
+
+**Settings → Environment Variables**, add `AUTH_SECRET` for all environments:
+
+```bash
+node -e "console.log(require('crypto').randomBytes(32).toString('base64url'))"
+```
+
+Use a *different* value from your local one. The app refuses to boot in
+production with a short or placeholder secret.
+
+### 6. Redeploy
+
+**Deployments → Redeploy**. The build runs `prisma migrate deploy`, which
+creates every table on the fresh database. The site comes up at
+`your-project.vercel.app`.
+
+### 7. Create the first administrator
+
+The production database is empty — no users, no vehicles. Seed it once, from
+your machine, pointing at the production database:
+
+```bash
+DATABASE_URL="<the Neon URL from Vercel>" npm run db:seed
+```
+
+Then **sign in and change the password immediately** — the seeded credentials
+are published in this README.
+
+> `db:seed` also inserts ten demo vehicles. To start empty instead, seed first,
+> then delete them from the back office.
+
+### Working on the site after it is live
+
+```bash
+# edit, check, ship
+npm run dev
+npm run typecheck && npm run lint
+git add -A && git commit -m "..." && git push
+```
+
+Every push to `main` deploys automatically. Pushes to any other branch get
+their own preview URL, which is the safe way to try a change before it is
+public.
+
+Schema changes need a migration committed alongside the code:
+
+```bash
+npm run db:migrate -- --name what_changed
+```
+
+### Using your own domain
+
+`autohaus-motion.de` is already registered (since 2022, nameservers at
+All-Inkl) — so it does not need buying, only pointing. In Vercel:
+**Settings → Domains → Add**, then create the DNS records it shows you at your
+current DNS provider. Vercel issues the HTTPS certificate automatically.
+
+Point a subdomain such as `neu.autohaus-motion.de` at it first. That way the
+existing site keeps serving until you are ready to switch the apex over.
+
+### Local development after this change
+
+Local dev now needs a Postgres URL too, since Prisma cannot switch provider per
+environment. Simplest: create a second free Neon database (or a Neon branch)
+for development and put its URL in `.env`. Uploads stay on your local disk —
+`BLOB_READ_WRITE_TOKEN` is only set in production.
 
 ## Project skills
 
