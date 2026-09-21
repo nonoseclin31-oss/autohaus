@@ -15,12 +15,18 @@
  *   fonts      — the family actually resolved for headings vs body
  *   baseline   — flex rows whose children are not vertically centred
  *
- * Run: node scripts/audit-locales.mjs [--width 1440]
+ * Run: node scripts/audit-locales.mjs [--base URL] [--width 1440] [--theme dark]
  */
 import puppeteer from "puppeteer-core";
 
 const CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
-const BASE = "http://localhost:3000";
+const arg = (flag, fallback) => {
+  const i = process.argv.indexOf(flag);
+  return i > -1 ? process.argv[i + 1] : fallback;
+};
+const BASE = arg("--base", "http://localhost:3000");
+/** The dark palette has to hold the same alignment as the light one. */
+const THEME = arg("--theme", "light");
 const LOCALES = ["en", "fr", "de", "zh", "ar", "es"];
 const PAGES = [
   { path: "", name: "home" },
@@ -169,6 +175,15 @@ for (const width of WIDTHS) {
     for (const locale of LOCALES) {
       const tab = await browser.newPage();
       await tab.setViewport({ width, height: 900, deviceScaleFactor: 1 });
+      if (THEME === "dark") {
+        // The theme is applied by a blocking script reading localStorage, so it
+        // has to be stored before the first document loads.
+        await tab.evaluateOnNewDocument(() => {
+          try {
+            localStorage.setItem("am-theme", "dark");
+          } catch {}
+        });
+      }
       await tab.goto(`${BASE}/${locale}${page.path}`, { waitUntil: "networkidle0", timeout: 60000 });
       // let fonts settle and the splash finish
       await tab.evaluateHandle("document.fonts.ready");

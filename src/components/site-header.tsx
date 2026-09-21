@@ -52,7 +52,7 @@ export function SiteHeader({
         className={cn(
           "sticky top-0 z-40 w-full border-b transition-[background-color,border-color,box-shadow] duration-300",
           scrolled
-            ? "border-line bg-white/85 shadow-[0_2px_6px_-1px_rgba(12,10,9,0.07)] backdrop-blur-xl"
+            ? "border-line bg-surface/85 shadow-[var(--shadow-sm)] backdrop-blur-xl"
             : "border-transparent bg-transparent",
         )}
       >

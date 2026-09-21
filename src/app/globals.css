@@ -25,6 +25,9 @@
   /* Hero wash and the faint grid over it: both need to move with the
      canvas rather than assume a light one. */
   --color-studio-top: #ffffff;
+  /* The sold stamp sits on a photo, so it needs a veil of the surface
+     colour rather than a literal white. */
+  --color-stamp-bg: rgba(255, 255, 255, 0.86);
   --color-hairline: rgba(12, 10, 9, 0.035);
 
   /* Dark counterpart, used sparingly (scrims, stamps, inverted chips) */
@@ -75,7 +78,12 @@
 }
 
 /* ══════════════════════════════════════════════════════════════
-   Dark theme
+   Dark theme, first palette — kept as "dark1"
+
+   A near-black canvas. Handsome, but it made every light surface on
+   top of it read as a jump rather than a step, and it is not what the
+   site ships with; it is kept so the choice can be reversed in one
+   word. Switch by setting data-theme="dark1" instead of "dark".
 
    The same site after dark, not a different one: only colours move.
    The neutrals stay warm — a blue-grey dark would fight the stone
@@ -94,7 +102,7 @@
    on all four dark surfaces, the oversized numerals clear 3:1.
    ══════════════════════════════════════════════════════════════ */
 
-[data-theme="dark"] {
+[data-theme="dark1"] {
   color-scheme: dark;
 
   /* Surfaces — warm charcoals, each a readable step from the last */
@@ -151,6 +159,74 @@
 /* Red as text, everywhere it appears. One rule rather than sixty-five
    edits: the attribute selector outranks Tailwind's own .text-red, and
    fills keep the brand red because they set a background, not a colour. */
+/* ══════════════════════════════════════════════════════════════
+   Dark theme — charcoal, the one the site ships with
+
+   The first palette went nearly to black, and anything translucent
+   laid over it — the header once it starts blurring the page behind
+   it, a chip on a photo — had to be lifted so far to stay legible
+   that it read as a light patch rather than the same surface.
+
+   So the canvas is a warm charcoal instead: dark enough to be a night
+   theme, light enough that a translucent surface above it is a step
+   rather than a jump. The neutrals keep the stone warmth of the light
+   theme, and the spread from canvas to the highest surface is 2.9×,
+   which is what makes cards, inputs and menus tell themselves apart
+   without a single border doing the work.
+
+   Measured, not eyeballed: text clears 4.5:1 on all four surfaces and
+   the oversized numerals clear 3:1.
+   ══════════════════════════════════════════════════════════════ */
+
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --color-canvas: #1e1b19;
+  --color-surface: #262320;
+  --color-surface-2: #2e2a27;
+  --color-surface-3: #37322e;
+  --color-line: #3a3531;
+  --color-line-strong: #544d48;
+
+  --color-flag-dark: #ece8e4;
+  --color-studio-top: #262320;
+  --color-hairline: rgba(247, 244, 241, 0.05);
+  --color-stamp-bg: rgba(38, 35, 32, 0.86);
+
+  --color-ink: #2e2a27;
+  --color-ink-soft: #37322e;
+
+  /* 11.6:1 · 6.0:1 · 5.2:1 on the canvas */
+  --color-fg: #f7f4f1;
+  --color-muted: #b9b2ab;
+  --color-subtle: #aca59e;
+  --color-numeral: #8d8780;
+
+  /* The fill keeps the brand red — white on it is 5.9:1. Only text
+     switches, and it has to be lighter here than on the near-black
+     palette to clear 4.5:1 against the raised surfaces. */
+  --color-red: #c8102e;
+  --color-red-text: #f47b8b;
+  --color-red-bright: #e30613;
+  --color-red-deep: #e0263f;
+  --color-red-wash: #33181d;
+
+  --color-gold: #e0a82e;
+  --color-bronze: #eab444;
+  --color-gold-wash: #2d2413;
+
+  --color-ok: #6dd49a;
+  --color-ok-wash: #172a1d;
+  --color-warn: #f0b35c;
+  --color-info: #6ec2ec;
+
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.35);
+  --shadow-sm: 0 2px 6px -1px rgba(0, 0, 0, 0.45);
+  --shadow-md: 0 8px 24px -8px rgba(0, 0, 0, 0.55);
+  --shadow-lg: 0 28px 56px -16px rgba(0, 0, 0, 0.65);
+}
+
+[data-theme="dark1"] .text-red,
 [data-theme="dark"] .text-red {
   color: var(--color-red-text);
 }
@@ -276,8 +352,10 @@
   .logo-wordmark { background-image: url("/brand/logo-wordmark.png"); }
   .logo-full { background-image: url("/brand/logo-full.png"); }
 
-  [data-theme="dark"] .logo-wordmark { background-image: url("/brand/logo-wordmark-dark.png"); }
-  [data-theme="dark"] .logo-full { background-image: url("/brand/logo-full-dark.png"); }
+  [data-theme="dark"] .logo-wordmark,
+  [data-theme="dark1"] .logo-wordmark { background-image: url("/brand/logo-wordmark-dark.png"); }
+  [data-theme="dark"] .logo-full,
+  [data-theme="dark1"] .logo-full { background-image: url("/brand/logo-full-dark.png"); }
 
 
   .flag-rule {
@@ -487,7 +565,7 @@
     transform: rotate(-7deg);
     border: 3px solid var(--color-red);
     color: var(--color-red);
-    background: rgba(255, 255, 255, 0.86);
+    background: var(--color-stamp-bg);
     font-family: var(--font-wordmark);
     font-weight: 800;
     font-style: italic;

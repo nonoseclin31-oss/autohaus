@@ -56,7 +56,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
         </Reveal>
 
         <Reveal delay={100}>
-          <div className="overflow-hidden rounded-sm border border-line bg-white p-8">
+          <div className="overflow-hidden rounded-sm border border-line bg-surface p-8">
             <Image
               src="/brand/logo.jpg"
               alt={`${COMPANY.legalName} — Nürburgring Nordschleife`}

@@ -71,12 +71,12 @@ export function VehicleCard({
 
         <div className="absolute end-4 top-4 z-10 flex items-center gap-2">
           {vehicle.condition === "NEW" ? (
-            <span className="rounded-[2px] bg-white/92 px-2 py-1 text-[0.6875rem] font-semibold uppercase tracking-[0.08em] text-ink backdrop-blur-sm">
+            <span className="rounded-[2px] bg-surface/92 px-2 py-1 text-[0.6875rem] font-semibold uppercase tracking-[0.08em] text-fg backdrop-blur-sm">
               {label(CONDITIONS, "NEW", tax)}
             </span>
           ) : null}
           {vehicle.imageCount > 1 ? (
-            <span className="inline-flex items-center gap-1 rounded-[2px] bg-white/92 px-2 py-1 text-[0.6875rem] font-semibold text-muted backdrop-blur-sm">
+            <span className="inline-flex items-center gap-1 rounded-[2px] bg-surface/92 px-2 py-1 text-[0.6875rem] font-semibold text-muted backdrop-blur-sm">
               <IconImage size={11} />
               {vehicle.imageCount}
             </span>
