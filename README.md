@@ -501,6 +501,17 @@ Light is the default; the toggle in the header switches to dark and the choice
 is remembered per browser. Only colours change — no layout, no components, no
 type.
 
+The light canvas is a sand beige rather than an off-white: the colour of the
+room instead of the colour of the screen behind it, and the daylight
+counterpart of the taupe below. Warming it darkens the whole scale, so the
+accents that only just cleared 4.5:1 against near-white — bronze, success,
+warning, the muted text tier, the oversized numerals — each moved a step down
+to match. The original stone palette is kept as `light1`.
+
+Brand red works the same way in every palette: the fill is the exact brand
+value and a twin is substituted wherever red is used as *text*, darker on
+sand and lighter on the dark canvases.
+
 The dark canvas is taupe — a warm grey-brown, the same hue family as the stone
 the light theme is built on, only far down the lightness scale. A blue-grey
 dark is the reflex and it fights that palette; a near-black reads as a
@@ -526,8 +537,9 @@ red and one rule swaps a lighter red wherever red is used as *text*. Red hover
 brightens rather than darkens: on a dark surface a darker red reads as
 disabled.
 
-To ship one of the earlier palettes instead, swap which block owns the `dark`
-name in `globals.css`.
+Four palettes are kept in `globals.css`: `light1` (stone), `dark1`
+(near-black), `dark2` (charcoal), and the two the site ships with. To ship one
+of the others, swap which block owns the `light` or `dark` name.
 
 Two things to watch when adding UI:
 
