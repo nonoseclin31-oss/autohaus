@@ -495,6 +495,49 @@ It found six real defects:
 
 Filter rows were also raised from 20px to the 24px minimum.
 
+## Themes
+
+Light is the default; the toggle in the header switches to dark and the choice
+is remembered per browser. Only colours change — no layout, no components, no
+type.
+
+The dark neutrals stay warm. A blue-grey dark is the reflex and it fights the
+stone palette the light theme is built on. The canvas is a charcoal rather
+than a near-black, because anything translucent above a near-black — the
+header once it starts blurring the page behind it, a chip laid on a photo —
+has to be lifted so far to stay legible that it reads as a light patch instead
+of the same surface. The spread from canvas to the highest surface is 2.9×,
+which is what lets cards, inputs and menus separate without borders doing all
+the work.
+
+Brand red is the one colour that cannot invert. No single red carries 4.5:1 as
+text on a dark canvas and also takes white text on top of it as a button — the
+two pull luminance in opposite directions. So the fill keeps the exact brand
+red and one rule swaps a lighter red wherever red is used as *text*. Red hover
+brightens rather than darkens: on a dark surface a darker red reads as
+disabled.
+
+The first, near-black palette is kept as `[data-theme="dark1"]` in
+`globals.css`. To ship it instead, swap which block owns the `dark` name.
+
+Two things to watch when adding UI:
+
+A hardcoded `bg-white`, `#fff` or `rgba(255,255,255,…)` is invisible in light
+mode and glaring in dark. The header's scrolled state, the chips over a
+vehicle photo and the sold stamp were each written that way and each had to be
+moved onto a token.
+
+The logo has a light-on-dark twin, swapped on a background image rather than
+in React — a component reading the theme after hydration renders the wrong
+mark for a frame, and the browser fetches only the variant whose rule applies.
+
+Both palettes are audited:
+
+```bash
+node scripts/audit-a11y.mjs --theme dark
+node scripts/audit-locales.mjs --base https://autohausmotion.com --theme dark
+```
+
 ## Listing templates
 
 Entering the tenth car of the same kind means retyping everything that is true
