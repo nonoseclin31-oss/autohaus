@@ -9,6 +9,12 @@ const en = {
     rental: "Long-term car rental with one fixed monthly payment covering the vehicle, servicing, warranty and roadside assistance. 24 to 60 months, no surprises.",
     about: "Autohaus Motion GmbH, a German dealership in Roetgen near Aachen. Premium and performance cars, sold and rented long-term across Europe.",
     contact: "Talk to our team about a car, a long-term rental or a trade-in. Showroom at Bundesstrasse 124, Roetgen, and delivery throughout Europe.",
+    // Short enough that the title template does not push it past what a
+    // result shows; the page keeps its longer heading on screen.
+    aboutTitle: "About us — Roetgen, Germany",
+    // Closes a listing snippet built from the facts when the listing has no
+    // written description of its own.
+    listingSuffix: "Inspected, certified and ready to drive. Delivery across Europe.",
   },
   nav: {
     home: "Home",

@@ -11,6 +11,12 @@ const zh: Dictionary = {
     rental: "长期租赁，每月固定租金涵盖车辆、保养、质保与道路救援。租期 24 至 60 个月，费用透明无意外。",
     about: "Autohaus Motion GmbH，位于德国亚琛附近罗特根的汽车经销商。销售与长期租赁高端及性能车，服务遍及全欧洲。",
     contact: "就购车、长期租赁或置换与我们联系。展厅位于罗特根 Bundesstrasse 124，配送至全欧洲。",
+    // Short enough that the title template does not push it past what a
+    // result shows; the page keeps its longer heading on screen.
+    aboutTitle: "关于我们 — 德国罗特根",
+    // Closes a listing snippet built from the facts when the listing has no
+    // written description of its own.
+    listingSuffix: "已检测认证，可立即上路。配送至全欧洲。",
   },
   nav: {
     home: "首页",

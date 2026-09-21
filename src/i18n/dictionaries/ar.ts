@@ -11,6 +11,12 @@ const ar: Dictionary = {
     rental: "تأجير طويل الأمد بقسط شهري ثابت يشمل السيارة والصيانة والضمان والمساعدة على الطريق. من 24 إلى 60 شهرًا، دون مفاجآت.",
     about: "Autohaus Motion GmbH، وكالة سيارات ألمانية في روتغن قرب آخن. سيارات فاخرة ورياضية للبيع والتأجير طويل الأمد في أنحاء أوروبا.",
     contact: "تحدث إلى فريقنا بشأن سيارة أو تأجير طويل الأمد أو استبدال سيارتك. صالة العرض في Bundesstrasse 124 بروتغن، والتوصيل في أنحاء أوروبا.",
+    // Short enough that the title template does not push it past what a
+    // result shows; the page keeps its longer heading on screen.
+    aboutTitle: "من نحن — روتغن، ألمانيا",
+    // Closes a listing snippet built from the facts when the listing has no
+    // written description of its own.
+    listingSuffix: "مفحوصة ومعتمدة وجاهزة للطريق. التوصيل في أنحاء أوروبا.",
   },
   nav: {
     home: "الرئيسية",

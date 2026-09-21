@@ -11,6 +11,12 @@ const es: Dictionary = {
     rental: "Alquiler a largo plazo con una cuota mensual fija que cubre el vehículo, el mantenimiento, la garantía y la asistencia. De 24 a 60 meses.",
     about: "Autohaus Motion GmbH, concesionario alemán en Roetgen, cerca de Aquisgrán. Coches premium y deportivos, en venta y alquiler a largo plazo.",
     contact: "Hable con nuestro equipo sobre un coche, un alquiler a largo plazo o su vehículo actual. Showroom en Bundesstrasse 124, Roetgen. Entrega en Europa.",
+    // Short enough that the title template does not push it past what a
+    // result shows; the page keeps its longer heading on screen.
+    aboutTitle: "Quiénes somos — Roetgen",
+    // Closes a listing snippet built from the facts when the listing has no
+    // written description of its own.
+    listingSuffix: "Revisado, certificado y listo para rodar. Entrega en toda Europa.",
   },
   nav: {
     home: "Inicio",

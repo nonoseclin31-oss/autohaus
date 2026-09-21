@@ -14,7 +14,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   const t = getDictionary(locale);
-  return { title: t.about.title, description: t.meta.about,
+  return { title: t.meta.aboutTitle, description: t.meta.about,
     alternates: pageAlternates(locale, "/about"),
   };
 }

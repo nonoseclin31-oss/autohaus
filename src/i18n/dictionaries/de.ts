@@ -11,6 +11,12 @@ const de: Dictionary = {
     rental: "Langzeitmiete mit einer festen Monatsrate für Fahrzeug, Wartung, Garantie und Pannenhilfe. Von 24 bis 60 Monaten, ohne Überraschungen.",
     about: "Autohaus Motion GmbH, deutsches Autohaus in Roetgen bei Aachen. Premium- und Sportfahrzeuge, Verkauf und Langzeitmiete in ganz Europa.",
     contact: "Sprechen Sie mit uns über ein Fahrzeug, eine Langzeitmiete oder Ihre Inzahlungnahme. Showroom Bundesstraße 124 in Roetgen, Lieferung europaweit.",
+    // Short enough that the title template does not push it past what a
+    // result shows; the page keeps its longer heading on screen.
+    aboutTitle: "Über uns — Autohaus in Roetgen",
+    // Closes a listing snippet built from the facts when the listing has no
+    // written description of its own.
+    listingSuffix: "Geprüft, zertifiziert und fahrbereit. Lieferung europaweit.",
   },
   nav: {
     home: "Startseite",

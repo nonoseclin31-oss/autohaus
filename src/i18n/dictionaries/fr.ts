@@ -11,6 +11,12 @@ const fr: Dictionary = {
     rental: "La location longue durée avec un loyer mensuel fixe couvrant le véhicule, l'entretien, la garantie et l'assistance. De 24 à 60 mois, sans surprise.",
     about: "Autohaus Motion GmbH, concession allemande à Roetgen près d'Aix-la-Chapelle. Véhicules premium et sportifs, à la vente et en location longue durée.",
     contact: "Parlez à notre équipe d'un véhicule, d'une location longue durée ou d'une reprise. Showroom Bundesstrasse 124 à Roetgen, livraison partout en Europe.",
+    // Short enough that the title template does not push it past what a
+    // result shows; the page keeps its longer heading on screen.
+    aboutTitle: "Notre concession à Roetgen",
+    // Closes a listing snippet built from the facts when the listing has no
+    // written description of its own.
+    listingSuffix: "Contrôlée, certifiée et prête à rouler. Livraison dans toute l'Europe.",
   },
   nav: {
     home: "Accueil",

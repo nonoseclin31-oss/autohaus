@@ -35,12 +35,18 @@ export async function generateMetadata({
   const locale = resolveLocale(raw);
   const vehicle = await getVehicleBySlug(slug);
   if (!vehicle) return { title: "404" };
+  const t = getDictionary(locale);
 
   const tr = vehicleTranslation(vehicle.translations, locale);
   const title = vehicleTitle(vehicle);
   return {
     title,
-    description: tr?.description?.slice(0, 160) ?? `${title} — ${vehicle.year} — ${vehicle.mileage} km`,
+    // A listing with no written description still has its facts; a snippet
+    // that names the year, mileage, power and price is what a buyer scans.
+    description:
+      tr?.description?.slice(0, 160) ??
+      `${title} — ${vehicle.year}, ${formatNumber(vehicle.mileage, locale)} ${t.common.km}, ` +
+        `${vehicle.powerHp} ${t.common.hp}, ${formatCurrency(vehicle.price, locale)}. ${t.meta.listingSuffix}`.slice(0, 160),
     alternates: pageAlternates(locale, `/vehicles/${slug}`),
     openGraph: {
       title,
