@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import { useFormStatus } from "react-dom";
 import Link from "next/link";
 import { saveVehicle, type VehicleFormState } from "@/app/actions/vehicles";
@@ -245,6 +245,36 @@ export function VehicleForm({
 
   const missing = Object.keys(state.fieldErrors ?? {});
 
+  const formRef = useRef<HTMLFormElement>(null);
+  const submitted = useRef<FormData | null>(null);
+
+  // React empties a form once its action has run. That is right after a save
+  // that worked, and wrong after one that did not: a listing rejected for a
+  // missing price would come back with every other field blank, so it could
+  // never be completed. The values are kept at submit time and put back when
+  // the server refuses.
+  useEffect(() => {
+    const form = formRef.current;
+    const data = submitted.current;
+    if (state.status !== "error" || !form || !data) return;
+
+    for (const element of Array.from(form.elements)) {
+      const field = element as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
+      const name = field.name;
+      if (!name || field.type === "hidden" || field.type === "file") continue;
+      // Anything React drives from state kept its value; touching it here
+      // would only push the two out of step.
+      if (name === "rentalAvailable" || name === "equipment" || name === "status") continue;
+
+      if (field.type === "checkbox" || field.type === "radio") {
+        (field as HTMLInputElement).checked = data.getAll(name).includes(field.value);
+        continue;
+      }
+      const value = data.get(name);
+      if (typeof value === "string") field.value = value;
+    }
+  }, [state]);
+
   // A rejected save has to take you to what it is complaining about, and the
   // order here is the order of the sections, so it lands on the first gap.
   useEffect(() => {
@@ -289,7 +319,14 @@ export function VehicleForm({
   }
 
   return (
-    <form action={action} className="grid grid-cols-1 gap-6 lg:grid-cols-[15rem_minmax(0,1fr)]">
+    <form
+      ref={formRef}
+      action={action}
+      onSubmit={(event) => {
+        submitted.current = new FormData(event.currentTarget);
+      }}
+      className="grid grid-cols-1 gap-6 lg:grid-cols-[15rem_minmax(0,1fr)]"
+    >
       {values.id ? <input type="hidden" name="id" value={values.id} /> : null}
       <input type="hidden" name="locale" value={locale} />
       {Array.from(equipment).map((key) => (
