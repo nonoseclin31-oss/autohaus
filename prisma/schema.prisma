@@ -1,0 +1,205 @@
+// Autohaus Motion GmbH — data model
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// Roles: ADMIN | MANAGER | SALES | VIEWER
+model User {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  name         String
+  passwordHash String
+  role         String    @default("VIEWER")
+  phone        String?
+  jobTitle     String?
+  avatarUrl    String?
+  locale       String    @default("fr")
+  active       Boolean   @default(true)
+  lastLoginAt  DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  vehicles   Vehicle[]     @relation("VehicleOwner")
+  leads      Lead[]        @relation("LeadAssignee")
+  activities ActivityLog[]
+}
+
+model Vehicle {
+  id        String @id @default(cuid())
+  slug      String @unique
+  reference String @unique
+
+  // ── Identity ────────────────────────────────
+  brand   String
+  model   String
+  version String?
+  year    Int
+  vin     String?
+
+  // ── Classification ──────────────────────────
+  bodyType  String // SEDAN | SUV | COUPE | CABRIOLET | ESTATE | HATCHBACK | MPV | PICKUP | VAN
+  condition String @default("USED") // NEW | USED | DEMO | CLASSIC
+  segment   String? // SPORT | LUXURY | FAMILY | CITY | ELECTRIC | OFFROAD | COLLECTOR
+
+  // ── Powertrain ──────────────────────────────
+  fuel         String // PETROL | DIESEL | HYBRID | PLUGIN_HYBRID | ELECTRIC | LPG | CNG
+  transmission String // MANUAL | AUTOMATIC | DUAL_CLUTCH | CVT
+  gears        Int?
+  drivetrain   String? // FWD | RWD | AWD | FOUR_WD
+  engineSize   Float?
+  cylinders    Int?
+  powerHp      Int
+  powerKw      Int?
+  torqueNm     Int?
+  acceleration Float?
+  topSpeed     Int?
+
+  // ── Energy & emissions ──────────────────────
+  consumptionCombined Float?
+  consumptionUrban    Float?
+  consumptionHighway  Float?
+  co2                 Int?
+  emissionClass       String?
+  energyLabel         String?
+  batteryCapacity     Float?
+  electricRange       Int?
+  chargingTime        String?
+
+  // ── Body & interior ─────────────────────────
+  doors         Int?
+  seats         Int?
+  colorExterior String?
+  colorInterior String?
+  paintType     String? // SOLID | METALLIC | PEARL | MATTE
+  upholstery    String? // LEATHER | ALCANTARA | FABRIC | VEGAN
+
+  // ── History & condition ─────────────────────
+  mileage           Int      @default(0)
+  firstRegistration DateTime?
+  previousOwners    Int?
+  serviceHistory    Boolean  @default(false)
+  warrantyMonths    Int?
+  nextInspection    DateTime?
+  accidentFree      Boolean  @default(true)
+  nonSmoker         Boolean  @default(true)
+  imported          Boolean  @default(false)
+
+  // ── Pricing ─────────────────────────────────
+  price            Int
+  priceNet         Int?
+  vatDeductible    Boolean @default(false)
+  oldPrice         Int?
+  negotiable       Boolean @default(false)
+  financingMonthly Int?
+
+  // ── Long-term rental (LLD) ──────────────────
+  rentalAvailable   Boolean @default(false)
+  rentalMonthly     Int?
+  rentalDeposit     Int?
+  rentalFirstPayment Int?
+  rentalDurations   String  @default("[]") // JSON: [24, 36, 48, 60]
+  rentalMileages    String  @default("[]") // JSON: [10000, 15000, 20000]
+
+  // ── Equipment (JSON array of option keys) ───
+  equipment String @default("[]")
+
+  // ── Media ───────────────────────────────────
+  videoUrl String?
+  images   VehicleImage[]
+
+  // ── Publication ─────────────────────────────
+  status    String  @default("AVAILABLE") // AVAILABLE | RESERVED | SOLD | COMING_SOON
+  published Boolean @default(false)
+  featured  Boolean @default(false)
+  location  String?
+  views     Int     @default(0)
+
+  ownerId String?
+  owner   User?   @relation("VehicleOwner", fields: [ownerId], references: [id], onDelete: SetNull)
+
+  translations VehicleTranslation[]
+  leads        Lead[]
+
+  soldAt    DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([status, published])
+  @@index([brand, model])
+  @@index([rentalAvailable])
+}
+
+model VehicleImage {
+  id        String  @id @default(cuid())
+  vehicleId String
+  vehicle   Vehicle @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  url       String
+  alt       String?
+  position  Int     @default(0)
+  isCover   Boolean @default(false)
+
+  @@index([vehicleId, position])
+}
+
+model VehicleTranslation {
+  id          String  @id @default(cuid())
+  vehicleId   String
+  vehicle     Vehicle @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  locale      String // en | fr | de | zh | ar | es
+  headline    String?
+  description String?
+
+  @@unique([vehicleId, locale])
+}
+
+model Lead {
+  id        String   @id @default(cuid())
+  type      String   @default("SALE") // SALE | RENTAL | CONTACT | TRADE_IN
+  firstName String
+  lastName  String
+  email     String
+  phone     String?
+  company   String?
+  message   String?
+  locale    String   @default("fr")
+
+  // rental request specifics
+  rentalDuration Int?
+  rentalMileage  Int?
+
+  vehicleId String?
+  vehicle   Vehicle? @relation(fields: [vehicleId], references: [id], onDelete: SetNull)
+
+  status       String  @default("NEW") // NEW | CONTACTED | QUALIFIED | WON | LOST
+  notes        String?
+  assignedToId String?
+  assignedTo   User?   @relation("LeadAssignee", fields: [assignedToId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status, createdAt])
+}
+
+model ActivityLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  action    String
+  entity    String
+  entityId  String?
+  summary   String?
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+}
+
+model Setting {
+  key   String @id
+  value String
+}

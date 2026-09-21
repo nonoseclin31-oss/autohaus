@@ -1,36 +1,292 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Autohaus Motion
 
-## Getting Started
+Vehicle sales and long-term rental site for **Autohaus Motion GmbH** (Bundesstraße 124, 52159 Roetgen).
+Public catalogue in six languages, plus a full back office for adding vehicles, managing sale
+statuses, handling enquiries and assigning staff roles.
 
-First, run the development server:
+## Stack
+
+| Layer     | Choice                                           |
+| --------- | ------------------------------------------------ |
+| Framework | Next.js 15 (App Router, React 19, server actions) |
+| Language  | TypeScript                                        |
+| Styling   | Tailwind CSS v4 with brand tokens in `globals.css` |
+| Database  | SQLite via Prisma 6 (swap the datasource for Postgres in production) |
+| Auth      | JWT session cookie (`jose`) + bcrypt password hashes |
+| Uploads   | Local filesystem under `public/uploads`           |
+
+## Getting started
 
 ```bash
+npm install
+npm run db:migrate   # creates dev.db from prisma/schema.prisma
+npm run db:seed      # demo catalogue, staff accounts and leads
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000 — you are redirected to your browser's language.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Demo accounts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Password for all of them: `Autohaus2026!`
 
-## Learn More
+| Email                           | Role          | Can do                                              |
+| ------------------------------- | ------------- | --------------------------------------------------- |
+| `admin@autohaus-motion.de`      | Administrator | Everything, including users and roles                |
+| `manager@autohaus-motion.de`    | Manager       | Whole catalogue, rental offers, all leads, delete    |
+| `commercial@autohaus-motion.de` | Sales advisor | Own listings, sale statuses (red badges), leads      |
+| `sales@autohaus-motion.de`      | Sales advisor | Same, scoped to their own vehicles                   |
+| `viewer@autohaus-motion.de`     | Viewer        | Read-only back office                                |
 
-To learn more about Next.js, take a look at the following resources:
+> Change these before deploying. `AUTH_SECRET` in `.env` must also be replaced with a random value.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Languages
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+English, French, German, Chinese (Simplified), Arabic (RTL) and Spanish.
 
-## Deploy on Vercel
+- Routes are prefixed with the locale: `/fr/vehicles`, `/ar/rental`, …
+- `src/middleware.ts` picks a locale from the `NEXT_LOCALE` cookie, then `Accept-Language`,
+  then falls back to French.
+- UI copy lives in `src/i18n/dictionaries/<locale>.ts`. English is the typed source of
+  truth — adding a key there makes TypeScript require it in the other five files.
+- Vehicle taxonomy (body types, fuels, equipment, statuses, roles) is translated once in
+  `src/lib/taxonomy.ts`, in compact `[key, en, fr, de, zh, ar, es]` tuples.
+- Each vehicle carries its own per-language headline and description, entered on the
+  **Descriptions** tab of the vehicle form. Empty languages fall back to English.
+- Arabic sets `dir="rtl"` on `<html>`; layout uses logical properties (`ps-*`, `me-*`,
+  `start-*`) so it mirrors without a separate stylesheet.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Roles and permissions
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Defined in one place: `src/lib/rbac.ts`.
+
+| Permission           | Admin | Manager | Sales | Viewer |
+| -------------------- | :---: | :-----: | :---: | :----: |
+| Access back office   |   ●   |    ●    |   ●   |   ●    |
+| Create vehicles      |   ●   |    ●    |   ●   |        |
+| Edit any vehicle     |   ●   |    ●    |       |        |
+| Edit own vehicles    |   ●   |    ●    |   ●   |        |
+| Delete vehicles      |   ●   |    ●    |       |        |
+| Publish / unpublish  |   ●   |    ●    |   ●   |        |
+| Set sale status      |   ●   |    ●    |   ●   |        |
+| Read leads           |   ●   |    ●    |   ●   |   ●    |
+| Update leads         |   ●   |    ●    |   ●   |        |
+| Delete leads         |   ●   |         |       |        |
+| Manage users & roles |   ●   |         |       |        |
+| Activity log         |   ●   |    ●    |       |        |
+
+Permissions are enforced server-side in every server action, not only hidden in the UI.
+The last active administrator cannot be deleted, deactivated or demoted.
+
+## Sale status — the red badge
+
+Every listing carries one of four statuses, set from the vehicle form's **Publication**
+tab or in one click from the admin vehicle table:
+
+| Status        | Public badge                        | Colour |
+| ------------- | ----------------------------------- | ------ |
+| `AVAILABLE`   | none                                | —      |
+| `RESERVED`    | "Sale in progress" / "En cours de vente" | deep red |
+| `SOLD`        | "Sold" / "Vendu" + diagonal stamp over the photo | red |
+| `COMING_SOON` | "Coming soon"                       | gold   |
+
+Sold and reserved cars stay online (good for SEO and for capturing backup interest) but
+sink to the bottom of listings and show a notice on their detail page.
+
+## Adding a vehicle
+
+`/<locale>/admin/vehicles/new`. The form is split into twelve categorised sections:
+
+1. **Identity** — make, model, version, year, VIN, stock reference, URL slug, location
+2. **Classification** — body type, condition, segment
+3. **Powertrain** — fuel, gearbox, gears, drivetrain, displacement, cylinders, hp/kW, torque, 0–100, top speed
+4. **Consumption & emissions** — WLTP figures, CO₂, emission class, energy label, battery, range, charging
+5. **Body & interior** — doors, seats, colours, paint finish, upholstery
+6. **History & condition** — mileage, first registration, owners, service book, warranty, next inspection, accident-free, non-smoker, imported
+7. **Pricing** — price, net price, previous price, VAT deductible, negotiable, financing
+8. **Long-term rental** — monthly rate, deposit, first instalment, available durations and mileage packages
+9. **Equipment** — 50 options across six groups, with select-all per group
+10. **Photos & video** — drag-and-drop upload, reorder, pick the cover, video link
+11. **Descriptions** — headline and body text per language, with a dot marking filled languages
+12. **Publication** — sale status, visibility, home-page feature, assigned advisor
+
+Reference and slug generate themselves if left empty, and clashes are resolved automatically.
+
+## Long-term rental
+
+`/<locale>/rental` explains the offer, lists rental-ready vehicles and includes an
+estimator (duration 24–60 months, 10–30k km/year, adjustable deposit) that pre-fills the
+enquiry form. A vehicle appears there as soon as **Offer this vehicle for long-term
+rental** is ticked on its form.
+
+The estimate formula lives in `estimateMonthly()` in `src/lib/utils.ts` — replace it with
+your leasing partner's real grid before quoting customers.
+
+## Project layout
+
+```
+prisma/
+  schema.prisma          data model
+  seed.mjs               demo data + generated placeholder imagery
+src/
+  app/
+    [locale]/
+      (site)/            public pages: home, vehicles, rental, about, contact, legal
+      admin/             back office: dashboard, vehicles, leads, users, activity
+      login/
+      layout.tsx         root layout (html lang + dir)
+    actions/             server actions: vehicles, leads, users, auth
+    api/upload/          image upload endpoint
+  components/            UI, including admin/ subfolder
+  i18n/                  locale config + six dictionaries
+  lib/                   prisma, auth, rbac, taxonomy, vehicle queries, helpers
+  middleware.ts          locale detection and redirect
+```
+
+## Before going live
+
+- [ ] Replace `AUTH_SECRET` in `.env` with a random 32+ character value
+- [ ] Change every seeded password, or delete the demo accounts
+- [ ] Switch the Prisma datasource from SQLite to Postgres and run `prisma migrate deploy`
+- [ ] Move uploads to object storage (S3/R2) — the local `public/uploads` folder does not
+      survive a redeploy on most hosts
+- [ ] Wire real email delivery for new leads (currently stored in the database only)
+- [ ] Complete `/legal/imprint`, `/legal/privacy` and `/legal/terms` — German law (TMG §5,
+      DSGVO) prescribes mandatory content, and the current text is a placeholder
+- [ ] Replace the seeded placeholder graphics with real photography
+- [ ] Set the real phone number and email in `COMPANY` (`src/lib/utils.ts`)
+
+## Project skills
+
+`.claude/skills` holds 27 skills vendored from [ECC](https://github.com/affaan-m/ECC)
+(MIT) covering React/Next.js, Prisma, accessibility, testing, security and deployment.
+They are copied rather than installed as the full plugin, which would register hooks that
+run around every tool call. See [`.claude/skills/README.md`](.claude/skills/README.md)
+for what is included and why.
+
+## Brand assets
+
+The official logo you supplied lives at `public/brand/logo.jpg`. It is a 1500×1500
+JPEG on a solid white ground, which does not sit well on the off-white canvas, so
+`scripts/build-logo.mjs` derives the web assets from it:
+
+| File | Size | Used for |
+| --- | --- | --- |
+| `logo-wordmark.png` | 1320×192 | Header, mobile drawer, admin sidebar |
+| `logo-full.png` | 1328×542 | Loading screen, splash, footer, 404 |
+| `logo-square.png` | 1024×1024 | Spare square lockup |
+| `src/app/icon.png` | 512×512 | Browser tab / PWA icon |
+| `src/app/apple-icon.png` | 180×180 | iOS home screen |
+| `src/app/opengraph-image.png` | 1200×630 | Link previews |
+
+The white ground is keyed out on the **minimum** RGB channel rather than luminance —
+white has a high minimum, while the brand yellow `#FFC300` and red `#E30613` each have a
+channel at or near zero, so the artwork survives untouched while the background goes
+transparent. Edge pixels get a soft alpha ramp, so there is no jagged cutout.
+
+Re-run after replacing the source artwork:
+
+```bash
+node scripts/build-logo.mjs
+```
+
+The `<Logo />` component takes `variant="wordmark" | "full"` and a size from `xs` to `xl`.
+It is the only place the logo is referenced, so swapping the artwork is a one-file change.
+
+> Note: the tagline baked into the artwork reads *"German compagny based in Frankfort"*.
+> That looks like two typos — *company* and *Frankfurt*. I have left your file exactly as
+> supplied; if you want it corrected, send a new version and re-run the script above.
+
+## Loading screen
+
+Two layers, both built on the full logo lockup over a progress bar in the flag colours:
+
+- **Splash** (`components/splash-screen.tsx`) covers the first paint of the public site.
+  It is deliberately CSS-only — no state, no effect, no `sessionStorage` — so it cannot
+  cause a hydration mismatch and cannot get stuck: the animation ends at
+  `visibility: hidden`, and it never takes pointer events, so the page underneath stays
+  usable the whole time. Under `prefers-reduced-motion` it is not rendered at all.
+- **Route loaders** (`loading.tsx` in `[locale]`, `[locale]/(site)` and `[locale]/admin`)
+  show `<BrandLoader />` while a route streams. The site and admin versions sit inside
+  their shells, so the header, footer and sidebar stay put rather than flashing away.
+
+The admin has no splash — staff reload it constantly and a splash each time would grate.
+
+## Profiles
+
+`/<locale>/admin/profile`, reachable from the card at the bottom of the admin sidebar.
+Every signed-in user can edit their own:
+
+- Profile photo — uploaded to `public/avatars`, with replace and remove
+- Full name, email address, phone, job title
+- Interface language
+- Password, behind the current password
+
+Role and account status are deliberately **not** editable here; those stay with an
+administrator on the Users & roles page. The action only ever writes to the caller's own
+record, email uniqueness is re-checked on save, and a password change requires the
+current password, a minimum of 8 characters and a matching confirmation.
+
+Avatars appear in the admin sidebar, the users table, and next to the assigned advisor on
+each public vehicle page.
+
+## Cross-locale layout audit
+
+Switching language changes every string length on the page, and two locales
+(`zh`, `ar`) fall outside Playfair's Latin coverage. `scripts/audit-locales.mjs`
+drives a real Chrome over **6 locales × 4 pages × 3 viewports** and fails on
+anything that reads as broken alignment: viewport overflow, elements outside the
+viewport, clipped text, header nav wrapping, header-height drift, buttons of
+different heights sharing a line, off-centre flex rows, and which font family
+actually resolved for headings.
+
+```bash
+npm run dev                      # in one terminal
+node scripts/audit-locales.mjs   # add --width 375 for a single viewport
+```
+
+It found and drove the fix for seven real bugs:
+
+| Bug | Cause |
+| --- | --- |
+| zh/ar headings used Playfair at 1.05 line-height | the locale override sat in `@layer base` while `.display` is in `@layer components`, so it lost the cascade and never applied |
+| Buttons 2–3px taller in zh/ar | no fixed `line-height` on `.btn`, so CJK/Arabic glyphs raised the intrinsic line box above `min-height` |
+| Header nav wrapped to two lines in fr/de/es | longer labels with no `whitespace-nowrap` |
+| "Doppelkupplung" clipped in vehicle cards | `line-clamp-1` on a column too narrow for German |
+| Porsche card overflowed in de/ar | price + struck-through old price + a wide power unit, with no `min-w-0` |
+| Every locale overflowed at 375px | responsive grids fell back to an implicit `auto` column, which sizes to max-content; the logo was also a fixed 220px |
+| Arabic showed "+400 2" | bidi moved the trailing `+` of "2 400+"; now isolated with `<bdi dir="ltr">` |
+
+## Design notes
+
+Light, editorial and premium — the showroom, not the pit lane.
+
+**Palette.** Warm stone neutrals on an off-white canvas (`#fafaf9`), near-black text
+(`#0c0a09`), and the brand colours used as accents rather than surfaces: signal red
+`#c8102e` for actions and the sale badges, gold `#ca8a04` as fills with bronze `#8a6508`
+as its readable text form. Every text colour clears WCAG AA on its background — measured,
+not assumed:
+
+| Pair | Ratio |
+| --- | --- |
+| Body text on canvas | 18.9:1 |
+| Muted text on canvas | 7.3:1 |
+| Subtle text on canvas | 4.6:1 |
+| Red on canvas | 5.6:1 |
+| Bronze on canvas | 5.1:1 |
+| White on red button | 5.9:1 |
+| Ink on gold fill | 6.0:1 |
+
+**Type.** Playfair Display carries the display voice (`.display`), Inter carries the
+interface and all data, and Barlow Condensed italic is reserved for the logo wordmark and
+the "sold" rubber stamp — the one place the racing identity belongs. Playfair has no
+Arabic or CJK coverage, so `html[lang="ar"]` and `html[lang="zh-Hans"]` fall back to Inter
+with looser line height and no italics, set in `globals.css`.
+
+**Surfaces.** White cards on the canvas, 1px hairline borders, 2–4px radii, and soft warm
+shadows (`--shadow-xs` … `--shadow-lg`) that appear on hover rather than at rest.
+
+**Layers.** All component CSS lives in `@layer components` so Tailwind utilities always
+win over it — without that, a `hidden` or `w-full` on a `.btn` silently does nothing.
+
+All motion is disabled under `prefers-reduced-motion`.

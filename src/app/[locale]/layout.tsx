@@ -1,0 +1,88 @@
+import type { Metadata, Viewport } from "next";
+import { notFound } from "next/navigation";
+import { Inter, Playfair_Display, Barlow_Condensed } from "next/font/google";
+import "../globals.css";
+import { LOCALES, LOCALE_META, getDictionary, isLocale, type Locale } from "@/i18n";
+
+/* Inter carries the interface and all data; Playfair gives the editorial
+   display voice; Barlow Condensed is reserved for the racing wordmark. */
+const inter = Inter({
+  subsets: ["latin", "latin-ext"],
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-inter",
+  display: "swap",
+});
+
+const playfair = Playfair_Display({
+  subsets: ["latin", "latin-ext"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-playfair",
+  display: "swap",
+});
+
+const barlowCondensed = Barlow_Condensed({
+  subsets: ["latin"],
+  weight: ["700", "800"],
+  style: ["italic"],
+  variable: "--font-barlow-condensed",
+  display: "swap",
+});
+
+export function generateStaticParams() {
+  return LOCALES.map((locale) => ({ locale }));
+}
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: "#fafaf9",
+};
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = getDictionary(locale);
+  return {
+    title: { default: t.meta.title, template: `%s · Autohaus Motion` },
+    description: t.meta.description,
+    alternates: {
+      languages: Object.fromEntries(LOCALES.map((l) => [LOCALE_META[l].htmlLang, `/${l}`])),
+    },
+    openGraph: {
+      title: t.meta.title,
+      description: t.meta.description,
+      siteName: "Autohaus Motion",
+      type: "website",
+    },
+  };
+}
+
+export default async function LocaleLayout({
+  children,
+  params,
+}: {
+  children: React.ReactNode;
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  if (!isLocale(locale)) notFound();
+
+  const meta = LOCALE_META[locale as Locale];
+
+  return (
+    <html lang={meta.htmlLang} dir={meta.dir} className={`${inter.variable} ${playfair.variable} ${barlowCondensed.variable}`}>
+      <body>
+        <a
+          href="#main"
+          className="sr-only focus:not-sr-only focus:fixed focus:start-4 focus:top-4 focus:z-[80] focus:rounded-sm focus:bg-red focus:px-4 focus:py-2 focus:font-semibold focus:text-white"
+        >
+          Skip to content
+        </a>
+        {children}
+      </body>
+    </html>
+  );
+}

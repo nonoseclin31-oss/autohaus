@@ -1,26 +1,552 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* ══════════════════════════════════════════════════════════════
+   Autohaus Motion — design tokens
+
+   Light, premium, editorial. Warm stone neutrals on an off-white
+   canvas, near-black text, signal red reserved for action and the
+   sale badges, bronze/gold as the secondary accent.
+   Every text colour below clears 4.5:1 on the canvas.
+   ══════════════════════════════════════════════════════════════ */
+
+@theme {
+  /* Surfaces — warm neutrals, never pure grey */
+  --color-canvas: #fafaf9;
+  --color-surface: #ffffff;
+  --color-surface-2: #f5f5f4;
+  --color-surface-3: #ebe9e7;
+  --color-line: #e7e5e4;
+  --color-line-strong: #d6d3d1;
+
+  /* Dark counterpart, used sparingly (scrims, stamps, inverted chips) */
+  --color-ink: #1c1917;
+  --color-ink-soft: #292524;
+
+  /* Foreground — contrast on #fafaf9: fg 18.9:1 · muted 7.6:1 · subtle 5.1:1 */
+  --color-fg: #0c0a09;
+  --color-muted: #57534e;
+  --color-subtle: #78716c;
+
+  /* Brand — red 5.7:1 as text, white on red 4.9:1 */
+  --color-red: #c8102e;
+  --color-red-bright: #e30613;
+  --color-red-deep: #9b0c23;
+  --color-red-wash: #fdf2f3;
+
+  /* Gold is a fill, never small text. Bronze is its readable text form (5.2:1). */
+  --color-gold: #ca8a04;
+  --color-bronze: #8a6508;
+  --color-gold-wash: #fdf8ec;
+
+  /* Semantic */
+  --color-ok: #15803d;
+  --color-ok-wash: #f0fdf4;
+  --color-warn: #b45309;
+  --color-info: #0369a1;
+
+  /* Type */
+  --font-heading: var(--font-playfair), "Playfair Display", "Songti SC", "Noto Naskh Arabic", Georgia, serif;
+  --font-sans: var(--font-inter), "Inter", "PingFang SC", "Noto Sans CJK SC",
+    "Microsoft YaHei", "Noto Naskh Arabic", "Geeza Pro", system-ui, sans-serif;
+  --font-display: var(--font-inter), "Inter", "PingFang SC", "Noto Sans CJK SC",
+    "Microsoft YaHei", "Noto Naskh Arabic", "Geeza Pro", system-ui, sans-serif;
+  --font-wordmark: var(--font-barlow-condensed), "Barlow Condensed", sans-serif;
+
+  /* Elevation — soft, warm, never black */
+  --shadow-xs: 0 1px 2px rgba(12, 10, 9, 0.05);
+  --shadow-sm: 0 2px 6px -1px rgba(12, 10, 9, 0.07);
+  --shadow-md: 0 8px 24px -8px rgba(12, 10, 9, 0.12);
+  --shadow-lg: 0 28px 56px -16px rgba(12, 10, 9, 0.16);
+
+  /* Motion */
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+/* ══════════════════════════════════════════════════════════════
+   Base
+   ══════════════════════════════════════════════════════════════ */
 
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    color-scheme: light;
   }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-canvas);
+    color: var(--color-fg);
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4 {
+    line-height: 1.12;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+  }
+
+  /* Playfair's Latin-only; CJK and Arabic fall back and need their own rhythm */
+  html[lang="ar"] body,
+  html[lang="zh-Hans"] body {
+    line-height: 1.85;
+  }
+  html[lang="ar"] :is(h1, h2, h3, h4),
+  html[lang="zh-Hans"] :is(h1, h2, h3, h4) {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    line-height: 1.35;
+    letter-spacing: 0;
+    font-style: normal;
+  }
+  html[lang="ar"] .italic-display,
+  html[lang="zh-Hans"] .italic-display {
+    font-style: normal;
+  }
+
+  ::selection {
+    background: var(--color-red);
+    color: #fff;
+  }
+
+  :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+    outline: 2px solid var(--color-red);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  ::-webkit-scrollbar { width: 12px; height: 12px; }
+  ::-webkit-scrollbar-track { background: var(--color-surface-2); }
+  ::-webkit-scrollbar-thumb { background: var(--color-line-strong); border-radius: 8px; border: 3px solid var(--color-surface-2); }
+  ::-webkit-scrollbar-thumb:hover { background: #b6b1ac; }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* ══════════════════════════════════════════════════════════════
+   Components — in the components layer so Tailwind utilities
+   (hidden, w-full, mt-4 …) always win over them.
+   ══════════════════════════════════════════════════════════════ */
+
+@layer components {
+  /* ── Typography helpers ──────────────────────────────────── */
+
+  .display {
+    font-family: var(--font-heading);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+  }
+
+  /* Playfair covers neither CJK nor Arabic, and a 1.05 Latin display line box
+     crushes both scripts. This has to live in the components layer next to
+     `.display` — the equivalent rule in @layer base loses to it. */
+  html[lang="zh-Hans"] .display,
+  html[lang="ar"] .display {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    letter-spacing: 0;
+    line-height: 1.32;
+    font-style: normal;
+  }
+
+  /* The logo's italic racing stance — wordmark and sale stamp only */
+  .italic-display {
+    font-family: var(--font-wordmark);
+    font-style: italic;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+  }
+
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--color-bronze);
+  }
+
+  /* ── Brand marks ─────────────────────────────────────────── */
+
+  .flag-rule {
+    height: 3px;
+    width: 100%;
+    background: linear-gradient(
+      90deg,
+      var(--color-ink) 0%, var(--color-ink) 33.3%,
+      var(--color-red) 33.3%, var(--color-red) 66.6%,
+      var(--color-gold) 66.6%, var(--color-gold) 100%
+    );
+  }
+
+  .flag-bar {
+    background: linear-gradient(
+      100deg,
+      var(--color-ink) 0%, var(--color-ink) 28%,
+      var(--color-red-bright) 28%, var(--color-red-bright) 64%,
+      #ffc300 64%, #ffc300 100%
+    );
+  }
+
+  /* Light studio wash for hero and CTA blocks */
+  .studio {
+    background-color: var(--color-canvas);
+    background-image:
+      radial-gradient(ellipse 70% 55% at 12% 0%, rgba(200, 16, 46, 0.07), transparent 62%),
+      radial-gradient(ellipse 60% 50% at 92% 8%, rgba(202, 138, 4, 0.09), transparent 60%),
+      linear-gradient(180deg, #ffffff 0%, var(--color-canvas) 60%);
+  }
+
+  .hairlines {
+    background-image:
+      linear-gradient(to right, rgba(12, 10, 9, 0.035) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(12, 10, 9, 0.035) 1px, transparent 1px);
+    background-size: 72px 72px;
+  }
+
+  /* ── Surfaces ────────────────────────────────────────────── */
+
+  .card {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: 4px;
+  }
+
+  .panel {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: 4px;
+    box-shadow: var(--shadow-xs);
+  }
+
+  /* ── Form controls ───────────────────────────────────────── */
+
+  .input,
+  .select,
+  .textarea {
+    width: 100%;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-line-strong);
+    border-radius: 2px;
+    padding: 0.625rem 0.75rem;
+    font-size: 0.9375rem;
+    color: var(--color-fg);
+    min-height: 44px;
+    transition: border-color 180ms var(--ease-out-quint), box-shadow 180ms var(--ease-out-quint);
+  }
+  .textarea { min-height: 120px; resize: vertical; line-height: 1.6; }
+  .input::placeholder, .textarea::placeholder { color: var(--color-subtle); }
+  .input:hover, .select:hover, .textarea:hover { border-color: #b6b1ac; }
+  .input:focus, .select:focus, .textarea:focus {
+    border-color: var(--color-red);
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 3px rgba(200, 16, 46, 0.14);
+  }
+  .input:disabled, .select:disabled, .textarea:disabled {
+    background-color: var(--color-surface-2);
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+
+  .select {
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2378716c' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.6rem center;
+    background-size: 1.1rem;
+    padding-inline-end: 2.25rem;
+    cursor: pointer;
+  }
+  [dir="rtl"] .select { background-position: left 0.6rem center; }
+
+  .label {
+    display: block;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+    margin-bottom: 0.4rem;
+  }
+
+  .field-help {
+    font-size: 0.75rem;
+    color: var(--color-subtle);
+    margin-top: 0.35rem;
+    line-height: 1.5;
+  }
+
+  /* ── Buttons ─────────────────────────────────────────────── */
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 44px;
+    padding: 0.625rem 1.35rem;
+    border-radius: 2px;
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 0.8125rem;
+    /* Fixed line box so min-height always wins. Without this, CJK and Arabic
+       glyphs raise the intrinsic line height and buttons grow 2–3px taller
+       than their Latin counterparts, which breaks row alignment. */
+    line-height: 1.15;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: background-color 200ms var(--ease-out-quint), border-color 200ms var(--ease-out-quint),
+      color 200ms var(--ease-out-quint), box-shadow 200ms var(--ease-out-quint);
+    /* Labels must be allowed to wrap. "Véhicules disponibles en location
+       longue durée" is 515px on one line and cannot fit a 375px screen; with
+       nowrap it simply overflowed the viewport. */
+    text-align: center;
+    text-wrap: balance;
+    max-width: 100%;
+  }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .btn-primary { background-color: var(--color-red); color: #fff; }
+  .btn-primary:hover:not(:disabled) { background-color: var(--color-red-deep); box-shadow: var(--shadow-sm); }
+
+  .btn-dark { background-color: var(--color-ink); color: #fff; }
+  .btn-dark:hover:not(:disabled) { background-color: #000; box-shadow: var(--shadow-sm); }
+
+  .btn-gold { background-color: var(--color-gold); color: var(--color-ink); }
+  .btn-gold:hover:not(:disabled) { background-color: var(--color-bronze); color: #fff; }
+
+  .btn-ghost { background-color: transparent; color: var(--color-fg); border-color: var(--color-line-strong); }
+  .btn-ghost:hover:not(:disabled) { background-color: var(--color-surface-2); border-color: var(--color-fg); }
+
+  .btn-solid { background-color: var(--color-surface-2); color: var(--color-fg); border-color: var(--color-line); }
+  .btn-solid:hover:not(:disabled) { background-color: var(--color-surface-3); border-color: var(--color-line-strong); }
+
+  .btn-danger { background-color: transparent; color: var(--color-red); border-color: rgba(200, 16, 46, 0.35); }
+  .btn-danger:hover:not(:disabled) { background-color: var(--color-red-wash); border-color: var(--color-red); }
+
+  .btn-sm { min-height: 36px; padding: 0.35rem 0.85rem; font-size: 0.75rem; }
+  .btn-lg { min-height: 54px; padding: 0.9rem 1.9rem; font-size: 0.875rem; }
+
+  /* ── The red "sold / sale in progress" vignette ──────────── */
+
+  .vignette {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background-color: var(--color-red);
+    color: #fff;
+    font-family: var(--font-sans);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: 0.6875rem;
+    padding: 0.35rem 0.75rem;
+    border-radius: 2px;
+    box-shadow: var(--shadow-sm);
+  }
+  .vignette-reserved { background-color: var(--color-red-deep); }
+  .vignette-soon { background-color: var(--color-gold); color: var(--color-ink); }
+
+  /* Light scrim + rubber stamp over a sold vehicle's photo */
+  .sold-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(250, 250, 249, 0.62);
+    backdrop-filter: saturate(0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+  }
+  .sold-stamp {
+    transform: rotate(-7deg);
+    border: 3px solid var(--color-red);
+    color: var(--color-red);
+    background: rgba(255, 255, 255, 0.86);
+    font-family: var(--font-wordmark);
+    font-weight: 800;
+    font-style: italic;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    font-size: clamp(1rem, 3vw, 1.6rem);
+    padding: 0.3rem 1.4rem;
+    border-radius: 2px;
+    box-shadow: var(--shadow-md);
+  }
+
+  /* ── Small pieces ────────────────────────────────────────── */
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    border: 1px solid var(--color-line);
+    background-color: var(--color-surface-2);
+    color: var(--color-muted);
+    border-radius: 999px;
+    padding: 0.2rem 0.65rem;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+  }
+
+  .link-underline {
+    position: relative;
+    transition: color 180ms var(--ease-out-quint);
+  }
+  .link-underline::after {
+    content: "";
+    position: absolute;
+    inset-inline-start: 0;
+    bottom: -3px;
+    height: 1.5px;
+    width: 100%;
+    background: var(--color-red);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 260ms var(--ease-out-quint);
+  }
+  [dir="rtl"] .link-underline::after { transform-origin: right; }
+  .link-underline:hover::after { transform: scaleX(1); }
+
+  /* Data rows in spec tables */
+  .spec-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.65rem 0;
+    border-bottom: 1px solid var(--color-line);
+    font-size: 0.9375rem;
+  }
+  .spec-row:last-child { border-bottom: 0; }
+  .spec-row dt { color: var(--color-muted); }
+  .spec-row dd { font-weight: 600; text-align: end; }
+
+  /* ── Motion ──────────────────────────────────────────────── */
+
+  .animate-rise { animation: rise 680ms var(--ease-out-quint) both; }
+  .animate-fade { animation: fade 480ms ease-out both; }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity 700ms var(--ease-out-quint), transform 700ms var(--ease-out-quint);
+  }
+  .reveal.is-visible { opacity: 1; transform: none; }
+
+  .no-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+
+  /* ── Loading state ───────────────────────────────────────── */
+
+  .loader-logo { animation: logo-breathe 2.4s var(--ease-out-quint) infinite; }
+
+  .loader-track {
+    position: relative;
+    width: min(16rem, 60vw);
+    height: 3px;
+    overflow: hidden;
+    border-radius: 2px;
+    background: var(--color-line);
+  }
+
+  /* A lap of the flag colours sweeping the track */
+  .loader-bar {
+    position: absolute;
+    inset-block: 0;
+    width: 45%;
+    border-radius: 2px;
+    background: linear-gradient(
+      90deg,
+      var(--color-ink) 0%, var(--color-ink) 33%,
+      var(--color-red-bright) 33%, var(--color-red-bright) 66%,
+      #ffc300 66%, #ffc300 100%
+    );
+    animation: loader-sweep 1.25s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+  }
+
+  /* First-load splash. Pure CSS so there is no hydration flash and no way for
+     it to get stuck: the animation always ends hidden and it never takes
+     pointer events. */
+  .splash {
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1.75rem;
+    pointer-events: none;
+    background: var(--color-canvas);
+    animation: splash-out 1150ms var(--ease-out-quint) forwards;
+  }
+  .splash-logo { animation: splash-logo-in 900ms var(--ease-out-quint) both; }
+}
+
+@keyframes logo-breathe {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+
+@keyframes loader-sweep {
+  0% { transform: translateX(-110%); }
+  100% { transform: translateX(345%); }
+}
+
+@keyframes splash-out {
+  0%, 62% { opacity: 1; visibility: visible; }
+  100% { opacity: 0; visibility: hidden; }
+}
+
+@keyframes splash-logo-in {
+  0% { opacity: 0; transform: translateY(10px) scale(0.985); }
+  100% { opacity: 1; transform: none; }
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .reveal { opacity: 1; transform: none; }
+  /* Skip the splash entirely rather than flashing it for one frame */
+  .splash { display: none; }
+  /* The loader still needs to signal activity, so keep one slow pulse */
+  .loader-logo {
+    animation: logo-breathe 2s ease-in-out infinite !important;
+    animation-duration: 2s !important;
+    animation-iteration-count: infinite !important;
+  }
+  .loader-bar { animation: none !important; width: 100%; }
+}
+
+@media print {
+  .no-print { display: none !important; }
+  body { background: #fff; }
 }
