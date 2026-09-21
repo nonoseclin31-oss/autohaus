@@ -495,6 +495,48 @@ It found six real defects:
 
 Filter rows were also raised from 20px to the 24px minimum.
 
+## Search
+
+`src/lib/seo.ts` holds the two things every public page needs: its canonical
+URL with the six language alternates, and the structured data for what the
+page is.
+
+Next replaces `alternates` rather than merging it, so a page that sets only a
+title inherits the layout's canonical — which points at the locale home page.
+Every page below `[locale]/layout.tsx` therefore calls `pageAlternates(locale,
+path)` with its own path. Leaving it out is silent: the page renders fine and
+quietly tells search engines it is a duplicate of the home page.
+
+`src/app/sitemap.ts` lists the eight static paths and every published listing,
+in all six locales, each entry carrying its own alternates. Drafts and
+unpublished listings are excluded — following one would be a soft 404. It is
+`force-dynamic`, so a listing appears as soon as it is published.
+
+`src/app/robots.ts` allows the public site and keeps crawlers out of `/api`,
+the back office and the login page. The host appends its own content-signal
+comments to whatever the origin serves; the directives still apply.
+
+Structured data:
+
+| Page | Schema | Why |
+| --- | --- | --- |
+| Home | `AutoDealer` | name, address and phone are what a local result is built from |
+| Listing | `Vehicle` + `Offer` | puts price, year and mileage under the result instead of a bare link |
+| Listing | `BreadcrumbList` | shows a path rather than a raw URL |
+
+Titles and snippets live in `meta` in each dictionary, deliberately apart from
+the on-screen copy: a subtitle that reads well above a heading is usually too
+short to fill a result, and a heading long enough to be interesting gets cut
+off at around 60 characters.
+
+After a deploy that changes any of this, check the live pages rather than the
+source — the canonical is the one thing a build will never warn you about:
+
+```bash
+curl -s https://autohausmotion.com/fr/vehicles | grep -o '<link rel="canonical"[^>]*>'
+curl -s https://autohausmotion.com/sitemap.xml | grep -c '<loc>'
+```
+
 ## Design notes
 
 Light, editorial and premium — the showroom, not the pit lane.
