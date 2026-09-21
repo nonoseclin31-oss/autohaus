@@ -33,7 +33,9 @@ export default async function SiteLayout({
           menu: t.nav.menu,
         }}
       />
-      <main id="main" className="flex-1">
+      {/* tabIndex={-1} so the skip link can move the keyboard here, not just
+          scroll the page — without it the next Tab goes back to the nav. */}
+      <main id="main" tabIndex={-1} className="flex-1 outline-none">
         {children}
       </main>
       <SiteFooter locale={locale} />

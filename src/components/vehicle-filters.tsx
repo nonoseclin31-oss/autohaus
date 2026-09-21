@@ -155,7 +155,7 @@ export function VehicleFilters({ locale, brands, total }: Props) {
         ].map((toggle) => (
           <label
             key={toggle.key}
-            className="flex cursor-pointer items-center gap-2.5 text-sm text-fg transition-colors duration-200 hover:text-red"
+            className="flex min-h-6 cursor-pointer items-center gap-2.5 text-sm text-fg transition-colors duration-200 hover:text-red"
           >
             <input
               type="checkbox"

@@ -26,7 +26,7 @@ export function VehicleCard({
   return (
     <article
       className={cn(
-        "group relative flex h-full flex-col overflow-hidden rounded-[4px] border border-line bg-surface",
+        "card-focus group relative flex h-full flex-col overflow-hidden rounded-[4px] border border-line bg-surface",
         "transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]",
         "hover:-translate-y-0.5 hover:border-line-strong hover:shadow-[var(--shadow-md)]",
         "focus-within:border-red",

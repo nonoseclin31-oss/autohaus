@@ -441,6 +441,14 @@
   .animate-rise { animation: rise 680ms var(--ease-out-quint) both; }
   .animate-fade { animation: fade 480ms ease-out both; }
 
+  /* A card whose title link is stretched over the whole card: the focus ring
+     belongs on the card, not on the few words of the heading. :focus-visible
+     keeps it to keyboard use, and :has puts it on the container. */
+  .card-focus:has(a:focus-visible) {
+    outline: 2px solid var(--color-red);
+    outline-offset: 2px;
+  }
+
   .reveal {
     opacity: 0;
     transform: translateY(18px);
