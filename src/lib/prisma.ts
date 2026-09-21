@@ -1,41 +1,31 @@
 import { PrismaClient } from "@prisma/client";
 import { PrismaNeon } from "@prisma/adapter-neon";
 import { neonConfig } from "@neondatabase/serverless";
-import { getCloudflareContext } from "@opennextjs/cloudflare";
 
 /**
- * Prisma client, created on first query and scoped to the request that asks
- * for it.
- *
- * Two constraints shape this file.
+ * Prisma client, created on first query rather than on import.
  *
  * The build runs on the host's CI with no DATABASE_URL, and Next imports every
- * route module to collect page data. So the client is built on first property
- * access, never on import.
+ * route module to collect page data, so the client is built on first property
+ * access and never at module load.
  *
- * And Cloudflare Workers refuse to let one request touch I/O opened by
- * another: "Cannot perform I/O on behalf of a different request". A client
- * cached on globalThis outlives the request that created it, so the next
- * request on a warm isolate inherits its connection and throws — and because
- * the throw happens inside the streaming render, the request hangs until the
- * runtime cancels it. Concurrent requests on one isolate (Next prefetching a
- * page's links, for instance) hit this reliably.
+ * Cloudflare Workers refuse to let one request touch I/O opened by another:
+ * "Cannot perform I/O on behalf of a different request". A client cached on
+ * globalThis outlives the request that created it, so the next request on a
+ * warm isolate would inherit its Neon connection and throw — mid-render, which
+ * left the request hanging until the runtime cancelled it.
  *
- * The fix is one client per request, keyed on the execution context, which is
- * also how Prisma's own Workers guidance instantiates it. Outside a Worker —
- * `next dev`, `next build`, seeds — there is no such context and a single
- * cached client is both safe and desirable.
+ * The cure is to make sure the client holds no connection between requests,
+ * rather than to build a client per request: constructing one instantiates the
+ * query engine, and on the free plan's CPU budget paying that per request costs
+ * more than it saves. With pool queries sent over HTTP, each query is a
+ * self-contained fetch and nothing survives the response, so one cached client
+ * per isolate is safe.
  */
 
-// Send pool queries over HTTP instead of a WebSocket. Each query becomes a
-// self-contained fetch, so nothing holds a socket open past the response.
 neonConfig.poolQueryViaFetch = true;
 
 const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient };
-
-// Keyed on the Worker's per-request execution context, so entries fall away
-// with the request rather than accumulating in the isolate.
-const perRequest = new WeakMap<object, PrismaClient>();
 
 function createClient(): PrismaClient {
   const connectionString = process.env.DATABASE_URL;
@@ -47,42 +37,16 @@ function createClient(): PrismaClient {
   });
 }
 
-/**
- * The current request's execution context, or undefined when there is no
- * request — during the build, in `next dev`, or in a plain Node script.
- */
-function requestScope(): object | undefined {
-  try {
-    // Synchronous on purpose: this runs on every property access, and the
-    // async form would turn `prisma.vehicle` into a promise. Outside a Worker
-    // it throws, which is the signal that there is no request to scope to.
-    return getCloudflareContext().ctx as unknown as object | undefined;
-  } catch {
-    return undefined;
-  }
-}
-
 function client(): PrismaClient {
-  const scope = requestScope();
-
-  if (!scope) {
-    // No request to scope to. Cache globally so hot reload does not open a
-    // pool per edit, and so scripts reuse one client.
-    globalForPrisma.prisma ??= createClient();
-    return globalForPrisma.prisma;
-  }
-
-  let existing = perRequest.get(scope);
-  if (!existing) {
-    existing = createClient();
-    perRequest.set(scope, existing);
-  }
-  return existing;
+  // Cached in development so hot reload does not open a pool per edit, and in
+  // production so a warm isolate reuses its engine.
+  globalForPrisma.prisma ??= createClient();
+  return globalForPrisma.prisma;
 }
 
 /**
- * Behaves exactly like a PrismaClient, but the real one is only resolved when
- * a property is first read — and resolves to this request's client.
+ * Behaves exactly like a PrismaClient, but the real one is only constructed
+ * when a property is first read.
  */
 export const prisma = new Proxy({} as PrismaClient, {
   get(_target, property, receiver) {
