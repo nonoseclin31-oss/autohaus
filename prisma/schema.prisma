@@ -111,6 +111,15 @@ model Vehicle {
   rentalMonthly     Int?
   rentalDeposit     Int?
   rentalFirstPayment Int?
+  /// Offered with a purchase option as well as on plain rental.
+  loaAvailable      Boolean @default(true)
+  /// Per-vehicle overrides for the quote. Null means the standard curve:
+  /// the rate defaults to 4.9%, the residual to the duration/mileage table,
+  /// and the services to a figure scaled from the price.
+  financeRate       Float?
+  residualRate      Float?
+  servicesMonthly   Int?
+
   rentalDurations   String  @default("[]") // JSON: [24, 36, 48, 60]
   rentalMileages    String  @default("[]") // JSON: [10000, 15000, 20000]
 

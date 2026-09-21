@@ -63,23 +63,6 @@ export function toDate(value: FormDataEntryValue | null | undefined): Date | nul
 }
 
 /** Estimate a monthly long-term rental payment from a list price. */
-export function estimateMonthly(
-  price: number,
-  months: number,
-  annualKm: number,
-  deposit = 0,
-): number {
-  const depreciationRate = 0.42 + (months / 60) * 0.18 + (annualKm - 15000) / 300000;
-  const residual = Math.max(0.18, 1 - Math.min(0.82, depreciationRate));
-  const financed = Math.max(0, price - deposit);
-  const depreciation = financed * (1 - residual);
-  const interest = financed * 0.049 * (months / 24);
-  const services = months * 38;
-  return Math.max(99, Math.round((depreciation + interest + services) / months / 5) * 5);
-}
-
-export const RENTAL_DURATIONS = [24, 36, 48, 60] as const;
-export const RENTAL_MILEAGES = [10000, 15000, 20000, 25000, 30000] as const;
 
 /** Company details, shown across the site and in structured data. */
 export const COMPANY = {

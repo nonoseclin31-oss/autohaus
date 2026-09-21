@@ -7,6 +7,7 @@ import {
 } from "@/i18n";
 import { absoluteUrl, breadcrumbSchema, pageAlternates, vehicleSchema } from "@/lib/seo";
 import { JsonLd } from "@/components/json-ld";
+import { FinanceSimulator } from "@/components/finance-simulator";
 import { getVehicleBySlug, getSimilarVehicles, vehicleTitle, vehicleTranslation } from "@/lib/vehicles";
 import { prisma } from "@/lib/prisma";
 import { VehicleGallery } from "@/components/vehicle-gallery";
@@ -424,6 +425,29 @@ export default async function VehicleDetailPage({
             </div>
           </div>
         </div>
+
+        {/* Finance — offered on every car, from its own price and any
+            overrides it carries. */}
+        <section id="finance" className="mt-16 scroll-mt-24 border-t border-line pt-12">
+          <h2 className="display text-3xl">{t.rental.simulatorTitle}</h2>
+          <p className="mt-2 max-w-2xl text-muted">{t.rental.simulatorBody}</p>
+          <div className="mt-6">
+            <FinanceSimulator
+              locale={locale}
+              vehicles={[
+                {
+                  id: vehicle.id,
+                  label: vehicleTitle(vehicle),
+                  price: vehicle.price,
+                  loaAvailable: vehicle.loaAvailable,
+                  financeRate: vehicle.financeRate,
+                  residualRate: vehicle.residualRate,
+                  servicesMonthly: vehicle.servicesMonthly,
+                },
+              ]}
+            />
+          </div>
+        </section>
 
         {/* Similar */}
         {similar.length ? (

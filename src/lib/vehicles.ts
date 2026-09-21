@@ -179,6 +179,32 @@ export async function getRentalVehicles(locale: Locale, take = 12) {
   return rows.map((row) => toListItem(row as unknown as RawListRow, locale));
 }
 
+/**
+ * Every car a quote can be built for — which is every car on sale, not only
+ * those flagged for the rental page. The finance overrides travel with them
+ * so the simulator quotes a car on its own terms when it has any.
+ */
+export async function getQuotableVehicles(locale: Locale) {
+  const rows = await prisma.vehicle.findMany({
+    where: { published: true, status: { not: "SOLD" } },
+    select: {
+      id: true, brand: true, model: true, version: true, year: true, price: true,
+      loaAvailable: true, financeRate: true, residualRate: true, servicesMonthly: true,
+    },
+    orderBy: [{ price: "asc" }],
+  });
+
+  return rows.map((row) => ({
+    id: row.id,
+    label: [row.brand, row.model, row.version].filter(Boolean).join(" ") + ` · ${row.year}`,
+    price: row.price,
+    loaAvailable: row.loaAvailable,
+    financeRate: row.financeRate,
+    residualRate: row.residualRate,
+    servicesMonthly: row.servicesMonthly,
+  }));
+}
+
 export async function getSimilarVehicles(
   vehicle: { id: string; brand: string; bodyType: string; price: number },
   locale: Locale,

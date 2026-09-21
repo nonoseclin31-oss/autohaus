@@ -2,9 +2,9 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { pageAlternates } from "@/lib/seo";
 import { getDictionary, resolveLocale, localePath } from "@/i18n";
-import { getRentalVehicles, vehicleTitle } from "@/lib/vehicles";
+import { getQuotableVehicles, getRentalVehicles } from "@/lib/vehicles";
 import { VehicleCard } from "@/components/vehicle-card";
-import { RentalCalculator } from "@/components/rental-calculator";
+import { FinanceSimulator } from "@/components/finance-simulator";
 import { Reveal } from "@/components/reveal";
 import {
   IconCheckCircle, IconArrowRight, IconTruck, IconUser, IconCar, IconChevronDown,
@@ -49,11 +49,9 @@ export default async function RentalPage({ params }: { params: Promise<{ locale:
     { q: t.rental.q5, a: t.rental.a5 },
   ];
 
-  const calculatorOptions = vehicles.map((v) => ({
-    id: v.id,
-    label: `${vehicleTitle(v)}${v.version ? "" : ""} · ${v.year}`,
-    price: v.price,
-  }));
+  // The simulator quotes any car on sale, not only the ones listed below:
+  // both formulas are offered across the showroom.
+  const quotable = await getQuotableVehicles(locale);
 
   return (
     <>
@@ -159,7 +157,7 @@ export default async function RentalPage({ params }: { params: Promise<{ locale:
           <p className="mt-2 max-w-2xl text-muted">{t.rental.calcBody}</p>
         </Reveal>
         <Reveal delay={80}>
-          <RentalCalculator locale={locale} vehicles={calculatorOptions} />
+          <FinanceSimulator locale={locale} vehicles={quotable} />
         </Reveal>
       </section>
 

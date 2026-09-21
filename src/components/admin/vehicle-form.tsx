@@ -12,7 +12,10 @@ import {
   UPHOLSTERY, EMISSION_CLASSES, COLORS, BRANDS, EQUIPMENT_GROUPS, VEHICLE_STATUS,
   equipmentByGroup, equipmentLabel, label, optionsFor, type Locale as TaxLocale,
 } from "@/lib/taxonomy";
-import { RENTAL_DURATIONS, RENTAL_MILEAGES, cn } from "@/lib/utils";
+import { cn } from "@/lib/utils";
+// The same lists the public simulator offers, so the back office cannot
+// promise a term the quote cannot price.
+import { DURATIONS as RENTAL_DURATIONS, MILEAGES as RENTAL_MILEAGES } from "@/lib/finance";
 import {
   IconCar, IconBolt, IconFuel, IconPalette, IconWrench, IconEuro, IconTruck,
   IconCheckCircle, IconImage, IconGlobe, IconEye, IconEyeOff, IconSpinner, IconAlert, IconCheck, IconFlag,
@@ -37,6 +40,8 @@ export type VehicleFormValues = {
   price?: number; priceNet?: number | null; vatDeductible?: boolean; oldPrice?: number | null;
   negotiable?: boolean; financingMonthly?: number | null;
   rentalAvailable?: boolean; rentalMonthly?: number | null; rentalDeposit?: number | null;
+  loaAvailable?: boolean; financeRate?: number | null; residualRate?: number | null;
+  servicesMonthly?: number | null;
   rentalFirstPayment?: number | null; rentalDurations?: number[]; rentalMileages?: number[];
   equipment?: string[]; videoUrl?: string | null;
   status?: string; published?: boolean; featured?: boolean; location?: string | null;
@@ -657,9 +662,40 @@ export function VehicleForm({
               <span className="block text-sm font-semibold uppercase tracking-[0.08em]">
                 {t.admin.fRentalAvailable}
               </span>
-              <span className="mt-0.5 block text-xs text-muted">{t.rental.subtitle}</span>
+              <span className="mt-0.5 block text-xs text-muted">{t.admin.fRentalAvailableHelp}</span>
             </span>
           </label>
+
+          {/* Both formulas are quoted on every car from its price; these only
+              override the standard curve when this one is not standard. */}
+          <div className="space-y-4 rounded-sm border border-line bg-surface-2 p-4">
+            <p className="text-xs font-semibold uppercase tracking-[0.12em] text-subtle">
+              {t.admin.financeSection}
+            </p>
+            <p className="field-help !mt-0">{t.admin.financeHelp}</p>
+
+            <Toggle
+              name="loaAvailable"
+              label={t.admin.fLoaAvailable}
+              defaultChecked={values.loaAvailable ?? true}
+              help={t.admin.fLoaAvailableHelp}
+            />
+
+            <div className="grid gap-4 sm:grid-cols-3">
+              <Field id="financeRate" label={t.admin.fFinanceRate} help={t.admin.fFinanceRateHelp}>
+                <Num id="financeRate" name="financeRate" min={0} max={30} step={0.1}
+                  defaultValue={values.financeRate != null ? values.financeRate * 100 : ""} />
+              </Field>
+              <Field id="residualRate" label={t.admin.fResidualRate} help={t.admin.fResidualRateHelp}>
+                <Num id="residualRate" name="residualRate" min={0} max={100} step={1}
+                  defaultValue={values.residualRate != null ? Math.round(values.residualRate * 100) : ""} />
+              </Field>
+              <Field id="servicesMonthly" label={t.admin.fServicesMonthly} help={t.admin.fServicesMonthlyHelp}>
+                <Num id="servicesMonthly" name="servicesMonthly" min={0} step={5}
+                  defaultValue={values.servicesMonthly ?? ""} />
+              </Field>
+            </div>
+          </div>
 
           <div className={cn("space-y-5", !rentalOn && "pointer-events-none opacity-45")}>
             <div className="grid gap-4 sm:grid-cols-3">

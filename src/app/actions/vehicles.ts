@@ -24,6 +24,16 @@ type ImagePayload = { url: string; alt?: string | null; isCover?: boolean };
 
 const STATUSES = ["AVAILABLE", "RESERVED", "SOLD", "COMING_SOON"];
 
+/**
+ * Reads a percentage typed as 4.9 or 45 and stores it as a fraction.
+ * An empty field is an absent override, not zero.
+ */
+function percentOrNull(value: FormDataEntryValue | null): number | null {
+  const parsed = toFloat(value);
+  if (parsed === null || !Number.isFinite(parsed)) return null;
+  return parsed / 100;
+}
+
 /** Create or update a vehicle from the admin form. */
 export async function saveVehicle(
   _prev: VehicleFormState,
@@ -194,6 +204,14 @@ export async function saveVehicle(
     financingMonthly: toInt(formData.get("financingMonthly")),
 
     rentalAvailable: toBool(formData.get("rentalAvailable")),
+
+    // Quote overrides. Empty means "use the standard curve", so an empty
+    // field has to store null rather than zero — a 0% rate is a real,
+    // different answer from "no override".
+    loaAvailable: toBool(formData.get("loaAvailable")),
+    financeRate: percentOrNull(formData.get("financeRate")),
+    residualRate: percentOrNull(formData.get("residualRate")),
+    servicesMonthly: toInt(formData.get("servicesMonthly")),
     rentalMonthly: toInt(formData.get("rentalMonthly")),
     rentalDeposit: toInt(formData.get("rentalDeposit")),
     rentalFirstPayment: toInt(formData.get("rentalFirstPayment")),
