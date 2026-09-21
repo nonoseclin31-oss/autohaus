@@ -5,7 +5,6 @@ import { getCurrentUser } from "@/lib/auth";
 import { can } from "@/lib/rbac";
 import { prisma } from "@/lib/prisma";
 import { VehicleForm, type VehicleFormValues } from "@/components/admin/vehicle-form";
-import { TemplatePicker } from "@/components/admin/template-picker";
 import { valuesFromPayload } from "@/lib/vehicle-templates";
 import { IconArrowLeft, IconLayers } from "@/components/icons";
 import { COMPANY } from "@/lib/utils";
@@ -80,19 +79,6 @@ export default async function NewVehiclePage({
       </div>
 
       <div className="flex flex-wrap items-center gap-3">
-        <TemplatePicker
-          locale={locale}
-          templates={templates.map((template) => ({
-            id: template.id,
-            name: template.name,
-            brand: template.brand,
-            model: template.model,
-            version: template.version,
-            usageCount: template.usageCount,
-            authorName: template.createdBy?.name ?? null,
-            deletable: template.createdById === user.id || can(user.role, "vehicle.update.any"),
-          }))}
-        />
         {appliedTemplate ? (
           <p className="flex items-center gap-2 rounded-sm border border-ok/40 bg-ok/10 px-3 py-2 text-sm">
             <IconLayers size={15} className="shrink-0 text-ok" />
@@ -112,6 +98,16 @@ export default async function NewVehiclePage({
         key={chosen ?? "blank"}
         locale={locale}
         advisors={advisors}
+        templates={templates.map((template) => ({
+          id: template.id,
+          name: template.name,
+          brand: template.brand,
+          model: template.model,
+          version: template.version,
+          usageCount: template.usageCount,
+          authorName: template.createdBy?.name ?? null,
+          deletable: template.createdById === user.id || can(user.role, "vehicle.update.any"),
+        }))}
         values={{
           location: `${COMPANY.postalCode} ${COMPANY.city}`,
           accidentFree: true,

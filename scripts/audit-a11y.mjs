@@ -6,7 +6,7 @@
  * 2.4.11) and keyboard reachability. Arabic is included because a
  * right-to-left page reorders the accessibility tree as well as the layout.
  *
- * Run: node scripts/audit-a11y.mjs [--base https://autohausmotion.com]
+ * Run: node scripts/audit-a11y.mjs [--base https://autohausmotion.com] [--theme dark]
  */
 import puppeteer from "puppeteer-core";
 
@@ -16,6 +16,8 @@ const arg = (flag, fallback) => {
   return i > -1 ? process.argv[i + 1] : fallback;
 };
 const BASE = arg("--base", "https://autohausmotion.com");
+/** The dark palette has to clear the same thresholds as the light one. */
+const THEME = arg("--theme", "light");
 const LOCALES = ["en", "fr", "de", "zh", "ar", "es"];
 const PAGES = ["", "/vehicles", "/rental", "/about", "/contact", "/login"];
 const AXE = "https://cdnjs.cloudflare.com/ajax/libs/axe-core/4.10.2/axe.min.js";
@@ -47,6 +49,15 @@ for (const locale of LOCALES) {
   for (const path of PAGES) {
     const page = await browser.newPage();
     await page.setViewport({ width: 1280, height: 900 });
+    if (THEME === "dark") {
+      // The theme is applied by a blocking script that reads localStorage, so
+      // it has to be there before the first document loads.
+      await page.evaluateOnNewDocument(() => {
+        try {
+          localStorage.setItem("am-theme", "dark");
+        } catch {}
+      });
+    }
     const url = `${BASE}/${locale}${path}`;
     try {
       await page.goto(url, { waitUntil: "networkidle2", timeout: 60000 });

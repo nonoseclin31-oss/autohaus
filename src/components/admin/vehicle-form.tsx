@@ -4,7 +4,7 @@ import { useActionState, useEffect, useRef, useState } from "react";
 import { useFormStatus } from "react-dom";
 import Link from "next/link";
 import { saveVehicle, type VehicleFormState } from "@/app/actions/vehicles";
-import { TemplateNameField } from "@/components/admin/template-picker";
+import { TemplateNameField, TemplatePicker, type PickableTemplate } from "@/components/admin/template-picker";
 import { ImageUploader, type UploadedImage } from "./image-uploader";
 import { getDictionary, localePath, LOCALE_META, LOCALES, type Locale } from "@/i18n";
 import {
@@ -229,11 +229,14 @@ export function VehicleForm({
   values = {},
   advisors,
   permissions,
+  templates,
 }: {
   locale: Locale;
   values?: VehicleFormValues;
   advisors: Advisor[];
   permissions: Permissions;
+  /** Saved templates, on a new listing only. */
+  templates?: PickableTemplate[];
 }) {
   const t = getDictionary(locale);
   const tax = locale as TaxLocale;
@@ -344,6 +347,15 @@ export function VehicleForm({
 
       {/* Section navigation */}
       <nav className="lg:sticky lg:top-24 lg:self-start" aria-label={t.admin.editVehicle}>
+        {/* Starting from a template belongs at the top of the sections, before
+            Identity: it is the first decision, not an afterthought above the
+            form. Only on a new listing — an existing one is already filled. */}
+        {templates?.length ? (
+          <div className="mb-3 border-b border-line pb-3">
+            <TemplatePicker locale={locale} templates={templates} />
+          </div>
+        ) : null}
+
         <div className="lg:hidden">
           <label htmlFor="section-select" className="label">{t.common.actions}</label>
           <select
