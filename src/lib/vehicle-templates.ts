@@ -54,6 +54,9 @@ export function payloadFromForm(formData: FormData): string {
 
   for (const key of new Set(formData.keys())) {
     if (EXCLUDED.has(key)) continue;
+    // React's server-action plumbing rides along in the same FormData under
+    // keys like "$ACTION_KEY"; it is not vehicle data and must not be stored.
+    if (key.startsWith("$")) continue;
 
     const values = formData.getAll(key).filter((value): value is string => typeof value === "string");
     if (!values.length) continue;

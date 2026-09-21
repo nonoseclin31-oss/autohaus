@@ -104,15 +104,23 @@ export default async function NewVehiclePage({
       </div>
 
       <VehicleForm
+        // Choosing a template navigates within this same route, so React would
+        // reconcile the existing form rather than build a new one — and an
+        // uncontrolled field already on screen ignores a changed defaultValue,
+        // which left the dropdowns showing the previous car. Keying on the
+        // template forces a fresh form whose defaults all apply.
+        key={chosen ?? "blank"}
         locale={locale}
         advisors={advisors}
         values={{
-          ...templateValues,
-          ownerId: user.id,
           location: `${COMPANY.postalCode} ${COMPANY.city}`,
           accidentFree: true,
           nonSmoker: true,
           status: "AVAILABLE",
+          // A template overrides the blank-form defaults where it has a value.
+          ...templateValues,
+          // But a new listing belongs to whoever is creating it.
+          ownerId: user.id,
         }}
         permissions={{
           canPublish: can(user.role, "vehicle.publish"),
