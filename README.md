@@ -495,6 +495,37 @@ It found six real defects:
 
 Filter rows were also raised from 20px to the 24px minimum.
 
+## Listing templates
+
+Entering the tenth car of the same kind means retyping everything that is true
+of all of them. A third button beside Save and Save draft keeps the current
+values under a name, and a new listing can start from one.
+
+A template holds every field except two groups. Photos, because they belong to
+one car rather than to a kind of car. And the values that identify one specific
+car — id, stock reference, slug, VIN — which would either clash with the car
+the template came from or quietly label the new one as the old one. Publication
+state is dropped too: a copy should not inherit "published".
+
+The values are stored as JSON in one column rather than a column per field.
+The form has some sixty of them and gains more over time; a column each would
+mean a migration every time one is added.
+
+Two things to know before changing it:
+
+The picker applies a template by linking to `?template=<id>`, which the server
+reads and hands to the form as ordinary defaults. That is deliberate — poking
+values into the form from the client would miss the sections React drives from
+state (equipment, rental, status). The form is keyed on the template id,
+because picking one navigates within the same route: without the key React
+reconciles the form already on screen, and an uncontrolled field that is
+already mounted ignores a changed `defaultValue`. Text fields updated anyway;
+every dropdown silently kept the previous car's value.
+
+And the payload is read from `FormData`, which also carries React's own
+server-action keys beginning with `$`. They are filtered out; anything else
+added to the form is stored automatically.
+
 ## Database migrations
 
 The Cloudflare build runs `prisma generate`, never `prisma migrate`. A schema
