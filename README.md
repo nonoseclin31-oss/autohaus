@@ -457,6 +457,41 @@ It found and drove the fix for seven real bugs:
 | Every locale overflowed at 375px | responsive grids fell back to an implicit `auto` column, which sizes to max-content; the logo was also a fixed 220px |
 | Arabic showed "+400 2" | bidi moved the trailing `+` of "2 400+"; now isolated with `<bdi dir="ltr">` |
 
+## Accessibility audit
+
+`scripts/audit-a11y.mjs` runs axe-core over all six public pages in all six
+locales, then adds the two things axe does not evaluate: target size
+(SC 2.5.8) and a focus indicator you can actually see (SC 2.4.11).
+
+```bash
+node scripts/audit-a11y.mjs                              # the live site
+node scripts/audit-a11y.mjs --base http://localhost:3000 # a local build
+```
+
+Two details in the harness matter, because both produced false readings before
+they were handled. Entrance transitions run for 700ms after the splash clears,
+and sampling before they settle reports contrast against a half-faded element
+nobody ever sees — so the script scrolls the page and waits. And a focus ring
+often sits on an ancestor rather than the focused element: a card whose title
+link is stretched over it carries the outline itself.
+
+The target-size check applies the two SC 2.5.8 exceptions, so it reports only
+targets that genuinely fail: a stretched link is measured as the card it
+covers, and a small target with nothing within 24px of it passes on spacing.
+
+It found six real defects:
+
+| Defect | Cause |
+| --- | --- |
+| No focus indicator on any vehicle card | the stretched title link carried `outline-none`, killing the global ring; the card, which is what the link covers, had none of its own |
+| No focus indicator on the four home-page dropdowns | `.select:focus` set a deliberately transparent outline, leaving a 1px border tint and a 14%-opacity glow |
+| Skip link moved the view but not the keyboard | `<main>` could not take focus, so the next Tab went back to the header |
+| Skip link did nothing at all on the login page | that page's `<main>` had neither the id nor a tabindex |
+| Step numerals at 1.42:1 against the canvas | `--color-line-strong` is a border colour, used as 48px text; large text needs 3:1 |
+| Four small-text colours between 4.03:1 and 4.39:1 | `--color-subtle` fell short wherever it met a tinted panel, and the 10px rental labels were dimmed to 80% on top of being small |
+
+Filter rows were also raised from 20px to the 24px minimum.
+
 ## Design notes
 
 Light, editorial and premium — the showroom, not the pit lane.
