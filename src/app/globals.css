@@ -253,6 +253,14 @@
     outline-offset: 2px;
     box-shadow: 0 0 0 3px rgba(200, 16, 46, 0.14);
   }
+  /* The rule above deliberately keeps the outline transparent so a mouse click
+     only tints the border. A keyboard user needs to see where they are, so
+     give form controls the same ring every other control gets. */
+  .input:focus-visible, .select:focus-visible, .textarea:focus-visible {
+    outline: 2px solid var(--color-red);
+    outline-offset: 2px;
+  }
+
   .input:disabled, .select:disabled, .textarea:disabled {
     background-color: var(--color-surface-2);
     opacity: 0.7;
