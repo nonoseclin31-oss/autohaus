@@ -17,9 +17,12 @@ prisma/dev.db-journal
 *.db
 *.db-journal
 
-# uploads — user media does not belong in the repo
+# uploads — user media does not belong in the repo. The seed-* fixtures do:
+# they are the demo photography shipped with the app, and the deployed site
+# serves them from here as static assets.
 /public/uploads/*
 !/public/uploads/.gitkeep
+!/public/uploads/seed-*
 
 # env
 .env

@@ -198,7 +198,7 @@ export function VehicleFilters({ locale, brands, total }: Props) {
 
       {/* Desktop sidebar */}
       <aside className="hidden lg:block" aria-label={t.common.filters}>
-        <div className="sticky top-24 rounded-sm border border-line bg-surface p-5">
+        <div className="sticky top-24 max-h-[calc(100vh-8rem)] overflow-y-auto overscroll-contain rounded-sm border border-line bg-surface p-5">
           <div className="mb-5 flex items-center justify-between">
             <h2 className="flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.08em]">
               <IconFilter size={16} className="text-red" />
