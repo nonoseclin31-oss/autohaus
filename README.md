@@ -594,6 +594,45 @@ node scripts/audit-a11y.mjs --theme dark
 node scripts/audit-locales.mjs --base https://autohausmotion.com --theme dark
 ```
 
+## Finance: LLD and LOA
+
+`src/lib/finance.ts` is the only place either formula is priced. The public
+simulator and the back office both call it, so a quote on a vehicle page and a
+quote an advisor builds cannot drift apart.
+
+The arithmetic is the standard lease formula rather than a percentage of the
+price:
+
+```
+monthly depreciation = (financed − residual) / months
+monthly finance      = (financed + residual) × rate / 24
+```
+
+Dividing the rate by 24 rather than 12 is what accounts for the capital
+falling steadily to the residual across the term. Residual comes off a
+duration curve, interpolated so any term works, then adjusted for mileage —
+and the mileage penalty grows with the term but not in proportion to it,
+because the first 50.000 km cost a car far more of its value than the next
+50.000. Scaling it by years alone put a five-year, 150.000 km car at 12% of
+new, which is well under what one fetches.
+
+LLD hands the car back and carries the service pack. LOA adds the right to buy
+at a price fixed at signature — the residual — so the monthly covers only the
+part of the car consumed, and services become optional.
+
+Both are quoted on every published, unsold car. `rentalAvailable` only decides
+what the rental page lists; it does not gate the quote.
+
+A car that is not standard overrides the curve from the back office:
+`financeRate`, `residualRate` and `servicesMonthly`. An empty field means the
+curve, so the action stores null rather than zero — a 0% rate is a real and
+different answer from "no override".
+
+Worth knowing before changing the numbers: a large deposit can push the
+financed amount below the residual, and the depreciation term goes to zero
+rather than negative. And `DURATIONS` and `MILEAGES` are imported by the admin
+form too, so the back office cannot offer a term the quote cannot price.
+
 ## Listing templates
 
 Entering the tenth car of the same kind means retyping everything that is true
