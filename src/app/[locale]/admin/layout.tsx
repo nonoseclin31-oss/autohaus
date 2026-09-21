@@ -35,6 +35,7 @@ export default async function AdminLayout({
         leads: t.admin.leads,
         users: t.admin.users,
         activity: t.admin.activity,
+        settings: t.admin.settings,
         profile: t.admin.profile,
         viewSite: t.admin.viewSite,
         logout: t.nav.logout,
@@ -45,6 +46,7 @@ export default async function AdminLayout({
       permissions={{
         users: can(user.role, "user.read"),
         activity: can(user.role, "activity.read"),
+        settings: can(user.role, "settings.manage"),
       }}
     >
       {children}

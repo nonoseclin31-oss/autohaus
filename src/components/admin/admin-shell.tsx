@@ -10,14 +10,14 @@ import { LanguageSwitcher } from "../language-switcher";
 import { signOut } from "@/app/actions/auth";
 import { localePath, type Locale } from "@/i18n";
 import {
-  IconDashboard, IconCar, IconInbox, IconUsers, IconActivity,
+  IconDashboard, IconCar, IconInbox, IconUsers, IconActivity, IconSettings,
   IconLogout, IconMenu, IconArrowLeft, IconUser,
 } from "../icons";
 import { cn } from "@/lib/utils";
 
 type Labels = {
   backOffice: string; dashboard: string; vehicles: string; leads: string;
-  users: string; activity: string; profile: string; viewSite: string; logout: string;
+  users: string; activity: string; settings: string; profile: string; viewSite: string; logout: string;
   language: string; menu: string; close: string;
 };
 
@@ -35,7 +35,7 @@ export function AdminShell({
     jobTitle: string | null; avatarUrl: string | null;
   };
   labels: Labels;
-  permissions: { users: boolean; activity: boolean };
+  permissions: { users: boolean; activity: boolean; settings: boolean };
 }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
@@ -48,6 +48,7 @@ export function AdminShell({
     { href: "/admin/leads", label: labels.leads, Icon: IconInbox, exact: false, show: true },
     { href: "/admin/users", label: labels.users, Icon: IconUsers, exact: false, show: permissions.users },
     { href: "/admin/activity", label: labels.activity, Icon: IconActivity, exact: false, show: permissions.activity },
+    { href: "/admin/settings", label: labels.settings, Icon: IconSettings, exact: false, show: permissions.settings },
   ].filter((item) => item.show);
 
   function isActive(href: string, exact: boolean) {

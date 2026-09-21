@@ -8,7 +8,7 @@ import { ThemeToggle } from "./theme-toggle";
 import { LanguageSwitcher } from "./language-switcher";
 import { IconMenu, IconX, IconPhone, IconUser } from "./icons";
 import { localePath, type Locale } from "@/i18n";
-import { cn, COMPANY } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 
 type NavItem = { href: string; label: string };
 
@@ -16,10 +16,16 @@ export function SiteHeader({
   locale,
   nav,
   languageLabel,
+  // Resolved by the layout so a number changed in the back office shows here
+  // without a deploy.
+  phone,
+  shortName,
 }: {
   locale: Locale;
   nav: { items: NavItem[]; login: string; admin: string; menu: string };
   languageLabel: string;
+  phone: string;
+  shortName: string;
 }) {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -60,7 +66,7 @@ export function SiteHeader({
           <Link
             href={localePath(locale)}
             className="shrink-0 cursor-pointer transition-opacity duration-200 hover:opacity-85"
-            aria-label={COMPANY.shortName}
+            aria-label={shortName}
           >
             <Logo heightClass="h-[22px] sm:h-7 lg:h-8" priority />
           </Link>
@@ -84,11 +90,11 @@ export function SiteHeader({
 
           <div className="flex items-center gap-2">
             <a
-              href={`tel:${COMPANY.phone.replace(/\s/g, "")}`}
+              href={`tel:${phone.replace(/\s/g, "")}`}
               className="hidden cursor-pointer items-center gap-2 whitespace-nowrap rounded-sm px-2.5 py-2 text-sm font-semibold text-muted transition-colors duration-200 hover:text-fg 2xl:inline-flex"
             >
               <IconPhone size={16} />
-              <span className="tabular-nums">{COMPANY.phone}</span>
+              <span className="tabular-nums">{phone}</span>
             </a>
 
             <ThemeToggle locale={locale} />
@@ -154,9 +160,9 @@ export function SiteHeader({
             </nav>
 
             <div className="space-y-3 border-t border-line px-5 py-5">
-              <a href={`tel:${COMPANY.phone.replace(/\s/g, "")}`} className="btn btn-solid w-full cursor-pointer">
+              <a href={`tel:${phone.replace(/\s/g, "")}`} className="btn btn-solid w-full cursor-pointer">
                 <IconPhone size={16} />
-                {COMPANY.phone}
+                {phone}
               </a>
               <Link href={localePath(locale, "/login")} className="btn btn-primary w-full cursor-pointer">
                 <IconUser size={16} />

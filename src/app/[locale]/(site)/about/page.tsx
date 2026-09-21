@@ -5,6 +5,7 @@ import { pageAlternates } from "@/lib/seo";
 import { getDictionary, resolveLocale, localePath } from "@/i18n";
 import { Reveal } from "@/components/reveal";
 import { IconShield, IconWrench, IconFlag, IconArrowRight } from "@/components/icons";
+import { getCompany } from "@/lib/company";
 import { COMPANY } from "@/lib/utils";
 
 export async function generateMetadata({
@@ -22,6 +23,7 @@ export async function generateMetadata({
 export default async function AboutPage({ params }: { params: Promise<{ locale: string }> }) {
   const locale = resolveLocale((await params).locale);
   const t = getDictionary(locale);
+  const company = await getCompany();
 
   const values = [
     { Icon: IconShield, title: t.about.v1Title, body: t.about.v1Body },
@@ -59,7 +61,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
           <div className="overflow-hidden rounded-sm border border-line bg-surface p-8">
             <Image
               src="/brand/logo.jpg"
-              alt={`${COMPANY.legalName} — Nürburgring Nordschleife`}
+              alt={`${company.legalName} — Nürburgring Nordschleife`}
               width={900}
               height={900}
               className="h-auto w-full object-contain"

@@ -57,25 +57,30 @@ const AVAILABILITY: Record<string, string> = {
 };
 
 /** The dealership itself: what a local search result is built from. */
-export function dealerSchema(locale: string, description: string) {
+export function dealerSchema(
+  locale: string,
+  description: string,
+  /** Resolved contact details; the constants are only the defaults. */
+  company: { legalName: string; shortName: string; phone: string; email: string; street: string; postalCode: string; city: string; countryCode: string },
+) {
   return {
     "@context": "https://schema.org",
     "@type": "AutoDealer",
     "@id": `${COMPANY.siteUrl}/#dealer`,
-    name: COMPANY.legalName,
-    alternateName: COMPANY.shortName,
+    name: company.legalName,
+    alternateName: company.shortName,
     description,
     url: absoluteUrl(locale),
     logo: `${COMPANY.siteUrl}/brand/logo-full.png`,
     image: `${COMPANY.siteUrl}/brand/logo-full.png`,
-    telephone: COMPANY.phone,
-    email: COMPANY.email,
+    telephone: company.phone,
+    email: company.email,
     address: {
       "@type": "PostalAddress",
-      streetAddress: COMPANY.street,
-      postalCode: COMPANY.postalCode,
-      addressLocality: COMPANY.city,
-      addressCountry: COMPANY.countryCode,
+      streetAddress: company.street,
+      postalCode: company.postalCode,
+      addressLocality: company.city,
+      addressCountry: company.countryCode,
     },
     // The showroom is in Germany, but cars are sourced beyond Europe and
     // shipped anywhere, so the served area is not a region.

@@ -2,6 +2,7 @@ import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { SplashScreen } from "@/components/splash-screen";
 import { getDictionary, resolveLocale } from "@/i18n";
+import { getCompany } from "@/lib/company";
 
 export default async function SiteLayout({
   children,
@@ -13,6 +14,8 @@ export default async function SiteLayout({
   const { locale: raw } = await params;
   const locale = resolveLocale(raw);
   const t = getDictionary(locale);
+  // One query for the whole tree; the header and footer both need it.
+  const company = await getCompany();
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -20,6 +23,8 @@ export default async function SiteLayout({
       <SiteHeader
         locale={locale}
         languageLabel={t.common.language}
+        phone={company.phone}
+        shortName={company.shortName}
         nav={{
           items: [
             { href: "/", label: t.nav.home },
@@ -38,7 +43,7 @@ export default async function SiteLayout({
       <main id="main" tabIndex={-1} className="flex-1 outline-none">
         {children}
       </main>
-      <SiteFooter locale={locale} />
+      <SiteFooter locale={locale} company={company} />
     </div>
   );
 }

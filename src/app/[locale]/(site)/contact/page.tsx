@@ -3,6 +3,8 @@ import { pageAlternates } from "@/lib/seo";
 import { getDictionary, resolveLocale } from "@/i18n";
 import { LeadForm } from "@/components/lead-form";
 import { IconPin, IconPhone, IconMail, IconClock } from "@/components/icons";
+import { getCompany } from "@/lib/company";
+import { ConsentMap } from "@/components/consent-map";
 import { COMPANY } from "@/lib/utils";
 
 export async function generateMetadata({
@@ -20,8 +22,7 @@ export async function generateMetadata({
 export default async function ContactPage({ params }: { params: Promise<{ locale: string }> }) {
   const locale = resolveLocale((await params).locale);
   const t = getDictionary(locale);
-
-  const mapSrc = `https://www.google.com/maps?q=${encodeURIComponent(COMPANY.mapsQuery)}&output=embed`;
+  const company = await getCompany();
 
   return (
     <>
@@ -49,12 +50,12 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
                 <IconPin size={19} className="mt-0.5 shrink-0 text-red" />
                 <div>
                   <p className="text-xs uppercase tracking-wider text-subtle">{t.contact.address}</p>
-                  <p className="mt-0.5 font-semibold text-fg">{COMPANY.legalName}</p>
-                  <p className="text-muted">{COMPANY.street}</p>
+                  <p className="mt-0.5 font-semibold text-fg">{company.legalName}</p>
+                  <p className="text-muted">{company.street}</p>
                   <p className="text-muted">
-                    {COMPANY.postalCode} {COMPANY.city}
+                    {company.postalCode} {company.city}
                   </p>
-                  <p className="text-muted">{COMPANY.country}</p>
+                  <p className="text-muted">{company.country}</p>
                 </div>
               </div>
 
@@ -63,10 +64,10 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
                 <div>
                   <p className="text-xs uppercase tracking-wider text-subtle">{t.contact.phone}</p>
                   <a
-                    href={`tel:${COMPANY.phone.replace(/\s/g, "")}`}
+                    href={`tel:${company.phone.replace(/\s/g, "")}`}
                     className="cursor-pointer font-semibold tabular-nums text-fg transition-colors duration-200 hover:text-red"
                   >
-                    {COMPANY.phone}
+                    {company.phone}
                   </a>
                 </div>
               </div>
@@ -76,10 +77,10 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
                 <div className="min-w-0">
                   <p className="text-xs uppercase tracking-wider text-subtle">{t.contact.email}</p>
                   <a
-                    href={`mailto:${COMPANY.email}`}
+                    href={`mailto:${company.email}`}
                     className="cursor-pointer break-all font-semibold text-fg transition-colors duration-200 hover:text-red"
                   >
-                    {COMPANY.email}
+                    {company.email}
                   </a>
                 </div>
               </div>
@@ -107,17 +108,13 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
             </address>
           </div>
 
-          <div className="overflow-hidden rounded-sm border border-line">
-            <iframe
-              src={mapSrc}
-              title={`${COMPANY.legalName} — ${t.contact.findUs}`}
-              width="100%"
-              height="320"
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-              className="block border-0 grayscale-[0.3]"
-            />
-          </div>
+          {/* Held behind a click: embedding it outright sends the visitor's IP
+              to Google before they have agreed to anything. */}
+          <ConsentMap
+            locale={locale}
+            query={company.mapsQuery}
+            title={`${company.legalName} — ${t.contact.findUs}`}
+          />
         </div>
 
         {/* Form */}

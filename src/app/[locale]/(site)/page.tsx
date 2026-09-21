@@ -13,6 +13,7 @@ import {
   IconCheckCircle, IconEuro, IconImage,
 } from "@/components/icons";
 import { BODY_TYPES, label, type Locale as TaxLocale } from "@/lib/taxonomy";
+import { getCompany } from "@/lib/company";
 import { COMPANY } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
@@ -21,6 +22,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   const locale = resolveLocale((await params).locale);
   const tax = locale as TaxLocale;
   const t = getDictionary(locale);
+  const company = await getCompany();
 
   const [featured, stockCount, brands] = await Promise.all([
     getFeaturedVehicles(locale, 6),
@@ -54,7 +56,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
     <>
       {/* The dealership itself: name, address and phone, which is what a
           local search result is assembled from. */}
-      <JsonLd data={dealerSchema(locale, t.meta.description)} />
+      <JsonLd data={dealerSchema(locale, t.meta.description, company)} />
 
       {/* ───────────────────────── Hero ───────────────────────── */}
       <section className="studio relative overflow-hidden">
@@ -304,7 +306,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         <Reveal className="mb-14">
           <p className="eyebrow mb-4">
             <span className="h-px w-10 bg-gold" aria-hidden="true" />
-            {COMPANY.shortName}
+            {company.shortName}
           </p>
           <h2 className="display text-4xl sm:text-5xl">{t.home.processTitle}</h2>
         </Reveal>
@@ -334,7 +336,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                 <IconArrowRight size={17} />
               </Link>
               <a
-                href={`tel:${COMPANY.phone.replace(/\s/g, "")}`}
+                href={`tel:${company.phone.replace(/\s/g, "")}`}
                 className="btn btn-lg cursor-pointer border-white/25 text-white transition-colors duration-200 hover:bg-white/10"
               >
                 {t.cta.callUs}

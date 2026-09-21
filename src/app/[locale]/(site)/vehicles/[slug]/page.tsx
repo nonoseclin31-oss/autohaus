@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getCompany } from "@/lib/company";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
@@ -89,6 +90,7 @@ export default async function VehicleDetailPage({
   const locale = resolveLocale(raw);
   const tax = locale as TaxLocale;
   const t = getDictionary(locale);
+  const company = await getCompany();
 
   const vehicle = await getVehicleBySlug(slug);
   if (!vehicle || !vehicle.published) notFound();
@@ -158,7 +160,7 @@ export default async function VehicleDetailPage({
     { label: t.spec.warranty, value: vehicle.warrantyMonths ? `${vehicle.warrantyMonths} ${t.common.months}` : null },
     { label: t.spec.nextInspection, value: vehicle.nextInspection ? formatDate(vehicle.nextInspection, locale) : null },
     { label: t.spec.vin, value: vehicle.vin },
-    { label: t.spec.location, value: vehicle.location ?? `${COMPANY.postalCode} ${COMPANY.city}` },
+    { label: t.spec.location, value: vehicle.location ?? `${company.postalCode} ${company.city}` },
   ];
 
   const groupedEquipment = Object.keys(EQUIPMENT_GROUPS)
@@ -399,11 +401,11 @@ export default async function VehicleDetailPage({
               ) : null}
 
               <div className="grid grid-cols-2 gap-2">
-                <a href={`tel:${COMPANY.phone.replace(/\s/g, "")}`} className="btn btn-solid btn-sm cursor-pointer">
+                <a href={`tel:${company.phone.replace(/\s/g, "")}`} className="btn btn-solid btn-sm cursor-pointer">
                   <IconPhone size={15} />
                   {t.cta.callUs}
                 </a>
-                <a href={`mailto:${COMPANY.email}?subject=${encodeURIComponent(`${title} — ${vehicle.reference}`)}`} className="btn btn-solid btn-sm cursor-pointer">
+                <a href={`mailto:${company.email}?subject=${encodeURIComponent(`${title} — ${vehicle.reference}`)}`} className="btn btn-solid btn-sm cursor-pointer">
                   <IconMail size={15} />
                   {t.forms.email}
                 </a>

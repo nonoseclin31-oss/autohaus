@@ -2,9 +2,9 @@ import Link from "next/link";
 import { Logo } from "./logo";
 import { IconPin, IconPhone, IconMail, IconClock } from "./icons";
 import { getDictionary, localePath, type Locale } from "@/i18n";
-import { COMPANY } from "@/lib/utils";
+import type { Company } from "@/lib/company";
 
-export function SiteFooter({ locale }: { locale: Locale }) {
+export function SiteFooter({ locale, company }: { locale: Locale; company: Company }) {
   const t = getDictionary(locale);
   const year = new Date().getFullYear();
 
@@ -74,29 +74,29 @@ export function SiteFooter({ locale }: { locale: Locale }) {
             <p className="flex items-start gap-2.5">
               <IconPin size={16} className="mt-0.5 shrink-0 text-red" />
               <span>
-                {COMPANY.legalName}
+                {company.legalName}
                 <br />
-                {COMPANY.street}
+                {company.street}
                 <br />
-                {COMPANY.postalCode} {COMPANY.city}
+                {company.postalCode} {company.city}
               </span>
             </p>
             <p className="flex items-center gap-2.5">
               <IconPhone size={16} className="shrink-0 text-red" />
               <a
-                href={`tel:${COMPANY.phone.replace(/\s/g, "")}`}
+                href={`tel:${company.phone.replace(/\s/g, "")}`}
                 className="cursor-pointer tabular-nums transition-colors duration-200 hover:text-fg"
               >
-                {COMPANY.phone}
+                {company.phone}
               </a>
             </p>
             <p className="flex items-center gap-2.5">
               <IconMail size={16} className="shrink-0 text-red" />
               <a
-                href={`mailto:${COMPANY.email}`}
+                href={`mailto:${company.email}`}
                 className="cursor-pointer break-all transition-colors duration-200 hover:text-fg"
               >
-                {COMPANY.email}
+                {company.email}
               </a>
             </p>
             <p className="flex items-start gap-2.5">
@@ -114,10 +114,10 @@ export function SiteFooter({ locale }: { locale: Locale }) {
       <div className="border-t border-line">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 px-4 py-5 text-xs text-subtle sm:flex-row sm:px-6 lg:px-8">
           <p>
-            © {year} {COMPANY.legalName}. {t.footer.rights}
+            © {year} {company.legalName}. {t.footer.rights}
           </p>
           <p className="tabular-nums">
-            {COMPANY.street} · {COMPANY.postalCode} {COMPANY.city} · {COMPANY.country}
+            {company.street} · {company.postalCode} {company.city} · {company.country}
           </p>
         </div>
       </div>

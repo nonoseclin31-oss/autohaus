@@ -3,6 +3,8 @@ import type { Metadata } from "next";
 import { pageAlternates } from "@/lib/seo";
 import { getDictionary, resolveLocale } from "@/i18n";
 import { IconAlert } from "@/components/icons";
+import { getCompany } from "@/lib/company";
+import { imprintSections, privacySections, termsSections } from "@/lib/legal";
 import { COMPANY } from "@/lib/utils";
 
 const DOCS = ["imprint", "privacy", "terms"] as const;
@@ -40,7 +42,14 @@ export default async function LegalPage({
 
   const locale = resolveLocale(raw);
   const t = getDictionary(locale);
+  const company = await getCompany();
   const title = titleFor(doc as Doc, t);
+  const sections =
+    doc === "imprint"
+      ? imprintSections(company, locale)
+      : doc === "privacy"
+        ? privacySections(company, locale)
+        : termsSections(company, locale);
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-14 sm:px-6 lg:px-8">
@@ -50,25 +59,26 @@ export default async function LegalPage({
       <div className="mt-8 space-y-5 leading-relaxed text-muted">
         <section className="rounded-sm border border-line bg-surface p-5">
           <h2 className="mb-3 text-base font-semibold">
-            {COMPANY.legalName}
+            {company.legalName}
           </h2>
           <address className="space-y-1 not-italic text-sm">
-            <p>{COMPANY.street}</p>
+            <p>{company.street}</p>
             <p>
-              {COMPANY.postalCode} {COMPANY.city}, {COMPANY.country}
+              {company.postalCode} {company.city}, {company.country}
             </p>
-            <p className="tabular-nums">{COMPANY.phone}</p>
-            <p>{COMPANY.email}</p>
+            <p className="tabular-nums">{company.phone}</p>
+            <p>{company.email}</p>
           </address>
         </section>
 
-        {/* These bodies were written straight into the page in English and
-            German, so a French or Chinese reader met a page in neither. They
-            are placeholders either way — the translation carries the same
-            text, it does not make it legal advice. */}
-        {doc === "imprint" ? <p>{t.footer.legalImprintBody}</p> : null}
-        {doc === "privacy" ? <p>{t.footer.legalPrivacyBody}</p> : null}
-        {doc === "terms" ? <p>{t.footer.legalTermsBody}</p> : null}
+        {sections.map((section) => (
+          <section key={section.heading}>
+            <h2 className="mb-2 text-base font-semibold text-fg">{section.heading}</h2>
+            {section.lines.map((line, index) => (
+              <p key={index} className={index ? "mt-2" : undefined}>{line}</p>
+            ))}
+          </section>
+        ))}
 
         <p className="flex items-start gap-2.5 rounded-sm border border-gold/45 bg-gold-wash px-4 py-3 text-sm text-fg">
           <IconAlert size={17} className="mt-0.5 shrink-0 text-bronze" />
