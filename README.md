@@ -37,7 +37,10 @@ until `BLOB_READ_WRITE_TOKEN` is set, so development needs no storage account.
 
 ### Demo accounts
 
-Password for all of them: `Autohaus2026!`
+The seed sets one password for all of them, printed by `npm run seed` when
+it runs. It is a development convenience: change it before the site is
+reachable from the internet, and never publish it — this file is in a
+public repository.
 
 | Email                           | Role          | Can do                                              |
 | ------------------------------- | ------------- | --------------------------------------------------- |

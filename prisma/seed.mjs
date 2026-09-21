@@ -479,7 +479,10 @@ async function main() {
   await prisma.user.deleteMany();
 
   console.log("→ Creating staff accounts…");
-  const password = await bcrypt.hash("Autohaus2026!", 10);
+  // Taken from SEED_PASSWORD so a real deployment never inherits a password
+  // that is written down in a public repository.
+  const plain = process.env.SEED_PASSWORD ?? "Autohaus2026!";
+  const password = await bcrypt.hash(plain, 10);
 
   const admin = await prisma.user.create({
     data: {
@@ -604,7 +607,7 @@ async function main() {
   console.log("  │ sales@autohaus-motion.de         │ Sales advisor    │");
   console.log("  │ viewer@autohaus-motion.de        │ Viewer           │");
   console.log("  └──────────────────────────────────┴──────────────────┘");
-  console.log("  Password for every account: Autohaus2026!\n");
+  console.log(`  Password for every account: ${plain}\n`);
 }
 
 main()
