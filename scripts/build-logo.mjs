@@ -19,7 +19,9 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const SOURCE = path.join(ROOT, "public/brand/logo.jpg");
+// The supplied artwork with its tagline spelling corrected. Built by
+// scripts/fix-logo-tagline.mjs; logo.jpg is kept untouched as the original.
+const SOURCE = path.join(ROOT, "public/brand/logo-source.png");
 const OUT = path.join(ROOT, "public/brand");
 
 // Alpha ramp: fully transparent at/above OPAQUE_MAX, fully opaque at/below INK_MAX.

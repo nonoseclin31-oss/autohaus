@@ -25,11 +25,24 @@ const FOLDER: Record<UploadKind, string> = {
 
 export const MAX_UPLOAD_BYTES = 8 * 1024 * 1024;
 
+/**
+ * What the server will store. Wider than what a browser can display, because
+ * phones hand over HEIC and cameras hand over TIFF: the uploader converts
+ * those to WebP before they get here, and this list is the safety net for the
+ * cases where it cannot (an unusual browser, a file it fails to decode).
+ */
 export const ALLOWED_IMAGE_TYPES: Record<string, string> = {
   "image/jpeg": "jpg",
+  "image/jpg": "jpg",
+  "image/pjpeg": "jpg",
   "image/png": "png",
   "image/webp": "webp",
   "image/avif": "avif",
+  "image/gif": "gif",
+  "image/bmp": "bmp",
+  "image/tiff": "tiff",
+  "image/heic": "heic",
+  "image/heif": "heif",
 };
 
 type R2Bucket = {

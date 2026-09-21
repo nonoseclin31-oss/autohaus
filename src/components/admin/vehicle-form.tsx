@@ -111,6 +111,35 @@ function Toggle({
   );
 }
 
+/**
+ * One section of the form. Declared here, not inside the form component: a
+ * component created during render gets a new identity on every render, so
+ * React would tear down each panel and rebuild it — wiping the photos waiting
+ * to be saved and every field typed so far. Hidden rather than unmounted, so
+ * nothing is lost when switching sections either.
+ */
+function Panel({
+  id,
+  active,
+  children,
+}: {
+  id: string;
+  active: boolean;
+  children: React.ReactNode;
+}) {
+  return (
+    <section
+      id={`panel-${id}`}
+      role="tabpanel"
+      aria-labelledby={`tab-${id}`}
+      hidden={!active}
+      className="space-y-5"
+    >
+      {children}
+    </section>
+  );
+}
+
 function SaveBar({
   idle,
   busy,
@@ -213,18 +242,6 @@ export function VehicleForm({
     });
   }
 
-  const Panel = ({ id, children }: { id: string; children: React.ReactNode }) => (
-    <section
-      id={`panel-${id}`}
-      role="tabpanel"
-      aria-labelledby={`tab-${id}`}
-      hidden={tab !== id}
-      className="space-y-5"
-    >
-      {children}
-    </section>
-  );
-
   return (
     <form action={action} className="grid grid-cols-1 gap-6 lg:grid-cols-[15rem_minmax(0,1fr)]">
       {values.id ? <input type="hidden" name="id" value={values.id} /> : null}
@@ -286,7 +303,7 @@ export function VehicleForm({
         ) : null}
 
         {/* ── Identity ── */}
-        <Panel id="identity">
+        <Panel id="identity" active={tab === "identity"}>
           <div className="grid gap-4 sm:grid-cols-2">
             <Field id="brand" label={t.admin.fBrand} required error={err("brand")}>
               <input
@@ -333,7 +350,7 @@ export function VehicleForm({
         </Panel>
 
         {/* ── Classification ── */}
-        <Panel id="classification">
+        <Panel id="classification" active={tab === "classification"}>
           <div className="grid gap-4 sm:grid-cols-2">
             <Field id="bodyType" label={t.vehicles.bodyType} required>
               <Select id="bodyType" name="bodyType" defaultValue={values.bodyType ?? "SEDAN"}
@@ -351,7 +368,7 @@ export function VehicleForm({
         </Panel>
 
         {/* ── Powertrain ── */}
-        <Panel id="powertrain">
+        <Panel id="powertrain" active={tab === "powertrain"}>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <Field id="fuel" label={t.spec.fuel} required>
               <Select id="fuel" name="fuel" defaultValue={values.fuel ?? "PETROL"} options={optionsFor(FUELS, tax)} />
@@ -392,7 +409,7 @@ export function VehicleForm({
         </Panel>
 
         {/* ── Energy ── */}
-        <Panel id="energy">
+        <Panel id="energy" active={tab === "energy"}>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <Field id="consumptionCombined" label={`${t.spec.consumptionCombined} (l/100km)`}>
               <Num id="consumptionCombined" name="consumptionCombined" min={0} max={40} step={0.1}
@@ -434,7 +451,7 @@ export function VehicleForm({
         </Panel>
 
         {/* ── Body ── */}
-        <Panel id="body">
+        <Panel id="body" active={tab === "body"}>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <Field id="doors" label={t.spec.doors}>
               <Num id="doors" name="doors" min={1} max={7} step={1} defaultValue={values.doors ?? ""} />
@@ -462,7 +479,7 @@ export function VehicleForm({
         </Panel>
 
         {/* ── History ── */}
-        <Panel id="history">
+        <Panel id="history" active={tab === "history"}>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <Field id="mileage" label={`${t.spec.mileage} (${t.common.km})`} required>
               <Num id="mileage" name="mileage" min={0} max={2000000} step={100} defaultValue={values.mileage ?? 0} />
@@ -494,7 +511,7 @@ export function VehicleForm({
         </Panel>
 
         {/* ── Pricing ── */}
-        <Panel id="pricing">
+        <Panel id="pricing" active={tab === "pricing"}>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <Field id="price" label={t.admin.fPrice} required error={err("price")}>
               <Num id="price" name="price" required min={0} max={100000000} step={100} defaultValue={values.price ?? ""} />
@@ -517,7 +534,7 @@ export function VehicleForm({
         </Panel>
 
         {/* ── Rental ── */}
-        <Panel id="rental">
+        <Panel id="rental" active={tab === "rental"}>
           <label className="flex cursor-pointer items-start gap-3 rounded-sm border border-gold/45 bg-gold-wash p-4 transition-colors duration-200">
             <input
               type="checkbox" name="rentalAvailable" checked={rentalOn}
@@ -587,7 +604,7 @@ export function VehicleForm({
         </Panel>
 
         {/* ── Equipment ── */}
-        <Panel id="equipment">
+        <Panel id="equipment" active={tab === "equipment"}>
           <p className="text-sm text-muted">
             <strong className="font-semibold tabular-nums">{equipment.size}</strong>{" "}
             {t.admin.equipmentSelected}
@@ -635,7 +652,7 @@ export function VehicleForm({
         </Panel>
 
         {/* ── Media ── */}
-        <Panel id="media">
+        <Panel id="media" active={tab === "media"}>
           <ImageUploader locale={locale} initial={values.images ?? []} />
           <Field id="videoUrl" label={t.admin.fVideoUrl}>
             <Text id="videoUrl" name="videoUrl" type="url" defaultValue={values.videoUrl ?? ""} maxLength={300}
@@ -644,7 +661,7 @@ export function VehicleForm({
         </Panel>
 
         {/* ── Content (multilingual) ── */}
-        <Panel id="content">
+        <Panel id="content" active={tab === "content"}>
           <p className="field-help">{t.admin.contentHelp}</p>
 
           <div role="tablist" className="flex flex-wrap gap-1.5 border-b border-line pb-3">
@@ -698,7 +715,7 @@ export function VehicleForm({
         </Panel>
 
         {/* ── Publication ── */}
-        <Panel id="publication">
+        <Panel id="publication" active={tab === "publication"}>
           <fieldset>
             <legend className="label">{t.common.status}</legend>
             <p className="field-help mb-3">{t.admin.statusHelp}</p>

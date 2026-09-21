@@ -13,11 +13,18 @@
 const MAX_EDGE = 2000;
 const QUALITY = 0.82;
 
+/** Formats every browser can draw. Anything else has to be converted. */
+const DISPLAYABLE = new Set(["image/jpeg", "image/png", "image/webp", "image/avif", "image/gif"]);
+
 export async function shrinkImage(file: File): Promise<File> {
   if (!file.type.startsWith("image/")) return file;
-  // Leave small files and vector/animated formats alone.
-  if (file.size < 300 * 1024) return file;
   if (typeof createImageBitmap !== "function" || typeof document === "undefined") return file;
+
+  // A phone photo arrives as HEIC and a camera card as TIFF; neither renders in
+  // a browser, so those are converted however small they are. Formats that do
+  // render are only touched when there is something to gain.
+  const mustConvert = !DISPLAYABLE.has(file.type);
+  if (!mustConvert && file.size < 300 * 1024) return file;
 
   try {
     const bitmap = await createImageBitmap(file);
@@ -25,7 +32,7 @@ export async function shrinkImage(file: File): Promise<File> {
     const scale = Math.min(1, MAX_EDGE / Math.max(width, height));
 
     // Already small enough and already efficiently encoded — leave it.
-    if (scale === 1 && file.type === "image/webp") {
+    if (!mustConvert && scale === 1 && file.type === "image/webp") {
       bitmap.close();
       return file;
     }
@@ -45,7 +52,10 @@ export async function shrinkImage(file: File): Promise<File> {
     const blob = await new Promise<Blob | null>((resolve) =>
       canvas.toBlob(resolve, "image/webp", QUALITY),
     );
-    if (!blob || blob.size >= file.size) return file;
+    // A conversion that grew the file is still worth keeping when the original
+    // could not be displayed at all.
+    if (!blob) return file;
+    if (!mustConvert && blob.size >= file.size) return file;
 
     const name = file.name.replace(/\.[^.]+$/, "") + ".webp";
     return new File([blob], name, { type: "image/webp", lastModified: Date.now() });

@@ -54,7 +54,16 @@ export function ImageUploader({
 
       setImages((prev) => [...prev, ...result.uploaded.map((u) => ({ url: u.url, alt: null }))]);
       if (result.rejected.length) {
-        setError(result.rejected.map((r) => `${r.name} (${r.reason})`).join(", "));
+        const why: Record<string, string> = {
+          type: t.admin.uploadBadType,
+          size: t.admin.uploadTooBig,
+          storage: t.admin.uploadFailed,
+        };
+        setError(
+          result.rejected
+            .map((r) => `${r.name} — ${why[r.reason] ?? t.common.error}`)
+            .join(" · "),
+        );
       }
     } catch {
       setError(t.common.error);
@@ -121,7 +130,9 @@ export function ImageUploader({
         <input
           ref={inputRef}
           type="file"
-          accept="image/jpeg,image/png,image/webp,image/avif"
+          // Any image the device offers, including a phone's HEIC; the
+          // browser converts what it can before uploading.
+          accept="image/*"
           multiple
           className="sr-only"
           onChange={(e) => e.target.files && upload(e.target.files)}
