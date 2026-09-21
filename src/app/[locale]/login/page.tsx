@@ -35,7 +35,13 @@ export default async function LoginPage({ params }: { params: Promise<{ locale: 
         <LanguageSwitcher locale={locale} label={t.common.language} />
       </header>
 
-      <main className="relative flex flex-1 items-center justify-center px-4 py-10">
+      {/* Same id and tabIndex as the site layout's main: the skip link in the
+          header points here, and without them it had nowhere to go. */}
+      <main
+        id="main"
+        tabIndex={-1}
+        className="relative flex flex-1 items-center justify-center px-4 py-10 outline-none"
+      >
         <div className="w-full max-w-md">
           <div className="rounded-sm border border-line bg-surface p-7 shadow-[var(--shadow-lg)] sm:p-9">
             <h1 className="display text-3xl">{t.auth.signIn}</h1>
