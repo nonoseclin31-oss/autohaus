@@ -19,12 +19,15 @@
 
   // Uploaded vehicle photos and avatars. Create it once with:
   //   npx wrangler r2 bucket create autohaus-motion-media
-  "r2_buckets": [
-    {
-      "binding": "MEDIA",
-      "bucket_name": "autohaus-motion-media"
-    }
-  ]
+  // Re-enable once R2 is activated in the Cloudflare dashboard. Until then
+  // the site works fully except uploading NEW photos; the seeded images are
+  // static assets and still display.
+  // "r2_buckets": [
+  //   {
+  //     "binding": "MEDIA",
+  //     "bucket_name": "autohaus-motion-media"
+  //   }
+  // ]
 
   // DATABASE_URL, AUTH_SECRET and R2_PUBLIC_URL are secrets, not vars.
   // Set them with `npx wrangler secret put <NAME>` — never in this file,

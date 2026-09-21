@@ -1,9 +1,10 @@
 /**
- * Fail fast on bad configuration.
+ * Configuration, validated on first use rather than on import.
  *
- * A missing AUTH_SECRET in production means every session cookie is signed
- * with nothing; a missing DATABASE_URL means the first request 500s. Both are
- * far cheaper to catch at boot than in the wild.
+ * Laziness matters: the build runs on the host's CI, where no secrets are
+ * present. Validating at module load would crash `next build` before a single
+ * page is rendered. Reading through a getter keeps the guarantees at runtime —
+ * where they matter — without coupling the build to the secrets.
  */
 
 function required(name: string): string {
@@ -11,25 +12,31 @@ function required(name: string): string {
   if (!value) {
     throw new Error(
       `Missing environment variable ${name}. ` +
-        `Copy .env.example to .env and fill it in, or set it in your host's dashboard.`,
+        `Set it in your host's dashboard, or copy .env.example to .env locally.`,
     );
   }
   return value;
 }
 
-const isProduction = process.env.NODE_ENV === "production";
-
 export const env = {
-  databaseUrl: required("DATABASE_URL"),
-  authSecret: (() => {
+  get databaseUrl(): string {
+    return required("DATABASE_URL");
+  },
+
+  get authSecret(): string {
     const secret = required("AUTH_SECRET");
-    if (isProduction && secret.length < 32) {
-      throw new Error("AUTH_SECRET must be at least 32 characters in production.");
-    }
-    if (isProduction && secret.includes("change-in-production")) {
-      throw new Error("AUTH_SECRET is still the development placeholder. Generate a new one.");
+    if (this.isProduction) {
+      if (secret.length < 32) {
+        throw new Error("AUTH_SECRET must be at least 32 characters in production.");
+      }
+      if (secret.includes("change-in-production")) {
+        throw new Error("AUTH_SECRET is still the development placeholder. Generate a new one.");
+      }
     }
     return secret;
-  })(),
-  isProduction,
+  },
+
+  get isProduction(): boolean {
+    return process.env.NODE_ENV === "production";
+  },
 };
