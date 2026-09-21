@@ -38,3 +38,13 @@ yarn-error.log*
 # uploaded avatars
 /public/avatars/*
 !/public/avatars/.gitkeep
+
+# cloudflare / opennext build output
+/.open-next/
+/.wrangler/
+/.wrangler-dryrun/
+cloudflare-env.d.ts
+
+# local wrangler secrets
+.dev.vars
+.dev.vars.*

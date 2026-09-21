@@ -4,6 +4,9 @@ Vehicle sales and long-term rental site for **Autohaus Motion GmbH** (Bundesstra
 Public catalogue in six languages, plus a full back office for adding vehicles, managing sale
 statuses, handling enquiries and assigning staff roles.
 
+> Hosting: **Cloudflare Workers** — see [Deploying](#deploying-free-commercial-use-allowed).
+> Requires **Node 22+** (`nvm use`).
+
 ## Stack
 
 | Layer     | Choice                                           |
@@ -11,9 +14,9 @@ statuses, handling enquiries and assigning staff roles.
 | Framework | Next.js 15 (App Router, React 19, server actions) |
 | Language  | TypeScript                                        |
 | Styling   | Tailwind CSS v4 with brand tokens in `globals.css` |
-| Database  | PostgreSQL via Prisma 6                           |
+| Database  | PostgreSQL (Neon) via Prisma 6 + driver adapter    |
 | Auth      | JWT session cookie (`jose`) + bcrypt password hashes |
-| Uploads   | Vercel Blob in production, local filesystem in development |
+| Uploads   | Cloudflare R2 in production, local filesystem in development |
 
 ## Getting started
 
@@ -162,121 +165,124 @@ src/
 - [ ] Replace the seeded placeholder graphics with real photography
 - [ ] Set the real phone number and email in `COMPANY` (`src/lib/utils.ts`)
 
-## Deploying (free)
+## Deploying (free, commercial use allowed)
 
-The app needs a Node host, a Postgres database and somewhere to keep uploaded
-images. This combination is free and deploys on every `git push`:
+Runs on **Cloudflare Workers**, whose free plan permits commercial use — unlike
+Vercel's Hobby plan.
 
-| Piece | Service | Cost |
+| Piece | Service | Free tier |
 | --- | --- | --- |
-| Hosting | Vercel | free (Hobby) |
+| Hosting | Cloudflare Workers | 100k requests/day |
 | Database | Neon Postgres | free tier |
-| Image uploads | Vercel Blob | free allowance |
-| URL | `your-project.vercel.app` | free, HTTPS included |
+| Image uploads | Cloudflare R2 | 10 GB storage, no egress fees |
+| URL | `autohaus-motion.<you>.workers.dev` | free, HTTPS included |
 
-> **Before going commercial:** Vercel's Hobby plan is for non-commercial use.
-> It is fine for testing and for showing the client. A live dealership site
-> needs Pro (about $20/month). If you want free *and* commercially permitted,
-> Cloudflare Workers or Render are the alternatives — Render's free tier sleeps
-> after inactivity, so the first visit takes roughly 50 seconds.
+Measured on this app: **1.71 MB gzipped**, against the free plan's 3 MB Worker
+limit — it fits with room to spare.
 
-### 1. Push to GitHub
+### Requirements
 
-Create an empty repository (no README, no .gitignore), then:
+Wrangler needs **Node 22+**. The repo pins it in `.nvmrc`:
 
 ```bash
-git remote add origin https://github.com/<you>/autohaus-motion.git
-git branch -M main
-git push -u origin main
+nvm use        # picks up .nvmrc
 ```
 
-`.env`, `prisma/dev.db`, `public/uploads` and `public/avatars` are all ignored,
-so no secrets or local data go up.
+### 1. Database
 
-### 2. Import into Vercel
+Create a free Postgres at [neon.com](https://neon.com) and copy the **pooled**
+connection string. Then create the schema and the first accounts:
 
-At [vercel.com/new](https://vercel.com/new), import the repository. Vercel
-detects Next.js on its own — leave the build settings alone. The first deploy
-will fail because there is no database yet; that is expected.
+```bash
+echo 'DATABASE_URL="<your neon url>"' >> .env
+npm run db:deploy    # creates every table
+npm run db:seed      # demo catalogue + staff accounts
+```
 
-### 3. Add the database
+### 2. Cloudflare account and bucket
 
-In the project's **Storage** tab, add **Neon** from the marketplace and pick the
-free plan. Vercel sets `DATABASE_URL` for you.
+```bash
+npx wrangler login
+npx wrangler r2 bucket create autohaus-motion-media
+```
 
-### 4. Add image storage
+Then in the Cloudflare dashboard open that bucket → **Settings** → enable
+**Public Development URL**, and copy the `https://pub-….r2.dev` address. That
+is what serves the vehicle photos.
 
-Same tab: create a **Blob** store. Vercel sets `BLOB_READ_WRITE_TOKEN`.
-Its presence is what switches uploads from the local disk to Blob — no code
-change needed.
+### 3. Secrets
 
-### 5. Add the auth secret
+Never in `wrangler.jsonc` — that file is committed.
 
-**Settings → Environment Variables**, add `AUTH_SECRET` for all environments:
+```bash
+npx wrangler secret put DATABASE_URL     # the Neon pooled URL
+npx wrangler secret put AUTH_SECRET      # see below
+npx wrangler secret put R2_PUBLIC_URL    # the pub-….r2.dev address
+```
+
+Generate a fresh `AUTH_SECRET` — not the one from your `.env`:
 
 ```bash
 node -e "console.log(require('crypto').randomBytes(32).toString('base64url'))"
 ```
 
-Use a *different* value from your local one. The app refuses to boot in
-production with a short or placeholder secret.
-
-### 6. Redeploy
-
-**Deployments → Redeploy**. The build runs `prisma migrate deploy`, which
-creates every table on the fresh database. The site comes up at
-`your-project.vercel.app`.
-
-### 7. Create the first administrator
-
-The production database is empty — no users, no vehicles. Seed it once, from
-your machine, pointing at the production database:
+### 4. Deploy
 
 ```bash
-DATABASE_URL="<the Neon URL from Vercel>" npm run db:seed
+npm run cf:deploy
 ```
 
-Then **sign in and change the password immediately** — the seeded credentials
-are published in this README.
+The site comes up at `autohaus-motion.<your-subdomain>.workers.dev`.
+**Sign in and change the seeded password immediately** — those credentials are
+published in this README.
 
-> `db:seed` also inserts ten demo vehicles. To start empty instead, seed first,
-> then delete them from the back office.
-
-### Working on the site after it is live
+### Everyday workflow
 
 ```bash
-# edit, check, ship
-npm run dev
+npm run dev          # normal Next dev server, fast
 npm run typecheck && npm run lint
-git add -A && git commit -m "..." && git push
+node scripts/audit-locales.mjs    # cross-locale layout check
+npm run cf:preview   # run the real Worker locally before shipping
+npm run cf:deploy    # ship
 ```
 
-Every push to `main` deploys automatically. Pushes to any other branch get
-their own preview URL, which is the safe way to try a change before it is
-public.
+`cf:preview` runs the actual Workers runtime, which is the only way to catch
+Workers-specific problems before they are live. Use it whenever you touch
+Prisma, uploads, or anything Node-flavoured.
 
-Schema changes need a migration committed alongside the code:
+Schema changes:
 
 ```bash
-npm run db:migrate -- --name what_changed
+npm run db:migrate -- --name what_changed   # local, writes a migration
+npm run db:deploy                           # apply to production
 ```
 
-### Using your own domain
+### Your own domain
 
 `autohaus-motion.de` is already registered (since 2022, nameservers at
-All-Inkl) — so it does not need buying, only pointing. In Vercel:
-**Settings → Domains → Add**, then create the DNS records it shows you at your
-current DNS provider. Vercel issues the HTTPS certificate automatically.
+All-Inkl), so it needs pointing, not buying. In the Cloudflare dashboard:
+**Workers & Pages → your worker → Settings → Domains & Routes → Add custom
+domain**.
 
-Point a subdomain such as `neu.autohaus-motion.de` at it first. That way the
-existing site keeps serving until you are ready to switch the apex over.
+Point a subdomain such as `neu.autohaus-motion.de` at it first, so the existing
+site keeps serving until you are ready to move the apex.
 
-### Local development after this change
+### Notes on the Cloudflare setup
 
-Local dev now needs a Postgres URL too, since Prisma cannot switch provider per
-environment. Simplest: create a second free Neon database (or a Neon branch)
-for development and put its URL in `.env`. Uploads stay on your local disk —
-`BLOB_READ_WRITE_TOKEN` is only set in production.
+**Prisma runs on its WASM engine.** Workers cannot open a raw TCP socket, so
+queries go through Neon's serverless driver via `@prisma/adapter-neon`.
+`serverExternalPackages` in `next.config.ts` keeps Next from bundling Prisma
+with Node export conditions, which would otherwise pull in the native query
+engine and fail at runtime.
+
+**Images are served as uploaded.** Cloudflare's free plan has no image resizing
+and next/image's optimiser cannot run in Workers, so `images.unoptimized` is
+on. To compensate, the uploader downscales to 2000px and re-encodes to WebP
+*in the browser* before anything is sent (`src/lib/image-resize.ts`). A 6 MB
+phone photo becomes a few hundred KB, which keeps both R2 and page weight down.
+
+**Uploads need no account locally.** `src/lib/storage.ts` writes to `public/`
+when the R2 binding is absent, so `npm run dev` works with nothing configured.
 
 ## Project skills
 

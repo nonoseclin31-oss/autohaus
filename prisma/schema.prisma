@@ -1,6 +1,9 @@
 // Autohaus Motion GmbH — data model
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  // Required to run Prisma on Cloudflare Workers: the Workers runtime has no
+  // raw TCP for Postgres, so queries go through the Neon serverless driver.
+  previewFeatures = ["driverAdapters"]
 }
 
 datasource db {

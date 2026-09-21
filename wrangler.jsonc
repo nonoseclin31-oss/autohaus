@@ -1,0 +1,32 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "autohaus-motion",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2026-09-01",
+
+  // nodejs_compat gives the Worker node:crypto, node:buffer and friends, which
+  // Next, Prisma and bcryptjs all need. Without it the build fails.
+  "compatibility_flags": ["nodejs_compat"],
+
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+
+  "observability": {
+    "enabled": true
+  },
+
+  // Uploaded vehicle photos and avatars. Create it once with:
+  //   npx wrangler r2 bucket create autohaus-motion-media
+  "r2_buckets": [
+    {
+      "binding": "MEDIA",
+      "bucket_name": "autohaus-motion-media"
+    }
+  ]
+
+  // DATABASE_URL, AUTH_SECRET and R2_PUBLIC_URL are secrets, not vars.
+  // Set them with `npx wrangler secret put <NAME>` — never in this file,
+  // which is committed.
+}

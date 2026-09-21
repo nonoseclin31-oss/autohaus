@@ -6,6 +6,7 @@ import Image from "next/image";
 import { updateProfile, type ProfileState } from "@/app/actions/profile";
 import { getDictionary, LOCALE_META, LOCALES, type Locale } from "@/i18n";
 import { ROLES, label, type Locale as TaxLocale } from "@/lib/taxonomy";
+import { shrinkImage } from "@/lib/image-resize";
 import {
   IconUser, IconUpload, IconTrash, IconSpinner, IconCheck,
   IconAlert, IconCheckCircle, IconKey,
@@ -48,7 +49,7 @@ export function ProfileForm({ locale, user }: { locale: Locale; user: ProfileVal
     try {
       const body = new FormData();
       body.append("kind", "avatar");
-      body.append("files", file);
+      body.append("files", await shrinkImage(file));
 
       const response = await fetch("/api/upload", { method: "POST", body });
       if (!response.ok) throw new Error(String(response.status));

@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import Image from "next/image";
 import { getDictionary, type Locale } from "@/i18n";
 import { IconUpload, IconTrash, IconStar, IconSpinner, IconAlert, IconChevronLeft, IconChevronRight } from "../icons";
+import { shrinkAll } from "@/lib/image-resize";
 import { cn } from "@/lib/utils";
 
 export type UploadedImage = { url: string; alt?: string | null };
@@ -37,8 +38,11 @@ export function ImageUploader({
     setError(null);
 
     try {
+      // Downscale in the browser first: Cloudflare's free plan does no image
+      // resizing, so an unshrunk phone photo would be served at full size.
+      const prepared = await shrinkAll(list);
       const body = new FormData();
-      for (const file of list) body.append("files", file);
+      for (const file of prepared) body.append("files", file);
 
       const response = await fetch("/api/upload", { method: "POST", body });
       if (!response.ok) throw new Error(String(response.status));
