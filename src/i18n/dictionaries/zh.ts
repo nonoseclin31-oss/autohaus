@@ -329,6 +329,12 @@ const zh: Dictionary = {
     imprint: "公司资料",
     privacy: "隐私政策",
     terms: "条款与条件",
+    // Placeholder bodies for the legal pages. They were hardcoded in English
+    // and German, so a French or Chinese reader met a page in neither.
+    legalImprintBody: "商业登记及登记法院、增值税识别号与公司管理层信息须在此填写。",
+    legalPrivacyBody: "通过本网站表单提交的数据——姓名、电子邮箱、电话号码与留言——仅用于处理该项咨询，并只提供给负责跟进的销售顾问。这些数据绝不出售，也不会为营销目的转交第三方。",
+    legalTermsBody: "本网站展示的车辆信息、价格与库存状况仅供参考，不构成具有约束力的要约。买卖或租赁关系须经双方签署书面合同后方告成立。",
+    legalNotice: "占位文本。本页须在网站投入商业使用前由法律顾问补充并审核——德国法律（TMG §5、DSGVO）对其内容有强制规定。",
     cookies: "Cookie 设置",
   },
   auth: {

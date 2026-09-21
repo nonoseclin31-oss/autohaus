@@ -62,37 +62,17 @@ export default async function LegalPage({
           </address>
         </section>
 
-        {doc === "imprint" ? (
-          <>
-            <p>
-              {COMPANY.legalName} — Handelsregister / Registergericht, USt-IdNr. und
-              Geschäftsführung sind hier einzutragen.
-            </p>
-          </>
-        ) : null}
-
-        {doc === "privacy" ? (
-          <p>
-            Data submitted through the enquiry forms on this website (name, email address, phone number
-            and message) is stored solely to process the enquiry and is shared only with the sales
-            advisor handling it. It is never sold or passed to third parties for marketing.
-          </p>
-        ) : null}
-
-        {doc === "terms" ? (
-          <p>
-            Vehicle listings, prices and availability shown on this website are indicative and do not
-            constitute a binding offer. A sale or rental agreement is concluded only once a written
-            contract has been signed by both parties.
-          </p>
-        ) : null}
+        {/* These bodies were written straight into the page in English and
+            German, so a French or Chinese reader met a page in neither. They
+            are placeholders either way — the translation carries the same
+            text, it does not make it legal advice. */}
+        {doc === "imprint" ? <p>{t.footer.legalImprintBody}</p> : null}
+        {doc === "privacy" ? <p>{t.footer.legalPrivacyBody}</p> : null}
+        {doc === "terms" ? <p>{t.footer.legalTermsBody}</p> : null}
 
         <p className="flex items-start gap-2.5 rounded-sm border border-gold/45 bg-gold-wash px-4 py-3 text-sm text-fg">
           <IconAlert size={17} className="mt-0.5 shrink-0 text-bronze" />
-          <span>
-            Placeholder text. This page must be completed and reviewed by legal counsel before the
-            site goes live — German law (TMG §5, DSGVO) sets mandatory content for this page.
-          </span>
+          <span>{t.footer.legalNotice}</span>
         </p>
       </div>
     </div>

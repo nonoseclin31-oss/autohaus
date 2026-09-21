@@ -327,6 +327,12 @@ const en = {
     imprint: "Imprint",
     privacy: "Privacy policy",
     terms: "Terms & conditions",
+    // Placeholder bodies for the legal pages. They were hardcoded in English
+    // and German, so a French or Chinese reader met a page in neither.
+    legalImprintBody: "Commercial register and registering court, VAT identification number and managing directors are to be entered here.",
+    legalPrivacyBody: "Data submitted through the enquiry forms on this website — name, email address, telephone number and message — is stored solely to process the enquiry and is shared only with the sales advisor handling it. It is never sold, nor passed to third parties for marketing.",
+    legalTermsBody: "The listings, prices and availability shown on this website are indicative and do not constitute a binding offer. A sale or rental agreement is concluded only once a written contract has been signed by both parties.",
+    legalNotice: "Placeholder text. This page must be completed and reviewed by legal counsel before the site is used commercially — German law (TMG §5, DSGVO) sets mandatory content for it.",
     cookies: "Cookie settings",
   },
   auth: {

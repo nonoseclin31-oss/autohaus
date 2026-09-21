@@ -329,6 +329,12 @@ const de: Dictionary = {
     imprint: "Impressum",
     privacy: "Datenschutzerklärung",
     terms: "AGB",
+    // Placeholder bodies for the legal pages. They were hardcoded in English
+    // and German, so a French or Chinese reader met a page in neither.
+    legalImprintBody: "Handelsregister und Registergericht, Umsatzsteuer-Identifikationsnummer sowie Geschäftsführung sind hier einzutragen.",
+    legalPrivacyBody: "Die über die Formulare dieser Website übermittelten Daten — Name, E-Mail-Adresse, Telefonnummer und Nachricht — werden ausschließlich zur Bearbeitung der Anfrage gespeichert und nur an den zuständigen Verkaufsberater weitergegeben. Sie werden weder verkauft noch zu Werbezwecken an Dritte übermittelt.",
+    legalTermsBody: "Die auf dieser Website gezeigten Angebote, Preise und Verfügbarkeiten sind unverbindlich und stellen kein bindendes Angebot dar. Ein Kauf- oder Mietvertrag kommt erst mit beiderseitiger schriftlicher Unterzeichnung zustande.",
+    legalNotice: "Platzhaltertext. Diese Seite muss vor der gewerblichen Nutzung der Website von einem Rechtsbeistand vervollständigt und geprüft werden — das deutsche Recht (TMG §5, DSGVO) schreibt den Inhalt zwingend vor.",
     cookies: "Cookie-Einstellungen",
   },
   auth: {

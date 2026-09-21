@@ -329,6 +329,12 @@ const es: Dictionary = {
     imprint: "Aviso legal",
     privacy: "Política de privacidad",
     terms: "Términos y condiciones",
+    // Placeholder bodies for the legal pages. They were hardcoded in English
+    // and German, so a French or Chinese reader met a page in neither.
+    legalImprintBody: "El registro mercantil y el tribunal de registro, el número de identificación fiscal y la gerencia deben indicarse aquí.",
+    legalPrivacyBody: "Los datos enviados a través de los formularios de este sitio — nombre, dirección de correo electrónico, número de teléfono y mensaje — se conservan únicamente para tramitar la solicitud y solo se comunican al asesor que la gestiona. No se venden ni se ceden a terceros con fines comerciales.",
+    legalTermsBody: "Los anuncios, precios y disponibilidades que figuran en este sitio son orientativos y no constituyen una oferta en firme. La venta o el alquiler solo se perfecciona tras la firma de un contrato escrito por ambas partes.",
+    legalNotice: "Texto provisional. Esta página debe completarse y ser revisada por un asesor jurídico antes de explotar el sitio comercialmente: la legislación alemana (TMG §5, DSGVO) fija su contenido obligatorio.",
     cookies: "Configuración de cookies",
   },
   auth: {
