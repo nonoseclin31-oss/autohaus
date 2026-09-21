@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { getDictionary, formatCurrency, formatNumber, type Locale } from "@/i18n";
+import { getDictionary, formatCurrency, formatCurrencyPrecise, formatNumber, type Locale } from "@/i18n";
 import { DURATIONS, MILEAGES, compare, type Formula } from "@/lib/finance";
 import { LeadForm } from "./lead-form";
 import { cn } from "@/lib/utils";
@@ -237,7 +237,7 @@ export function FinanceSimulator({
           ) : null}
           <Row
             label={t.rental.rowExcessKm}
-            value={`${formatCurrency(result.excessKmRate, locale)}/${t.common.km}`}
+            value={`${formatCurrencyPrecise(result.excessKmRate, locale)}/${t.common.km}`}
           />
           <Row
             label={t.rental.rowTotal}

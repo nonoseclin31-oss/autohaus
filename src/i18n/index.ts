@@ -67,6 +67,20 @@ export function formatCurrency(value: number | null | undefined, locale: Locale)
   }).format(value);
 }
 
+/**
+ * Money that is only meaningful to the cent — a per-kilometre rate, where
+ * whole euros would round 0,08 € to nothing.
+ */
+export function formatCurrencyPrecise(value: number | null | undefined, locale: Locale): string {
+  if (value === null || value === undefined) return "—";
+  return new Intl.NumberFormat(INTL_LOCALE[locale], {
+    style: "currency",
+    currency: "EUR",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(value);
+}
+
 export function formatNumber(value: number | null | undefined, locale: Locale, opts?: Intl.NumberFormatOptions): string {
   if (value === null || value === undefined) return "—";
   return new Intl.NumberFormat(INTL_LOCALE[locale], opts).format(value);
