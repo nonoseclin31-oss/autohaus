@@ -4,6 +4,7 @@ import { useActionState, useEffect, useRef, useState } from "react";
 import { useFormStatus } from "react-dom";
 import Link from "next/link";
 import { saveVehicle, type VehicleFormState } from "@/app/actions/vehicles";
+import { TemplateNameField } from "@/components/admin/template-picker";
 import { ImageUploader, type UploadedImage } from "./image-uploader";
 import { getDictionary, localePath, LOCALE_META, LOCALES, type Locale } from "@/i18n";
 import {
@@ -171,17 +172,21 @@ function SaveBar({
   cancelHref,
   cancel,
   draft,
+  template,
 }: {
   idle: string;
   busy: string;
   cancelHref: string;
   cancel: string;
   draft: string;
+  template: React.ReactNode;
 }) {
   const { pending } = useFormStatus();
   return (
     <div className="sticky bottom-0 z-20 -mx-4 mt-8 flex flex-wrap items-center justify-end gap-3 border-t border-line bg-canvas/90 px-4 py-3 backdrop-blur-xl sm:-mx-6 sm:px-6">
       <Link href={cancelHref} className="btn btn-ghost cursor-pointer">{cancel}</Link>
+      {/* Keeps these values for the next car of the same kind. */}
+      {template}
       {/* Saves what is there and keeps the listing off the public site, so it
           can be picked up later — by whoever gets to it first. */}
       <button
@@ -244,6 +249,7 @@ export function VehicleForm({
   const err = (field: string) => (state.fieldErrors?.[field] ? t.common.required : undefined);
 
   const missing = Object.keys(state.fieldErrors ?? {});
+  const templateNameMissing = state.message === "template-name";
 
   const formRef = useRef<HTMLFormElement>(null);
   const submitted = useRef<FormData | null>(null);
@@ -384,9 +390,11 @@ export function VehicleForm({
             <span>
               {state.message === "forbidden"
                 ? t.admin.permDenied
-                : missing.length
-                  ? `${t.admin.missingFields} ${missing.map((f) => FIELD_LABEL(t, f)).join(", ")}`
-                  : t.common.error}
+                : templateNameMissing
+                  ? t.admin.errTemplateName
+                  : missing.length
+                    ? `${t.admin.missingFields} ${missing.map((f) => FIELD_LABEL(t, f)).join(", ")}`
+                    : t.common.error}
             </span>
           </p>
         ) : null}
@@ -865,6 +873,7 @@ export function VehicleForm({
           cancel={t.common.cancel}
           cancelHref={localePath(locale, "/admin/vehicles")}
           draft={t.admin.saveDraft}
+          template={<TemplateNameField locale={locale} saved={state.templateSaved} />}
         />
       </div>
     </form>

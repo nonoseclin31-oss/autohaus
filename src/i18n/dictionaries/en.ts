@@ -464,6 +464,16 @@ const en = {
     // permissions
     permDenied: "Your role does not allow this action.",
     missingFields: "Nothing was saved. Still missing:",
+    // Reusable listing presets. Photos belong to one car, so they are never
+    // part of one.
+    saveTemplate: "Save as template",
+    useTemplate: "Start from a template",
+    searchTemplates: "Search by name, make or model…",
+    noTemplateMatch: "No template matches.",
+    templateSaved: "Template saved",
+    templateNamePlaceholder: "e.g. Audi RS3 Sportback",
+    templateApplied: "Filled in from a template — photos are not included.",
+    errTemplateName: "Give the template a name.",
   },
   profile: {
     title: "My profile",

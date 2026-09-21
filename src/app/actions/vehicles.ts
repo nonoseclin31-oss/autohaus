@@ -10,11 +10,14 @@ import {
   slugify, generateReference, toInt, toFloat, toStr, toBool, toDate, parseJsonArray,
 } from "@/lib/utils";
 import { resolveLocale } from "@/i18n";
+import { payloadFromForm } from "@/lib/vehicle-templates";
 
 export type VehicleFormState = {
   status: "idle" | "error" | "success";
   message?: string;
   fieldErrors?: Record<string, string>;
+  /** Set when the submission saved a template rather than the vehicle. */
+  templateSaved?: string;
 };
 
 type ImagePayload = { url: string; alt?: string | null; isCover?: boolean };
@@ -45,6 +48,38 @@ export async function saveVehicle(
   // ── Required fields ──────────────────────────────────────
   const brand = toStr(formData.get("brand"));
   const model = toStr(formData.get("model"));
+
+  // ── Save as a template ───────────────────────────────────
+  // Handled before anything is written, so saving a template from an open
+  // listing never touches the listing itself.
+  if (toStr(formData.get("intent")) === "template") {
+    if (!can(user.role, "vehicle.create")) return { status: "error", message: "forbidden" };
+
+    const templateName = toStr(formData.get("templateName"));
+    if (!templateName) return { status: "error", message: "template-name" };
+    if (!brand || !model) {
+      return { status: "error", message: "validation", fieldErrors: { ...(!brand && { brand: "required" }), ...(!model && { model: "required" }) } };
+    }
+
+    try {
+      const template = await prisma.vehicleTemplate.create({
+        data: {
+          name: templateName.slice(0, 80),
+          brand,
+          model,
+          version: toStr(formData.get("version")),
+          payload: payloadFromForm(formData),
+          createdById: user.id,
+        },
+      });
+      await logActivity(user.id, "template.created", "VehicleTemplate", template.id, `${templateName} — ${brand} ${model}`);
+    } catch {
+      return { status: "error", message: "server" };
+    }
+
+    revalidatePath(`/${locale}/admin/vehicles/new`);
+    return { status: "success", templateSaved: templateName };
+  }
   const year = toInt(formData.get("year"));
   const price = toInt(formData.get("price"));
   const powerHp = toInt(formData.get("powerHp"));
@@ -338,4 +373,27 @@ export async function deleteVehicle(formData: FormData): Promise<void> {
   revalidatePath(`/${locale}/admin/vehicles`);
   revalidatePath(`/${locale}/vehicles`);
   redirect(`/${locale}/admin/vehicles`);
+}
+
+/** Remove a saved template. Its author may delete it; so may a manager. */
+export async function deleteVehicleTemplate(formData: FormData): Promise<void> {
+  const user = await getCurrentUser();
+  if (!user) return;
+
+  const id = toStr(formData.get("id"));
+  const locale = resolveLocale(toStr(formData.get("locale")));
+  if (!id) return;
+
+  const template = await prisma.vehicleTemplate.findUnique({
+    where: { id },
+    select: { name: true, createdById: true },
+  });
+  if (!template) return;
+
+  const mine = template.createdById === user.id;
+  if (!mine && !can(user.role, "vehicle.update.any")) return;
+
+  await prisma.vehicleTemplate.delete({ where: { id } });
+  await logActivity(user.id, "template.deleted", "VehicleTemplate", id, template.name);
+  revalidatePath(`/${locale}/admin/vehicles/new`);
 }

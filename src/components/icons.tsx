@@ -188,6 +188,10 @@ export const IconStar = (p: IconProps) => (
   <Svg {...p}><path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1L3.2 9.5l6.1-.9Z" /></Svg>
 );
 
+export const IconLayers = (p: IconProps) => (
+  <Svg {...p}><path d="m12 2 9 5-9 5-9-5 9-5Z" /><path d="m3 12 9 5 9-5" /><path d="m3 17 9 5 9-5" /></Svg>
+);
+
 export const IconImage = (p: IconProps) => (
   <Svg {...p}><rect width="18" height="18" x="3" y="3" rx="2" /><circle cx="9" cy="9" r="2" /><path d="m21 15-4.35-4.35a2 2 0 0 0-2.83 0L4 21" /></Svg>
 );

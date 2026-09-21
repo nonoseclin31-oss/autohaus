@@ -35,6 +35,7 @@ model User {
   vehicles   Vehicle[]     @relation("VehicleOwner")
   leads      Lead[]        @relation("LeadAssignee")
   activities ActivityLog[]
+  templates  VehicleTemplate[]
 }
 
 model Vehicle {
@@ -163,6 +164,38 @@ model VehicleTranslation {
   description String?
 
   @@unique([vehicleId, locale])
+}
+
+/// A saved set of listing values, reusable as the starting point for a new one.
+/// Photos are never part of it: they belong to one car, not to a kind of car.
+model VehicleTemplate {
+  id   String @id @default(cuid())
+  name String
+
+  /// Shown in the picker so a template is recognisable without opening it.
+  brand   String
+  model   String
+  version String?
+
+  /// The form values, as JSON. Kept opaque on purpose: the vehicle form has
+  /// some sixty fields and gains more over time, and a column per field would
+  /// mean a migration every time one is added.
+  payload String
+
+  /// Frequently used templates sort to the top, which is what keeps the list
+  /// usable once there are a few hundred of them.
+  usageCount Int       @default(0)
+  lastUsedAt DateTime?
+
+  createdBy   User?   @relation(fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([brand, model])
+  @@index([lastUsedAt])
+  @@index([name])
 }
 
 model Lead {

@@ -461,6 +461,16 @@ const ar: Dictionary = {
     noLeads: "لا توجد طلبات بعد",
     permDenied: "دورك لا يسمح بهذا الإجراء.",
     missingFields: "لم يتم حفظ أي شيء. لا يزال ناقصًا:",
+    // Reusable listing presets. Photos belong to one car, so they are never
+    // part of one.
+    saveTemplate: "حفظ كنموذج",
+    useTemplate: "البدء من نموذج",
+    searchTemplates: "ابحث بالاسم أو الماركة أو الطراز…",
+    noTemplateMatch: "لا يوجد نموذج مطابق.",
+    templateSaved: "تم حفظ النموذج",
+    templateNamePlaceholder: "مثال: Audi RS3 Sportback",
+    templateApplied: "تمت التعبئة من نموذج — الصور غير مضمّنة.",
+    errTemplateName: "امنح النموذج اسمًا.",
   },
   profile: {
     title: "ملفي الشخصي",

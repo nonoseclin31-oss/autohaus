@@ -461,6 +461,16 @@ const de: Dictionary = {
     noLeads: "Noch keine Anfragen",
     permDenied: "Ihre Rolle erlaubt diese Aktion nicht.",
     missingFields: "Nichts wurde gespeichert. Es fehlt noch:",
+    // Reusable listing presets. Photos belong to one car, so they are never
+    // part of one.
+    saveTemplate: "Als Vorlage speichern",
+    useTemplate: "Aus einer Vorlage starten",
+    searchTemplates: "Nach Name, Marke oder Modell suchen…",
+    noTemplateMatch: "Keine passende Vorlage.",
+    templateSaved: "Vorlage gespeichert",
+    templateNamePlaceholder: "z. B. Audi RS3 Sportback",
+    templateApplied: "Aus einer Vorlage ausgefüllt — ohne Fotos.",
+    errTemplateName: "Geben Sie der Vorlage einen Namen.",
   },
   profile: {
     title: "Mein Profil",

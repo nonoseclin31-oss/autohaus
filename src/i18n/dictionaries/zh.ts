@@ -461,6 +461,16 @@ const zh: Dictionary = {
     noLeads: "暂无咨询",
     permDenied: "您的角色无权执行此操作。",
     missingFields: "未保存任何内容。仍缺少：",
+    // Reusable listing presets. Photos belong to one car, so they are never
+    // part of one.
+    saveTemplate: "保存为模板",
+    useTemplate: "从模板开始",
+    searchTemplates: "按名称、品牌或车型搜索…",
+    noTemplateMatch: "没有匹配的模板。",
+    templateSaved: "模板已保存",
+    templateNamePlaceholder: "例如 Audi RS3 Sportback",
+    templateApplied: "已从模板填充 — 不包含照片。",
+    errTemplateName: "请为模板命名。",
   },
   profile: {
     title: "我的资料",
