@@ -219,16 +219,22 @@ npm run db:deploy    # creates every table
 npm run db:seed      # demo catalogue + staff accounts
 ```
 
-### 2. Cloudflare account and bucket
+### 2. Cloudflare account and media bucket
+
+R2 has to be switched on from the Cloudflare dashboard first. It is an
+account-level one-off that the API cannot do for you — every bucket command
+fails with code 10042 until someone clicks it. After that:
 
 ```bash
 npx wrangler login
 npx wrangler r2 bucket create autohaus-motion-media
+npx wrangler r2 bucket dev-url enable autohaus-motion-media
 ```
 
-Then in the Cloudflare dashboard open that bucket → **Settings** → enable
-**Public Development URL**, and copy the `https://pub-….r2.dev` address. That
-is what serves the vehicle photos.
+The last command prints the `https://pub-….r2.dev` address that serves the
+vehicle photos. It is what `R2_PUBLIC_URL` below must be set to. Until the
+bucket and that secret exist, the site runs fine but adding a photo fails with
+a storage error.
 
 ### 3. Secrets
 
