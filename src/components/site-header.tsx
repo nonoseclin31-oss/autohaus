@@ -15,12 +15,10 @@ export function SiteHeader({
   locale,
   nav,
   languageLabel,
-  signedIn,
 }: {
   locale: Locale;
   nav: { items: NavItem[]; login: string; admin: string; menu: string };
   languageLabel: string;
-  signedIn: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -95,11 +93,11 @@ export function SiteHeader({
             <LanguageSwitcher locale={locale} label={languageLabel} />
 
             <Link
-              href={localePath(locale, signedIn ? "/admin" : "/login")}
+              href={localePath(locale, "/login")}
               className="btn btn-ghost btn-sm hidden cursor-pointer sm:inline-flex"
             >
               <IconUser size={15} />
-              {signedIn ? nav.admin : nav.login}
+              {nav.login}
             </Link>
 
             <button
@@ -158,9 +156,9 @@ export function SiteHeader({
                 <IconPhone size={16} />
                 {COMPANY.phone}
               </a>
-              <Link href={localePath(locale, signedIn ? "/admin" : "/login")} className="btn btn-primary w-full cursor-pointer">
+              <Link href={localePath(locale, "/login")} className="btn btn-primary w-full cursor-pointer">
                 <IconUser size={16} />
-                {signedIn ? nav.admin : nav.login}
+                {nav.login}
               </Link>
             </div>
           </div>

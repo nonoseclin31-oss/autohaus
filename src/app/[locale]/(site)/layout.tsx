@@ -2,7 +2,6 @@ import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { SplashScreen } from "@/components/splash-screen";
 import { getDictionary, resolveLocale } from "@/i18n";
-import { getCurrentUser } from "@/lib/auth";
 
 export default async function SiteLayout({
   children,
@@ -14,14 +13,12 @@ export default async function SiteLayout({
   const { locale: raw } = await params;
   const locale = resolveLocale(raw);
   const t = getDictionary(locale);
-  const user = await getCurrentUser();
 
   return (
     <div className="flex min-h-screen flex-col">
       <SplashScreen />
       <SiteHeader
         locale={locale}
-        signedIn={!!user}
         languageLabel={t.common.language}
         nav={{
           items: [
