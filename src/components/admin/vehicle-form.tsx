@@ -262,7 +262,10 @@ export function VehicleForm({
   useEffect(() => {
     const form = formRef.current;
     const data = submitted.current;
-    if (state.status !== "error" || !form || !data) return;
+    // Also after saving a template: the listing itself was not saved, so
+    // emptying the form would throw away everything just typed.
+    const keepValues = state.status === "error" || !!state.templateSaved;
+    if (!keepValues || !form || !data) return;
 
     for (const element of Array.from(form.elements)) {
       const field = element as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;

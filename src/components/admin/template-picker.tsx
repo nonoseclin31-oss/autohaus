@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { getDictionary, localePath, type Locale } from "@/i18n";
 import { deleteVehicleTemplate } from "@/app/actions/vehicles";
@@ -155,8 +155,20 @@ export function TemplateNameField({ locale, saved }: { locale: Locale; saved?: s
   const t = getDictionary(locale);
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
+  const [confirmed, setConfirmed] = useState<string | null>(null);
 
-  if (saved) {
+  // The confirmation stands in for the button, so it has to step aside again —
+  // otherwise a second template cannot be saved without reloading the page.
+  useEffect(() => {
+    if (!saved) return;
+    setConfirmed(saved);
+    setOpen(false);
+    setName("");
+    const timer = setTimeout(() => setConfirmed(null), 4000);
+    return () => clearTimeout(timer);
+  }, [saved]);
+
+  if (confirmed) {
     return (
       <span className="flex items-center gap-1.5 text-sm font-medium text-ok">
         <IconCheck size={15} />
