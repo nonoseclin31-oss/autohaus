@@ -495,6 +495,34 @@ It found six real defects:
 
 Filter rows were also raised from 20px to the 24px minimum.
 
+## Database migrations
+
+The Cloudflare build runs `prisma generate`, never `prisma migrate`. A schema
+change therefore has to be applied to the database yourself, before the deploy
+that depends on it lands:
+
+```bash
+npx prisma migrate dev --create-only --name what_changed  # write it
+cat prisma/migrations/*_what_changed/migration.sql        # read it
+npx prisma migrate deploy                                 # apply it
+```
+
+`migrate dev` without `--create-only` would run against whatever `DATABASE_URL`
+points at, which locally is production. Create, read, then deploy.
+
+## Sessions
+
+Sessions are stateless JWTs in an httpOnly cookie, valid for seven days. That
+means nothing server-side to look up on each request — and nothing to delete
+when access should stop. `User.passwordChangedAt` closes that: `getCurrentUser`
+refuses a token issued before it, so changing a password evicts every session
+opened with the old one instead of leaving them live until they expire.
+
+Anything that writes `passwordHash` must set `passwordChangedAt` alongside it,
+and anything that changes the *current* user's password must call
+`createSession` afterwards — otherwise the browser that just changed it signs
+itself out on the next request.
+
 ## Search
 
 `src/lib/seo.ts` holds the two things every public page needs: its canonical
