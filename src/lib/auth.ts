@@ -66,12 +66,23 @@ export async function getCurrentUser(): Promise<SessionUser | null> {
 
     const user = await prisma.user.findUnique({
       where: { id },
-      select: { id: true, email: true, name: true, role: true, avatarUrl: true, jobTitle: true, active: true },
+      select: {
+        id: true, email: true, name: true, role: true, avatarUrl: true, jobTitle: true,
+        active: true, passwordChangedAt: true,
+      },
     });
     if (!user || !user.active) return null;
 
-    const { active: _active, ...session } = user;
+    // A token minted before the password changed belongs to whoever held the
+    // old one. Without this a reset does not evict them: the cookie they
+    // already have keeps working until it expires.
+    if (user.passwordChangedAt && typeof payload.iat === "number") {
+      if (payload.iat * 1000 < user.passwordChangedAt.getTime()) return null;
+    }
+
+    const { active: _active, passwordChangedAt: _changed, ...session } = user;
     void _active;
+    void _changed;
     return session;
   } catch {
     return null;

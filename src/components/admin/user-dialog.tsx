@@ -56,13 +56,15 @@ export function UserDialog({
   const errorText =
     state.message === "email-taken"
       ? `${t.forms.email}: ${t.common.error}`
-      : state.message === "self-role"
-        ? t.admin.cannotEditSelfRole
-        : state.message === "forbidden"
-          ? t.admin.permDenied
-          : state.status === "error"
-            ? t.common.error
-            : null;
+      : state.message === "password-short"
+        ? t.profile.errPasswordShort
+        : state.message === "self-role"
+          ? t.admin.cannotEditSelfRole
+          : state.message === "forbidden"
+            ? t.admin.permDenied
+            : state.status === "error"
+              ? t.common.error
+              : null;
 
   return (
     <>

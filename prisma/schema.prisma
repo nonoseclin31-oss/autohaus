@@ -23,6 +23,11 @@ model User {
   avatarUrl    String?
   locale       String    @default("fr")
   active       Boolean   @default(true)
+  // Sessions are stateless JWTs, so a stolen cookie stays valid until it
+  // expires. Stamping the moment a password changed lets any token issued
+  // before it be rejected — which is what makes a reset actually evict
+  // whoever was using the old credentials.
+  passwordChangedAt DateTime?
   lastLoginAt  DateTime?
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt

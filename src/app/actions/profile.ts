@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
-import { getCurrentUser, hashPassword, verifyPassword, logActivity } from "@/lib/auth";
+import { createSession, getCurrentUser, hashPassword, verifyPassword, logActivity } from "@/lib/auth";
 import { toStr } from "@/lib/utils";
 import { resolveLocale, isLocale } from "@/i18n";
 
@@ -83,12 +83,19 @@ export async function updateProfile(
         jobTitle,
         avatarUrl,
         ...(isLocale(localeInput) ? { locale: localeInput } : {}),
-        ...(passwordHash ? { passwordHash } : {}),
+        // Same stamp as an admin reset: changing your own password should
+        // sign out anyone else holding a session on your account.
+        ...(passwordHash ? { passwordHash, passwordChangedAt: new Date() } : {}),
       },
     });
   } catch {
     return { status: "error", message: "server" };
   }
+
+  // The stamp above invalidates every token issued before now, including the
+  // one this request arrived with, so mint a fresh session for the browser
+  // that just changed it.
+  if (passwordHash) await createSession(actor.id);
 
   await logActivity(
     actor.id,

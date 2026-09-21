@@ -2,14 +2,14 @@
 
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
-import { getCurrentUser, hashPassword, logActivity } from "@/lib/auth";
+import { createSession, getCurrentUser, hashPassword, logActivity } from "@/lib/auth";
 import { can, ROLE_KEYS } from "@/lib/rbac";
 import { toStr, toBool } from "@/lib/utils";
 import { resolveLocale } from "@/i18n";
 
 export type UserFormState = {
   status: "idle" | "error" | "success";
-  message?: "forbidden" | "email-taken" | "validation" | "self-role" | "server";
+  message?: "forbidden" | "email-taken" | "validation" | "password-short" | "self-role" | "server";
 };
 
 /** Create or update a staff account. ADMIN only. */
@@ -29,7 +29,11 @@ export async function saveUser(
 
   if (!name || !email) return { status: "error", message: "validation" };
   if (!(ROLE_KEYS as readonly string[]).includes(role)) return { status: "error", message: "validation" };
-  if (!id && (!password || password.length < 8)) return { status: "error", message: "validation" };
+  // A new account needs a password; an existing one only when it is being
+  // changed. Either way it has to clear the same bar — the length check used
+  // to apply on creation only, so an edit could set a one-character password.
+  if (!id && !password) return { status: "error", message: "validation" };
+  if (password && password.length < 8) return { status: "error", message: "password-short" };
 
   // An administrator must not lock themselves out by demoting their own account.
   if (id && id === actor!.id && role !== actor!.role) {
@@ -56,9 +60,23 @@ export async function saveUser(
     if (id) {
       await prisma.user.update({
         where: { id },
-        data: { ...data, ...(password ? { passwordHash: await hashPassword(password) } : {}) },
+        data: {
+          ...data,
+          // Stamping the change invalidates every session token issued before
+          // it, so resetting a password actually turns out whoever was signed
+          // in with the old one.
+          ...(password
+            ? { passwordHash: await hashPassword(password), passwordChangedAt: new Date() }
+            : {}),
+        },
       });
       await logActivity(actor!.id, "user.updated", "User", id, `${name} — ${role}`);
+      if (password) {
+        await logActivity(actor!.id, "user.password.reset", "User", id, name);
+        // An admin resetting their own password would otherwise sign themselves
+        // out on the next request.
+        if (id === actor!.id) await createSession(id);
+      }
     } else {
       const created = await prisma.user.create({
         data: { ...data, passwordHash: await hashPassword(password!) },
