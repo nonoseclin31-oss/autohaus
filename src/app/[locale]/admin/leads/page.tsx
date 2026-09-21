@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getDictionary, resolveLocale, localePath, formatDate, formatNumber } from "@/i18n";
+import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth";
 import { can } from "@/lib/rbac";
 import { prisma } from "@/lib/prisma";
@@ -23,7 +24,10 @@ export default async function AdminLeadsPage({
   const tax = locale as TaxLocale;
   const t = getDictionary(locale);
   const sp = await searchParams;
-  const user = (await getCurrentUser())!;
+  const user = await getCurrentUser();
+  // The layout redirects signed-out visitors, but a page renders in
+  // parallel with its layout, so it has to guard for itself.
+  if (!user) redirect(localePath(locale, "/login"));
 
   const statusFilter = typeof sp.status === "string" ? sp.status : "";
   const mine = sp.mine === "1";

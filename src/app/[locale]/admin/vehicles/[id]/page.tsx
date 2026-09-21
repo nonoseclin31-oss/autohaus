@@ -23,7 +23,10 @@ export default async function EditVehiclePage({
   const { locale: raw, id } = await params;
   const locale = resolveLocale(raw);
   const t = getDictionary(locale);
-  const user = (await getCurrentUser())!;
+  const user = await getCurrentUser();
+  // The layout redirects signed-out visitors, but a page renders in
+  // parallel with its layout, so it has to guard for itself.
+  if (!user) redirect(localePath(locale, "/login"));
 
   const vehicle = await getVehicleById(id);
   if (!vehicle) notFound();

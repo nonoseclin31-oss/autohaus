@@ -13,7 +13,10 @@ export const dynamic = "force-dynamic";
 export default async function NewVehiclePage({ params }: { params: Promise<{ locale: string }> }) {
   const locale = resolveLocale((await params).locale);
   const t = getDictionary(locale);
-  const user = (await getCurrentUser())!;
+  const user = await getCurrentUser();
+  // The layout redirects signed-out visitors, but a page renders in
+  // parallel with its layout, so it has to guard for itself.
+  if (!user) redirect(localePath(locale, "/login"));
 
   if (!can(user.role, "vehicle.create")) redirect(localePath(locale, "/admin/vehicles"));
 

@@ -16,7 +16,10 @@ export default async function AdminUsersPage({ params }: { params: Promise<{ loc
   const locale = resolveLocale((await params).locale);
   const tax = locale as TaxLocale;
   const t = getDictionary(locale);
-  const actor = (await getCurrentUser())!;
+  const actor = await getCurrentUser();
+  // The layout redirects signed-out visitors, but a page renders in
+  // parallel with its layout, so it has to guard for itself.
+  if (!actor) redirect(localePath(locale, "/login"));
 
   if (!can(actor.role, "user.read")) redirect(localePath(locale, "/admin"));
   const manage = can(actor.role, "user.manage");
