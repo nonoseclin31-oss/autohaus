@@ -451,6 +451,7 @@ const en = {
     noLeads: "No lead yet",
     // permissions
     permDenied: "Your role does not allow this action.",
+    missingFields: "Nothing was saved. Still missing:",
   },
   profile: {
     title: "My profile",

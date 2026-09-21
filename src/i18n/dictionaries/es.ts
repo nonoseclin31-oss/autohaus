@@ -448,6 +448,7 @@ const es: Dictionary = {
     relatedVehicle: "Vehículo relacionado",
     noLeads: "Todavía no hay solicitudes",
     permDenied: "Tu rol no permite esta acción.",
+    missingFields: "No se guardó nada. Todavía falta:",
   },
   profile: {
     title: "Mi perfil",

@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { useFormStatus } from "react-dom";
 import Link from "next/link";
 import { saveVehicle, type VehicleFormState } from "@/app/actions/vehicles";
@@ -140,6 +140,31 @@ function Panel({
   );
 }
 
+/**
+ * Which section holds each field the server insists on. A save rejected for a
+ * missing price has to open the section that price is in, otherwise the
+ * message sits on a tab nobody is looking at.
+ */
+/** The label the operator sees for a field, for the "still missing" message. */
+function FIELD_LABEL(t: ReturnType<typeof getDictionary>, field: string): string {
+  const names: Record<string, string> = {
+    brand: t.admin.fBrand,
+    model: t.admin.fModel,
+    year: t.admin.fYear,
+    powerHp: t.spec.power,
+    price: t.admin.fPrice,
+  };
+  return names[field] ?? field;
+}
+
+const FIELD_TAB: Record<string, string> = {
+  brand: "identity",
+  model: "identity",
+  year: "identity",
+  powerHp: "powertrain",
+  price: "pricing",
+};
+
 function SaveBar({
   idle,
   busy,
@@ -173,7 +198,18 @@ function SaveBar({
         <IconEyeOff size={17} />
         {draft}
       </button>
-      <button type="submit" name="intent" value="publish" className="btn btn-primary cursor-pointer" disabled={pending}>
+      <button
+        type="submit"
+        name="intent"
+        value="publish"
+        // Required fields sit in sections that are hidden while another one is
+        // open. The browser refuses to report a field it cannot show and
+        // cancels the submit without saying anything — the button looks dead.
+        // The server validates and answers with the offending fields instead.
+        formNoValidate
+        className="btn btn-primary cursor-pointer"
+        disabled={pending}
+      >
         {pending ? <IconSpinner size={17} /> : <IconCheck size={17} />}
         {pending ? busy : idle}
       </button>
@@ -206,6 +242,16 @@ export function VehicleForm({
 
   const groups = equipmentByGroup();
   const err = (field: string) => (state.fieldErrors?.[field] ? t.common.required : undefined);
+
+  const missing = Object.keys(state.fieldErrors ?? {});
+
+  // A rejected save has to take you to what it is complaining about, and the
+  // order here is the order of the sections, so it lands on the first gap.
+  useEffect(() => {
+    if (!missing.length) return;
+    const target = ["brand", "model", "year", "powerHp", "price"].find((f) => missing.includes(f));
+    if (target) setTab(FIELD_TAB[target]);
+  }, [state]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const tabs = [
     { id: "identity", label: t.admin.secIdentity, Icon: IconCar },
@@ -298,7 +344,13 @@ export function VehicleForm({
         {state.status === "error" ? (
           <p role="alert" className="mb-5 flex items-start gap-2 rounded-sm border border-red/40 bg-red/10 px-4 py-3 text-sm">
             <IconAlert size={16} className="mt-0.5 shrink-0 text-red" />
-            {state.message === "forbidden" ? t.admin.permDenied : t.common.error}
+            <span>
+              {state.message === "forbidden"
+                ? t.admin.permDenied
+                : missing.length
+                  ? `${t.admin.missingFields} ${missing.map((f) => FIELD_LABEL(t, f)).join(", ")}`
+                  : t.common.error}
+            </span>
           </p>
         ) : null}
 

@@ -448,6 +448,7 @@ const zh: Dictionary = {
     relatedVehicle: "相关车辆",
     noLeads: "暂无咨询",
     permDenied: "您的角色无权执行此操作。",
+    missingFields: "未保存任何内容。仍缺少：",
   },
   profile: {
     title: "我的资料",

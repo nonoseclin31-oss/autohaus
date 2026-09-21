@@ -448,6 +448,7 @@ const fr: Dictionary = {
     relatedVehicle: "Véhicule concerné",
     noLeads: "Aucune demande pour le moment",
     permDenied: "Votre rôle ne permet pas cette action.",
+    missingFields: "Rien n'a été enregistré. Il manque encore :",
   },
   profile: {
     title: "Mon profil",

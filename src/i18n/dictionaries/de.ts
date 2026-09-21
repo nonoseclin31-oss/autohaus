@@ -448,6 +448,7 @@ const de: Dictionary = {
     relatedVehicle: "Betreffendes Fahrzeug",
     noLeads: "Noch keine Anfragen",
     permDenied: "Ihre Rolle erlaubt diese Aktion nicht.",
+    missingFields: "Nichts wurde gespeichert. Es fehlt noch:",
   },
   profile: {
     title: "Mein Profil",

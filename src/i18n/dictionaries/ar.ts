@@ -448,6 +448,7 @@ const ar: Dictionary = {
     relatedVehicle: "السيارة المرتبطة",
     noLeads: "لا توجد طلبات بعد",
     permDenied: "دورك لا يسمح بهذا الإجراء.",
+    missingFields: "لم يتم حفظ أي شيء. لا يزال ناقصًا:",
   },
   profile: {
     title: "ملفي الشخصي",
