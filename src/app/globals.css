@@ -25,7 +25,10 @@
   /* Foreground — contrast on #fafaf9: fg 18.9:1 · muted 7.6:1 · subtle 5.1:1 */
   --color-fg: #0c0a09;
   --color-muted: #57534e;
-  --color-subtle: #78716c;
+  --color-subtle: #6f6862;
+  /* Oversized step numerals: the lightest grey that still clears 3:1
+     against the canvas at 48px (SC 1.4.3, large text). */
+  --color-numeral: #948e88;
 
   /* Brand — red 5.7:1 as text, white on red 4.9:1 */
   --color-red: #c8102e;
@@ -456,6 +459,8 @@
     outline: 2px solid var(--color-red);
     outline-offset: 2px;
   }
+
+  .text-numeral { color: var(--color-numeral); }
 
   .reveal {
     opacity: 0;

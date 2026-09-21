@@ -70,7 +70,7 @@ export function RentalCalculator({
                 )}
               >
                 {value}
-                <span className="block text-[10px] font-medium uppercase tracking-wider opacity-80">
+                <span className="block text-[10px] font-medium uppercase tracking-wider">
                   {t.common.months}
                 </span>
               </button>
@@ -96,7 +96,7 @@ export function RentalCalculator({
                 )}
               >
                 {value / 1000}k
-                <span className="block text-[10px] font-medium uppercase tracking-wider opacity-80">
+                <span className="block text-[10px] font-medium uppercase tracking-wider">
                   {t.common.km}
                 </span>
               </button>

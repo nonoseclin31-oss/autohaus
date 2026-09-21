@@ -307,7 +307,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
           {steps.map((step, i) => (
             <Reveal as="li" key={step.n} delay={i * 80}>
               <div className="h-full">
-                <span className="display block text-5xl text-line-strong">{step.n}</span>
+                <span className="display block text-5xl text-numeral">{step.n}</span>
                 <h3 className="mt-4 text-lg font-semibold">{step.title}</h3>
                 <p className="mt-2 text-sm leading-relaxed text-muted">{step.body}</p>
               </div>

@@ -26,7 +26,7 @@ const MIN_TARGET = 24;
 const browser = await puppeteer.launch({
   executablePath: CHROME,
   headless: "new",
-  args: ["--no-sandbox", "--force-prefers-reduced-motion"],
+  args: ["--no-sandbox"],
 });
 
 const violations = new Map(); // rule id -> { impact, help, nodes: [] }
@@ -50,8 +50,13 @@ for (const locale of LOCALES) {
     const url = `${BASE}/${locale}${path}`;
     try {
       await page.goto(url, { waitUntil: "networkidle2", timeout: 60000 });
-      // The splash screen covers the page on first paint.
-      await new Promise((r) => setTimeout(r, 1200));
+      // The splash covers the first paint, and the entrance transitions run
+      // for 700ms after that. Sampling before they settle reports contrast
+      // failures against a half-faded element that no one ever sees.
+      await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+      await new Promise((r) => setTimeout(r, 2200));
+      await page.evaluate(() => window.scrollTo(0, 0));
+      await new Promise((r) => setTimeout(r, 800));
 
       await page.addScriptTag({ url: AXE });
       const results = await page.evaluate(async () =>
@@ -63,6 +68,34 @@ for (const locale of LOCALES) {
 
       // Target size and focus visibility, which axe does not evaluate.
       const extra = await page.evaluate((min) => {
+        // SC 2.5.8 has two exceptions this page relies on.
+        //
+        // A card's title link is stretched over the whole card by an absolutely
+        // positioned ::after, so the thing a pointer actually hits is the card,
+        // not the words. Measure whichever is bigger.
+        const hitArea = (el) => {
+          const own = el.getBoundingClientRect();
+          const after = getComputedStyle(el, "::after");
+          if (after.position !== "absolute" || after.content === "none") return own;
+          const stretched = el.offsetParent?.getBoundingClientRect();
+          return stretched && stretched.width * stretched.height > own.width * own.height ? stretched : own;
+        };
+
+        // And a small target passes when nothing else sits within 24px of it:
+        // there is no risk of hitting the wrong one.
+        const spacedOut = (el, all) => {
+          const a = el.getBoundingClientRect();
+          for (const other of all) {
+            if (other === el) continue;
+            const b = other.getBoundingClientRect();
+            if (b.width === 0 || b.height === 0) continue;
+            const dx = Math.max(0, Math.max(a.left - b.right, b.left - a.right));
+            const dy = Math.max(0, Math.max(a.top - b.bottom, b.top - a.bottom));
+            const centreGap = Math.hypot(dx + a.width / 2 + b.width / 2, dy + a.height / 2 + b.height / 2);
+            if (centreGap < min) return false;
+          }
+          return true;
+        };
         const small = [];
         const invisibleFocus = [];
         const interactive = document.querySelectorAll(
@@ -71,22 +104,33 @@ for (const locale of LOCALES) {
         for (const el of interactive) {
           const r = el.getBoundingClientRect();
           if (r.width === 0 && r.height === 0) continue; // hidden
+          // Visually hidden until focused (skip links): 1x1 by design, and
+          // never a pointer target.
+          if (r.width <= 1 && r.height <= 1) continue;
           const style = getComputedStyle(el);
           if (style.visibility === "hidden" || style.display === "none") continue;
-          if (r.width < min || r.height < min) {
+          const hit = hitArea(el);
+          if ((hit.width < min || hit.height < min) && !spacedOut(el, interactive)) {
             small.push({
               tag: el.tagName.toLowerCase(),
               name: (el.getAttribute("aria-label") || el.textContent || "").trim().slice(0, 40),
-              w: Math.round(r.width), h: Math.round(r.height),
+              w: Math.round(hit.width), h: Math.round(hit.height),
             });
           }
+          // A ring may sit on an ancestor: a card whose link is stretched over
+          // it carries the outline itself. And an outline that is transparent
+          // or still mid-transition is not an indicator.
           el.focus({ preventScroll: true });
-          const focused = getComputedStyle(el);
-          const hasRing =
-            focused.outlineStyle !== "none" && parseFloat(focused.outlineWidth) > 0 ||
-            focused.boxShadow !== style.boxShadow ||
-            focused.borderColor !== style.borderColor ||
-            focused.backgroundColor !== style.backgroundColor;
+          let node = el, hasRing = false;
+          for (let depth = 0; depth < 7 && node && !hasRing; depth++, node = node.parentElement) {
+            const cs = getComputedStyle(node);
+            const solid =
+              cs.outlineStyle !== "none" &&
+              parseFloat(cs.outlineWidth) > 0 &&
+              !/transparent|rgba\(0, 0, 0, 0\)/.test(cs.outlineColor);
+            const shadow = cs.boxShadow !== "none" && !/rgba\(0, 0, 0, 0\)/.test(cs.boxShadow);
+            hasRing = solid || shadow;
+          }
           if (!hasRing) {
             invisibleFocus.push({
               tag: el.tagName.toLowerCase(),
@@ -129,6 +173,7 @@ for (const [id, v] of [...violations].sort((a, b) => b[1].nodes.length - a[1].no
   const pages = new Set(v.nodes.map((n) => `${n.locale}${n.path}`));
   console.log(`\n[${v.impact}] ${id} — ${v.help}`);
   console.log(`  ${v.wcag.join(", ")} · ${v.nodes.length} occurrence(s) sur ${pages.size} page(s)`);
+  if (v.why) console.log(`  → ${v.why}`);
   for (const n of dedupe(v.nodes, (n) => n.target + n.html).slice(0, 4)) {
     console.log(`    ${n.target}  ${n.html.replace(/\s+/g, " ")}`);
   }
