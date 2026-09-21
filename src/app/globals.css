@@ -160,7 +160,7 @@
    edits: the attribute selector outranks Tailwind's own .text-red, and
    fills keep the brand red because they set a background, not a colour. */
 /* ══════════════════════════════════════════════════════════════
-   Dark theme — charcoal, the one the site ships with
+   Dark theme, second palette — kept as "dark2"
 
    The first palette went nearly to black, and anything translucent
    laid over it — the header once it starts blurring the page behind
@@ -174,11 +174,11 @@
    which is what makes cards, inputs and menus tell themselves apart
    without a single border doing the work.
 
-   Measured, not eyeballed: text clears 4.5:1 on all four surfaces and
-   the oversized numerals clear 3:1.
+   Lighter than the first, and still darker than the taupe the site
+   ships with. Kept so the choice can be reversed in one word.
    ══════════════════════════════════════════════════════════════ */
 
-[data-theme="dark"] {
+[data-theme="dark2"] {
   color-scheme: dark;
 
   --color-canvas: #1e1b19;
@@ -226,8 +226,81 @@
   --shadow-lg: 0 28px 56px -16px rgba(0, 0, 0, 0.65);
 }
 
+/* ══════════════════════════════════════════════════════════════
+   Dark theme — taupe, the one the site ships with
+
+   Taupe rather than grey: a warm grey-brown, the same hue family as
+   the stone the light theme is built on, only far down the lightness
+   scale. It reads as a dimmed showroom rather than a switched-off
+   screen, which is the point — the first two palettes were darker
+   than the rooms these cars are actually photographed in.
+
+   This is as light as a dark theme can honestly go here, and the
+   limit is arithmetic rather than taste. Three tiers of text have to
+   clear 4.5:1 on the lightest surface in the scale. One step lighter
+   and the muted and subtle tiers fall to 4.3:1 and 4.0:1 — still
+   legible to most people, no longer legible to everyone — and two
+   steps lighter, only the brightest tier survives. So the canvas
+   stops here: 3.6× lighter than the near-black it started at, with
+   every tier intact.
+
+   Measured, not eyeballed. Text clears 4.5:1 on all four surfaces,
+   the oversized numerals clear 3:1, and white on the brand red stays
+   at 5.9:1.
+   ══════════════════════════════════════════════════════════════ */
+
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --color-canvas: #2a2522;
+  --color-surface: #332d29;
+  --color-surface-2: #3c3531;
+  --color-surface-3: #453d38;
+  --color-line: #453e39;
+  --color-line-strong: #625850;
+
+  --color-flag-dark: #efeae6;
+  --color-studio-top: #332d29;
+  --color-hairline: rgba(250, 248, 246, 0.055);
+  --color-stamp-bg: rgba(51, 45, 41, 0.86);
+
+  --color-ink: #3c3531;
+  --color-ink-soft: #453d38;
+
+  /* 10.0:1 · 6.4:1 · 5.4:1 on the canvas */
+  --color-fg: #faf8f6;
+  --color-muted: #cec7c0;
+  --color-subtle: #bfb7b0;
+  --color-numeral: #968f88;
+
+  /* The fill keeps the brand red; only text lightens, and it has to
+     lighten further on a taupe canvas than on a charcoal one. */
+  --color-red: #c8102e;
+  --color-red-text: #fba3ab;
+  --color-red-bright: #e30613;
+  --color-red-deep: #e0263f;
+  --color-red-wash: #3f2328;
+
+  --color-gold: #f0c469;
+  --color-bronze: #f5cf7e;
+  --color-gold-wash: #3a2f1b;
+
+  --color-ok: #8adcaf;
+  --color-ok-wash: #22352a;
+  --color-warn: #f5c073;
+  --color-info: #8fd0ef;
+
+  /* A lighter canvas takes a lighter shadow; the near-black values
+     read as holes punched in the page. */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.28);
+  --shadow-sm: 0 2px 6px -1px rgba(0, 0, 0, 0.36);
+  --shadow-md: 0 8px 24px -8px rgba(0, 0, 0, 0.46);
+  --shadow-lg: 0 28px 56px -16px rgba(0, 0, 0, 0.56);
+}
+
+[data-theme="dark"] .text-red,
 [data-theme="dark1"] .text-red,
-[data-theme="dark"] .text-red {
+[data-theme="dark2"] .text-red {
   color: var(--color-red-text);
 }
 
@@ -353,9 +426,11 @@
   .logo-full { background-image: url("/brand/logo-full.png"); }
 
   [data-theme="dark"] .logo-wordmark,
-  [data-theme="dark1"] .logo-wordmark { background-image: url("/brand/logo-wordmark-dark.png"); }
+  [data-theme="dark1"] .logo-wordmark,
+  [data-theme="dark2"] .logo-wordmark { background-image: url("/brand/logo-wordmark-dark.png"); }
   [data-theme="dark"] .logo-full,
-  [data-theme="dark1"] .logo-full { background-image: url("/brand/logo-full-dark.png"); }
+  [data-theme="dark1"] .logo-full,
+  [data-theme="dark2"] .logo-full { background-image: url("/brand/logo-full-dark.png"); }
 
 
   .flag-rule {
