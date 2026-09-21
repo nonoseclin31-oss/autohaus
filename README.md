@@ -501,14 +501,23 @@ Light is the default; the toggle in the header switches to dark and the choice
 is remembered per browser. Only colours change — no layout, no components, no
 type.
 
-The dark neutrals stay warm. A blue-grey dark is the reflex and it fights the
-stone palette the light theme is built on. The canvas is a charcoal rather
-than a near-black, because anything translucent above a near-black — the
-header once it starts blurring the page behind it, a chip laid on a photo —
-has to be lifted so far to stay legible that it reads as a light patch instead
-of the same surface. The spread from canvas to the highest surface is 2.9×,
-which is what lets cards, inputs and menus separate without borders doing all
-the work.
+The dark canvas is taupe — a warm grey-brown, the same hue family as the stone
+the light theme is built on, only far down the lightness scale. A blue-grey
+dark is the reflex and it fights that palette; a near-black reads as a
+switched-off screen rather than a dimmed showroom, and anything translucent
+above it (the header once it blurs the page behind it, a chip on a photo) has
+to be lifted so far to stay legible that it looks like a light patch instead
+of the same surface.
+
+Taupe is also as light as this can honestly go, and the limit is arithmetic
+rather than taste. Three tiers of text have to clear 4.5:1 on the lightest
+surface of the scale. One step lighter and the muted and subtle tiers fall to
+4.3:1 and 4.0:1 — still legible to most people, no longer to everyone. Two
+steps lighter and only the brightest tier survives.
+
+Two earlier palettes are kept for comparison: `dark1` is the near-black it
+started at, `dark2` the charcoal in between. The canvas went from a luminance
+of 0.0053 to 0.0193 across the three.
 
 Brand red is the one colour that cannot invert. No single red carries 4.5:1 as
 text on a dark canvas and also takes white text on top of it as a button — the
@@ -517,8 +526,8 @@ red and one rule swaps a lighter red wherever red is used as *text*. Red hover
 brightens rather than darkens: on a dark surface a darker red reads as
 disabled.
 
-The first, near-black palette is kept as `[data-theme="dark1"]` in
-`globals.css`. To ship it instead, swap which block owns the `dark` name.
+To ship one of the earlier palettes instead, swap which block owns the `dark`
+name in `globals.css`.
 
 Two things to watch when adding UI:
 
