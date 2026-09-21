@@ -10,7 +10,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       // R2 public bucket, either r2.dev or a custom domain.
       { protocol: "https", hostname: "*.r2.dev" },
-      { protocol: "https", hostname: "media.autohaus-motion.de" },
+      { protocol: "https", hostname: "media.autohausmotion.com" },
     ],
   },
   // Keep Prisma out of Next's own bundle. Otherwise Next resolves it with
