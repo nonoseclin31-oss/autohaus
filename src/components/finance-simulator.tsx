@@ -11,7 +11,8 @@ export type FinanceVehicle = {
   id: string;
   label: string;
   price: number;
-  /** Back-office overrides. Absent means the standard curve applies. */
+  /** Which formulas this car is actually offered on. */
+  lldAvailable?: boolean;
   loaAvailable?: boolean;
   financeRate?: number | null;
   residualRate?: number | null;
@@ -47,8 +48,14 @@ export function FinanceSimulator({
 
   const selected = vehicles.find((v) => v.id === vehicleId) ?? vehicles[0];
   const price = selected?.price ?? 45000;
+
+  // A car is quoted only on the formulas it is offered on. Picking one that
+  // does not do LLD has to move the tab, not leave it on a formula the
+  // showroom will not sign.
+  const lldOffered = selected?.lldAvailable ?? true;
   const loaOffered = selected?.loaAvailable ?? true;
-  const activeFormula: Formula = loaOffered ? formula : "LLD";
+  const activeFormula: Formula =
+    formula === "LOA" && loaOffered ? "LOA" : lldOffered ? "LLD" : "LOA";
 
   const [forBusiness, setForBusiness] = useState(false);
   const [asking, setAsking] = useState(false);
@@ -116,7 +123,7 @@ export function FinanceSimulator({
           <span className="label">{t.rental.formula}</span>
           <div role="tablist" className="mt-2 grid grid-cols-2 gap-2">
             {(["LLD", "LOA"] as const).map((key) => {
-              const disabled = key === "LOA" && !loaOffered;
+              const disabled = key === "LLD" ? !lldOffered : !loaOffered;
               const active = activeFormula === key;
               return (
                 <button
@@ -245,15 +252,12 @@ export function FinanceSimulator({
           />
         </dl>
 
-        {/* The other formula, on the same terms. */}
+        {/* The other formula, on the same terms — only when there is one. */}
+        {lldOffered && loaOffered ? (
         <button
           type="button"
           onClick={() => setFormula(activeFormula === "LLD" ? "LOA" : "LLD")}
-          disabled={!loaOffered}
-          className={cn(
-            "flex items-center justify-between gap-3 rounded-sm border border-line bg-surface px-3 py-2.5 text-start text-xs transition-colors duration-200",
-            loaOffered ? "cursor-pointer hover:border-line-strong" : "cursor-not-allowed opacity-45",
-          )}
+          className="flex cursor-pointer items-center justify-between gap-3 rounded-sm border border-line bg-surface px-3 py-2.5 text-start text-xs transition-colors duration-200 hover:border-line-strong"
         >
           <span className="min-w-0">
             <span className="block font-semibold">
@@ -269,6 +273,7 @@ export function FinanceSimulator({
           </span>
           <IconArrowRight size={14} className="shrink-0 text-subtle" />
         </button>
+        ) : null}
 
         <p className="flex items-start gap-2 rounded-sm bg-surface px-3 py-2.5 text-xs leading-relaxed text-muted">
           {activeFormula === "LLD" ? (

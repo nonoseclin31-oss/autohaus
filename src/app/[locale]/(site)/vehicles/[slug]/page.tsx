@@ -428,8 +428,10 @@ export default async function VehicleDetailPage({
           </div>
         </div>
 
-        {/* Finance — offered on every car, from its own price and any
-            overrides it carries. */}
+        {/* Finance — only for a car actually offered on one formula or the
+            other. A car sold outright gets no simulator, because configuring
+            a lease nobody will sign is worse than not offering one. */}
+        {vehicle.rentalAvailable || vehicle.loaAvailable ? (
         <section id="finance" className="mt-16 scroll-mt-24 border-t border-line pt-12">
           <h2 className="display text-3xl">{t.rental.simulatorTitle}</h2>
           <p className="mt-2 max-w-2xl text-muted">{t.rental.simulatorBody}</p>
@@ -441,6 +443,7 @@ export default async function VehicleDetailPage({
                   id: vehicle.id,
                   label: vehicleTitle(vehicle),
                   price: vehicle.price,
+                  lldAvailable: vehicle.rentalAvailable,
                   loaAvailable: vehicle.loaAvailable,
                   financeRate: vehicle.financeRate,
                   residualRate: vehicle.residualRate,
@@ -450,6 +453,7 @@ export default async function VehicleDetailPage({
             />
           </div>
         </section>
+        ) : null}
 
         {/* Similar */}
         {similar.length ? (
