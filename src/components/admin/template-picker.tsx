@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import { getDictionary, localePath, type Locale } from "@/i18n";
 import { deleteVehicleTemplate } from "@/app/actions/vehicles";
@@ -39,6 +40,28 @@ export function TemplatePicker({
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
 
+  // The picker sits inside the form's sticky section nav, and a sticky element
+  // creates its own stacking context — so a dialog rendered in place is
+  // trapped inside it and the save bar lower down the form paints over it. A
+  // portal puts the dialog on the body, where its z-index means what it says.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
+  // Escape closes it, and the page behind does not scroll while it is open.
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("keydown", onKey);
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = previous;
+    };
+  }, [open]);
+
   const matches = useMemo(() => {
     const needle = query.trim().toLowerCase();
     if (!needle) return templates;
@@ -51,98 +74,105 @@ export function TemplatePicker({
 
   if (!templates.length) return null;
 
+  const dialog = (
+    <div
+      className="fixed inset-0 z-[70] flex items-start justify-center bg-ink/60 p-4 pt-[8vh] backdrop-blur-sm"
+      role="dialog"
+      aria-modal="true"
+      aria-label={t.admin.useTemplate}
+      onClick={(event) => {
+        if (event.target === event.currentTarget) setOpen(false);
+      }}
+    >
+      <div className="flex max-h-[80vh] w-full max-w-2xl flex-col overflow-hidden rounded-sm border border-line bg-canvas shadow-[var(--shadow-lg)]">
+        <div className="flex items-center justify-between gap-3 border-b border-line px-5 py-4">
+          <h2 className="display text-xl">{t.admin.useTemplate}</h2>
+          <button
+            type="button"
+            onClick={() => setOpen(false)}
+            aria-label={t.common.close}
+            className="cursor-pointer rounded-sm p-1 text-subtle transition-colors duration-200 hover:text-fg"
+          >
+            <IconX size={18} />
+          </button>
+        </div>
+
+        <div className="border-b border-line px-5 py-3">
+          <div className="relative">
+            <IconSearch
+              size={15}
+              className="pointer-events-none absolute start-3 top-1/2 -translate-y-1/2 text-subtle"
+            />
+            <input
+              autoFocus
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder={t.admin.searchTemplates}
+              className="input ps-9"
+            />
+          </div>
+        </div>
+
+        <ul className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
+          {matches.length ? (
+            matches.map((template) => (
+              <li key={template.id} className="border-b border-line last:border-0">
+                <div className="flex items-center gap-3 px-5 py-3 transition-colors duration-200 hover:bg-surface-2">
+                  <Link
+                    href={localePath(locale, `/admin/vehicles/new?template=${template.id}`)}
+                    className="min-w-0 flex-1 cursor-pointer"
+                  >
+                    <span className="block truncate font-semibold">{template.name}</span>
+                    <span className="block truncate text-sm text-muted">
+                      {[template.brand, template.model, template.version].filter(Boolean).join(" ")}
+                      {template.authorName ? ` · ${template.authorName}` : ""}
+                      {template.usageCount > 0 ? ` · ${template.usageCount}×` : ""}
+                    </span>
+                  </Link>
+
+                  {template.deletable ? (
+                    <form action={deleteVehicleTemplate}>
+                      <input type="hidden" name="id" value={template.id} />
+                      <input type="hidden" name="locale" value={locale} />
+                      <button
+                        type="submit"
+                        aria-label={`${t.common.delete} — ${template.name}`}
+                        className="cursor-pointer rounded-sm p-1.5 text-subtle transition-colors duration-200 hover:bg-red/10 hover:text-red"
+                      >
+                        <IconTrash size={15} />
+                      </button>
+                    </form>
+                  ) : null}
+                </div>
+              </li>
+            ))
+          ) : (
+            <li className="px-5 py-8 text-center text-sm text-muted">{t.admin.noTemplateMatch}</li>
+          )}
+        </ul>
+      </div>
+    </div>
+  );
+
   return (
     <>
-      <button type="button" onClick={() => setOpen(true)} className="btn btn-solid cursor-pointer">
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        className="btn btn-solid w-full cursor-pointer justify-start"
+      >
         <IconLayers size={16} />
         {t.admin.useTemplate}
-        <span className="ms-1 rounded-full bg-fg/10 px-1.5 text-xs font-bold tabular-nums">
+        <span className="ms-auto rounded-full bg-fg/10 px-1.5 text-xs font-bold tabular-nums">
           {templates.length}
         </span>
       </button>
 
-      {open ? (
-        <div
-          className="fixed inset-0 z-50 flex items-start justify-center bg-ink/40 p-4 pt-[8vh] backdrop-blur-sm"
-          role="dialog"
-          aria-modal="true"
-          aria-label={t.admin.useTemplate}
-          onClick={(event) => {
-            if (event.target === event.currentTarget) setOpen(false);
-          }}
-        >
-          <div className="flex max-h-[80vh] w-full max-w-2xl flex-col overflow-hidden rounded-sm border border-line bg-canvas shadow-[var(--shadow-lg)]">
-            <div className="flex items-center justify-between gap-3 border-b border-line px-5 py-4">
-              <h2 className="display text-xl">{t.admin.useTemplate}</h2>
-              <button
-                type="button"
-                onClick={() => setOpen(false)}
-                aria-label={t.common.close}
-                className="cursor-pointer rounded-sm p-1 text-subtle transition-colors duration-200 hover:text-fg"
-              >
-                <IconX size={18} />
-              </button>
-            </div>
-
-            <div className="border-b border-line px-5 py-3">
-              <div className="relative">
-                <IconSearch
-                  size={15}
-                  className="pointer-events-none absolute start-3 top-1/2 -translate-y-1/2 text-subtle"
-                />
-                <input
-                  autoFocus
-                  value={query}
-                  onChange={(event) => setQuery(event.target.value)}
-                  placeholder={t.admin.searchTemplates}
-                  className="input ps-9"
-                />
-              </div>
-            </div>
-
-            <ul className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
-              {matches.length ? (
-                matches.map((template) => (
-                  <li key={template.id} className="border-b border-line last:border-0">
-                    <div className="flex items-center gap-3 px-5 py-3 transition-colors duration-200 hover:bg-surface-2">
-                      <Link
-                        href={localePath(locale, `/admin/vehicles/new?template=${template.id}`)}
-                        className="min-w-0 flex-1 cursor-pointer"
-                      >
-                        <span className="block truncate font-semibold">{template.name}</span>
-                        <span className="block truncate text-sm text-muted">
-                          {[template.brand, template.model, template.version].filter(Boolean).join(" ")}
-                          {template.authorName ? ` · ${template.authorName}` : ""}
-                          {template.usageCount > 0 ? ` · ${template.usageCount}×` : ""}
-                        </span>
-                      </Link>
-
-                      {template.deletable ? (
-                        <form action={deleteVehicleTemplate}>
-                          <input type="hidden" name="id" value={template.id} />
-                          <input type="hidden" name="locale" value={locale} />
-                          <button
-                            type="submit"
-                            aria-label={`${t.common.delete} — ${template.name}`}
-                            className="cursor-pointer rounded-sm p-1.5 text-subtle transition-colors duration-200 hover:bg-red/10 hover:text-red"
-                          >
-                            <IconTrash size={15} />
-                          </button>
-                        </form>
-                      ) : null}
-                    </div>
-                  </li>
-                ))
-              ) : (
-                <li className="px-5 py-8 text-center text-sm text-muted">{t.admin.noTemplateMatch}</li>
-              )}
-            </ul>
-          </div>
-        </div>
-      ) : null}
+      {open && mounted ? createPortal(dialog, document.body) : null}
     </>
   );
 }
+
 
 /**
  * Names a template before the form submits it.
