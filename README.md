@@ -495,6 +495,41 @@ It found six real defects:
 
 Filter rows were also raised from 20px to the 24px minimum.
 
+## Seeded templates
+
+`scripts/seed-templates.mjs` creates the thirty templates the showroom starts
+from — Audi, Ferrari, BMW, Lamborghini and Porsche — with the manufacturers'
+published figures, WLTP combined where the car is sold in Europe. It is
+idempotent: a template is matched by name and updated, so re-running it after
+editing a figure or a phrase refreshes all thirty without duplicating any.
+
+```bash
+node scripts/seed-templates.mjs
+```
+
+The descriptions are assembled from the data rather than written out thirty
+times in six languages: an engine layout, a drivetrain and a gearbox each map
+to a phrase per language, and the electrification note is chosen from the
+car's own fields. Adding a car means adding a row; adding an engine layout
+means adding six short strings.
+
+Three cars in the list do not exist as the year they were asked for, and the
+templates say so rather than quietly pretending:
+
+| Car | What the template says | Why |
+| --- | --- | --- |
+| BMW X4 M | 2025, used | BMW ended X4 production in November 2025 |
+| Porsche 718 Cayman GT4 RS | 2025, used, collector | All 718 production ended in October 2025; the first and last combustion GT4 RS |
+| Audi RS5 | 2026 with the known 2.9 V6 figures | A new-generation RS5 is not confirmed |
+
+Two Porsches are T-Hybrids — a 1.9 kWh battery that never plugs in, there to
+spin the turbos. They are stored as hybrids, not plug-ins, and carry a battery
+capacity but no electric range or charging time, because they have neither.
+
+Rental figures are only written for the body types a company actually leases.
+A GT3 template leaves that section empty rather than carrying a monthly nobody
+would quote.
+
 ## Themes
 
 Light is the default; the toggle in the header switches to dark and the choice
