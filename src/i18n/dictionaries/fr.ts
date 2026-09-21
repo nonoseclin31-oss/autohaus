@@ -363,6 +363,7 @@ const fr: Dictionary = {
     searchVehicles: "Rechercher par marque, modèle ou référence…",
     published: "Publié",
     draft: "Brouillon",
+    saveDraft: "Enregistrer le brouillon",
     publishedState: "Publication",
     visibility: "Visible sur le site",
     featuredState: "Mettre en avant sur la page d'accueil",

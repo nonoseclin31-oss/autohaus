@@ -363,6 +363,7 @@ const de: Dictionary = {
     searchVehicles: "Nach Marke, Modell oder Referenz suchen…",
     published: "Veröffentlicht",
     draft: "Entwurf",
+    saveDraft: "Als Entwurf speichern",
     publishedState: "Veröffentlichung",
     visibility: "Auf der Website sichtbar",
     featuredState: "Auf der Startseite hervorheben",

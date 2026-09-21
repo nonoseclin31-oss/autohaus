@@ -14,7 +14,7 @@ import {
 import { RENTAL_DURATIONS, RENTAL_MILEAGES, cn } from "@/lib/utils";
 import {
   IconCar, IconBolt, IconFuel, IconPalette, IconWrench, IconEuro, IconTruck,
-  IconCheckCircle, IconImage, IconGlobe, IconEye, IconSpinner, IconAlert, IconCheck, IconFlag,
+  IconCheckCircle, IconImage, IconGlobe, IconEye, IconEyeOff, IconSpinner, IconAlert, IconCheck, IconFlag,
 } from "../icons";
 
 export type VehicleFormValues = {
@@ -111,12 +111,36 @@ function Toggle({
   );
 }
 
-function SaveBar({ idle, busy, cancelHref, cancel }: { idle: string; busy: string; cancelHref: string; cancel: string }) {
+function SaveBar({
+  idle,
+  busy,
+  cancelHref,
+  cancel,
+  draft,
+}: {
+  idle: string;
+  busy: string;
+  cancelHref: string;
+  cancel: string;
+  draft: string;
+}) {
   const { pending } = useFormStatus();
   return (
-    <div className="sticky bottom-0 z-20 -mx-4 mt-8 flex items-center justify-end gap-3 border-t border-line bg-canvas/90 px-4 py-3 backdrop-blur-xl sm:-mx-6 sm:px-6">
+    <div className="sticky bottom-0 z-20 -mx-4 mt-8 flex flex-wrap items-center justify-end gap-3 border-t border-line bg-canvas/90 px-4 py-3 backdrop-blur-xl sm:-mx-6 sm:px-6">
       <Link href={cancelHref} className="btn btn-ghost cursor-pointer">{cancel}</Link>
-      <button type="submit" className="btn btn-primary cursor-pointer" disabled={pending}>
+      {/* Saves what is there and keeps the listing off the public site, so it
+          can be picked up later — by whoever gets to it first. */}
+      <button
+        type="submit"
+        name="intent"
+        value="draft"
+        className="btn btn-solid cursor-pointer"
+        disabled={pending}
+      >
+        <IconEyeOff size={17} />
+        {draft}
+      </button>
+      <button type="submit" name="intent" value="publish" className="btn btn-primary cursor-pointer" disabled={pending}>
         {pending ? <IconSpinner size={17} /> : <IconCheck size={17} />}
         {pending ? busy : idle}
       </button>
@@ -730,6 +754,7 @@ export function VehicleForm({
           busy={t.common.saving}
           cancel={t.common.cancel}
           cancelHref={localePath(locale, "/admin/vehicles")}
+          draft={t.admin.saveDraft}
         />
       </div>
     </form>

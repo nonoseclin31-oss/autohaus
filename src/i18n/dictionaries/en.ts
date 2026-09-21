@@ -361,6 +361,7 @@ const en = {
     searchVehicles: "Search by make, model or reference…",
     published: "Published",
     draft: "Draft",
+    saveDraft: "Save as draft",
     publishedState: "Publication",
     visibility: "Visible on the website",
     featuredState: "Feature on the home page",

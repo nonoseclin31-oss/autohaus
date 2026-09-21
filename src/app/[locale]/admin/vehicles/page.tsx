@@ -52,11 +52,17 @@ export default async function AdminVehiclesPage({
           ],
         }
       : {}),
-    ...(statusFilter ? { status: statusFilter } : {}),
+    // "DRAFT" is not one of the status values; an unfinished listing is one
+    // that has not been published, whatever its status says.
+    ...(statusFilter === "DRAFT"
+      ? { published: false }
+      : statusFilter
+        ? { status: statusFilter }
+        : {}),
     ...(mine ? { ownerId: user.id } : {}),
   };
 
-  const [vehicles, total, counts] = await Promise.all([
+  const [vehicles, total, counts, draftCount] = await Promise.all([
     prisma.vehicle.findMany({
       where,
       orderBy: { updatedAt: "desc" },
@@ -70,6 +76,7 @@ export default async function AdminVehiclesPage({
     }),
     prisma.vehicle.count({ where }),
     prisma.vehicle.groupBy({ by: ["status"], _count: { _all: true } }),
+    prisma.vehicle.count({ where: { published: false } }),
   ]);
 
   const pageCount = Math.max(1, Math.ceil(total / PER_PAGE));
@@ -81,6 +88,7 @@ export default async function AdminVehiclesPage({
     { value: "RESERVED", label: label(VEHICLE_STATUS, "RESERVED", tax), count: countFor("RESERVED") },
     { value: "SOLD", label: label(VEHICLE_STATUS, "SOLD", tax), count: countFor("SOLD") },
     { value: "COMING_SOON", label: label(VEHICLE_STATUS, "COMING_SOON", tax), count: countFor("COMING_SOON") },
+    { value: "DRAFT", label: t.admin.draft, count: draftCount },
   ];
 
   function hrefWith(overrides: Record<string, string>) {

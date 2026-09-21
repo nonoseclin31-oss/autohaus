@@ -49,12 +49,19 @@ export async function saveVehicle(
   const price = toInt(formData.get("price"));
   const powerHp = toInt(formData.get("powerHp"));
 
+  // A draft is a listing someone has started and will come back to — or hand
+  // to a colleague. It is never shown on the public site, so it only needs
+  // enough to be recognisable in the back office; everything else can wait.
+  const asDraft = toStr(formData.get("intent")) === "draft";
+
   const fieldErrors: Record<string, string> = {};
   if (!brand) fieldErrors.brand = "required";
   if (!model) fieldErrors.model = "required";
-  if (!year || year < 1950 || year > new Date().getFullYear() + 2) fieldErrors.year = "required";
-  if (price === null || price < 0) fieldErrors.price = "required";
-  if (powerHp === null || powerHp < 0) fieldErrors.powerHp = "required";
+  if (!asDraft) {
+    if (!year || year < 1950 || year > new Date().getFullYear() + 2) fieldErrors.year = "required";
+    if (price === null || price < 0) fieldErrors.price = "required";
+    if (powerHp === null || powerHp < 0) fieldErrors.powerHp = "required";
+  }
   if (Object.keys(fieldErrors).length) {
     return { status: "error", message: "validation", fieldErrors };
   }
@@ -82,7 +89,8 @@ export async function saveVehicle(
   if (!STATUSES.includes(status)) status = "AVAILABLE";
   if (!can(user.role, "vehicle.status")) status = "AVAILABLE";
 
-  const published = can(user.role, "vehicle.publish") ? toBool(formData.get("published")) : false;
+  const published =
+    !asDraft && can(user.role, "vehicle.publish") ? toBool(formData.get("published")) : false;
 
   // ── Equipment ────────────────────────────────────────────
   const equipment = formData.getAll("equipment").map(String).filter(Boolean);
@@ -97,7 +105,7 @@ export async function saveVehicle(
     brand: brand!,
     model: model!,
     version: toStr(formData.get("version")),
-    year: year!,
+    year: year ?? new Date().getFullYear(),
     vin: toStr(formData.get("vin")),
 
     bodyType: toStr(formData.get("bodyType")) ?? "SEDAN",
@@ -110,7 +118,7 @@ export async function saveVehicle(
     drivetrain: toStr(formData.get("drivetrain")),
     engineSize: toFloat(formData.get("engineSize")),
     cylinders: toInt(formData.get("cylinders")),
-    powerHp: powerHp!,
+    powerHp: powerHp ?? 0,
     powerKw: toInt(formData.get("powerKw")) ?? Math.round(powerHp! * 0.7355),
     torqueNm: toInt(formData.get("torqueNm")),
     acceleration: toFloat(formData.get("acceleration")),
@@ -143,7 +151,7 @@ export async function saveVehicle(
     nonSmoker: toBool(formData.get("nonSmoker")),
     imported: toBool(formData.get("imported")),
 
-    price: price!,
+    price: price ?? 0,
     priceNet: toInt(formData.get("priceNet")),
     vatDeductible: toBool(formData.get("vatDeductible")),
     oldPrice: toInt(formData.get("oldPrice")),

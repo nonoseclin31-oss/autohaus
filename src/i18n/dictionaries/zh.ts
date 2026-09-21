@@ -363,6 +363,7 @@ const zh: Dictionary = {
     searchVehicles: "按品牌、车型或编号搜索…",
     published: "已发布",
     draft: "草稿",
+    saveDraft: "保存为草稿",
     publishedState: "发布状态",
     visibility: "在网站上可见",
     featuredState: "在首页重点展示",

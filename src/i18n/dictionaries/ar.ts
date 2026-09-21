@@ -363,6 +363,7 @@ const ar: Dictionary = {
     searchVehicles: "ابحث بالماركة أو الطراز أو الرقم المرجعي…",
     published: "منشورة",
     draft: "مسودة",
+    saveDraft: "حفظ كمسودة",
     publishedState: "النشر",
     visibility: "ظاهرة على الموقع",
     featuredState: "إبرازها في الصفحة الرئيسية",
