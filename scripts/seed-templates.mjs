@@ -20,57 +20,63 @@ const LOCALES = ["en", "fr", "de", "zh", "ar", "es"];
 
 const T = {
   en: {
-    layout: { V12: "naturally aspirated V12", V8T: "twin-turbo V8", V8: "V8", V6T: "twin-turbo V6", I6: "turbocharged straight-six", I5: "five-cylinder turbo" },
+    layout: { F6T: "twin-turbo flat-six", F6: "naturally aspirated flat-six", V12: "naturally aspirated V12", V8T: "twin-turbo V8", V8: "V8", V6T: "twin-turbo V6", I6: "turbocharged straight-six", I5: "five-cylinder turbo" },
     drive: { AWD: "all-wheel drive", RWD: "rear-wheel drive" },
     gearbox: { DUAL_CLUTCH: "dual-clutch gearbox", AUTOMATIC: "automatic gearbox" },
     hp: "hp", sec: "s", to100: "0–100 km/h in", top: "top speed",
     phev: "Plug-in hybrid: it runs on electricity alone for short journeys and recharges from a wall box.",
     mhev: "A 48-volt system smooths the stop-start and recovers energy under braking.",
+    thybrid: "Performance hybrid: it never plugs in — the battery is charged by the engine and by braking, and exists to fill the turbos.",
     closing: "Inspected and certified to German standards, delivered anywhere in the world.",
   },
   fr: {
-    layout: { V12: "V12 atmosphérique", V8T: "V8 biturbo", V8: "V8", V6T: "V6 biturbo", I6: "six cylindres en ligne turbo", I5: "cinq cylindres turbo" },
+    layout: { F6T: "flat-six biturbo", F6: "flat-six atmosphérique", V12: "V12 atmosphérique", V8T: "V8 biturbo", V8: "V8", V6T: "V6 biturbo", I6: "six cylindres en ligne turbo", I5: "cinq cylindres turbo" },
     drive: { AWD: "transmission intégrale", RWD: "propulsion" },
     gearbox: { DUAL_CLUTCH: "boîte à double embrayage", AUTOMATIC: "boîte automatique" },
     hp: "ch", sec: "s", to100: "0–100 km/h en", top: "vitesse maximale",
     phev: "Hybride rechargeable : elle roule en tout électrique sur les trajets courts et se recharge sur une borne.",
     mhev: "Un réseau 48 volts adoucit le stop-and-start et récupère l'énergie au freinage.",
+    thybrid: "Hybride de performance : elle ne se branche pas — la batterie se recharge en roulant et au freinage, et sert à supprimer le temps de réponse des turbos.",
     closing: "Contrôlée et certifiée selon les standards allemands, livrée partout dans le monde.",
   },
   de: {
-    layout: { V12: "V12-Saugmotor", V8T: "V8-Biturbo", V8: "V8", V6T: "V6-Biturbo", I6: "Reihensechszylinder mit Turbo", I5: "Fünfzylinder-Turbo" },
+    layout: { F6T: "Sechszylinder-Boxer mit Biturbo", F6: "Sechszylinder-Boxer-Saugmotor", V12: "V12-Saugmotor", V8T: "V8-Biturbo", V8: "V8", V6T: "V6-Biturbo", I6: "Reihensechszylinder mit Turbo", I5: "Fünfzylinder-Turbo" },
     drive: { AWD: "Allradantrieb", RWD: "Hinterradantrieb" },
     gearbox: { DUAL_CLUTCH: "Doppelkupplungsgetriebe", AUTOMATIC: "Automatikgetriebe" },
     hp: "PS", sec: "s", to100: "0–100 km/h in", top: "Höchstgeschwindigkeit",
     phev: "Plug-in-Hybrid: rein elektrisch auf kurzen Strecken, Aufladung an der Wallbox.",
     mhev: "Ein 48-Volt-System glättet die Start-Stopp-Automatik und rekuperiert beim Bremsen.",
+    thybrid: "Performance-Hybrid: kein Stecker — die Batterie lädt im Fahren und beim Bremsen und dient dazu, das Turboloch zu schließen.",
     closing: "Nach deutschen Standards geprüft und zertifiziert, Lieferung weltweit.",
   },
   zh: {
-    layout: { V12: "自然吸气 V12", V8T: "双涡轮增压 V8", V8: "V8", V6T: "双涡轮增压 V6", I6: "涡轮增压直列六缸", I5: "涡轮增压五缸" },
+    layout: { F6T: "双涡轮增压水平对置六缸", F6: "自然吸气水平对置六缸", V12: "自然吸气 V12", V8T: "双涡轮增压 V8", V8: "V8", V6T: "双涡轮增压 V6", I6: "涡轮增压直列六缸", I5: "涡轮增压五缸" },
     drive: { AWD: "四轮驱动", RWD: "后轮驱动" },
     gearbox: { DUAL_CLUTCH: "双离合变速箱", AUTOMATIC: "自动变速箱" },
     hp: "马力", sec: "秒", to100: "0–100 公里/小时加速", top: "最高时速",
     phev: "插电式混合动力：短途可纯电行驶，可通过充电桩充电。",
     mhev: "48 伏系统让启停更平顺，并在制动时回收能量。",
+    thybrid: "性能混合动力：无需插电——电池在行驶与制动中充电，用于消除涡轮迟滞。",
     closing: "按德国标准检测认证，配送至全球。",
   },
   ar: {
-    layout: { V12: "محرك V12 بسحب طبيعي", V8T: "V8 بشاحنين توربو", V8: "V8", V6T: "V6 بشاحنين توربو", I6: "ستة أسطوانات على التوالي بتوربو", I5: "خمس أسطوانات بتوربو" },
+    layout: { F6T: "ستة أسطوانات مسطّحة بشاحنين توربو", F6: "ستة أسطوانات مسطّحة بسحب طبيعي", V12: "محرك V12 بسحب طبيعي", V8T: "V8 بشاحنين توربو", V8: "V8", V6T: "V6 بشاحنين توربو", I6: "ستة أسطوانات على التوالي بتوربو", I5: "خمس أسطوانات بتوربو" },
     drive: { AWD: "دفع رباعي", RWD: "دفع خلفي" },
     gearbox: { DUAL_CLUTCH: "ناقل حركة بقابضين", AUTOMATIC: "ناقل حركة أوتوماتيكي" },
     hp: "حصان", sec: "ثانية", to100: "من 0 إلى 100 كم/س في", top: "السرعة القصوى",
     phev: "هجينة قابلة للشحن: تسير كهربائيًا بالكامل في المشاوير القصيرة وتُشحن من محطة منزلية.",
     mhev: "نظام 48 فولت يجعل التشغيل والإيقاف أكثر سلاسة ويستعيد الطاقة عند الفرملة.",
+    thybrid: "هجينة أداء: لا تُشحن بالكهرباء — تُشحن البطارية أثناء القيادة وعند الفرملة، ووظيفتها إلغاء تأخّر التوربو.",
     closing: "مفحوصة ومعتمدة وفق المعايير الألمانية، مع التوصيل إلى أنحاء العالم.",
   },
   es: {
-    layout: { V12: "V12 atmosférico", V8T: "V8 biturbo", V8: "V8", V6T: "V6 biturbo", I6: "seis cilindros en línea turbo", I5: "cinco cilindros turbo" },
+    layout: { F6T: "bóxer de seis cilindros biturbo", F6: "bóxer de seis cilindros atmosférico", V12: "V12 atmosférico", V8T: "V8 biturbo", V8: "V8", V6T: "V6 biturbo", I6: "seis cilindros en línea turbo", I5: "cinco cilindros turbo" },
     drive: { AWD: "tracción total", RWD: "propulsión trasera" },
     gearbox: { DUAL_CLUTCH: "caja de doble embrague", AUTOMATIC: "caja automática" },
     hp: "CV", sec: "s", to100: "0–100 km/h en", top: "velocidad máxima",
     phev: "Híbrido enchufable: circula en eléctrico puro en trayectos cortos y se recarga en un punto de carga.",
     mhev: "Un sistema de 48 voltios suaviza el arranque-parada y recupera energía al frenar.",
+    thybrid: "Híbrido de prestaciones: no se enchufa — la batería se carga al rodar y al frenar, y sirve para eliminar el retardo de los turbos.",
     closing: "Revisado y certificado según estándares alemanes, con entrega en todo el mundo.",
   },
 };
@@ -179,6 +185,49 @@ const CARS = [
     drivetrain: "AWD", engine: 3.0, cylinders: 6, hp: 510, kw: 375, nm: 650, acc: 4.1, top: 280,
     cons: 10.7, urban: 14.0, highway: 8.8, co2: 243, doors: 5, seats: 5, condition: "USED" },
 
+  // ── Porsche ─────────────────────────────────────────────────────────
+  // The 992.2 generation. Turbo S and Targa 4 GTS are T-Hybrids: a 1.9 kWh
+  // battery that never plugs in, there to spin the turbos rather than to
+  // drive on — so they are hybrids, not plug-ins, and carry no electric range.
+  { name: "2026 Porsche 911 Carrera 4S", brand: "Porsche", model: "911", version: "Carrera 4S", year: 2026,
+    body: "COUPE", segment: "SPORT", layout: "F6T", fuel: "PETROL", transmission: "DUAL_CLUTCH", gears: 8,
+    drivetrain: "AWD", engine: 3.0, cylinders: 6, hp: 480, kw: 353, nm: 530, acc: 3.3, top: 308,
+    cons: 10.9, urban: 14.2, highway: 9.1, co2: 247, doors: 2, seats: 4 },
+
+  { name: "2026 Porsche 911 Turbo S", brand: "Porsche", model: "911", version: "Turbo S T-Hybrid", year: 2026,
+    body: "COUPE", segment: "SPORT", layout: "F6T", fuel: "HYBRID", transmission: "DUAL_CLUTCH", gears: 8,
+    drivetrain: "AWD", engine: 3.6, cylinders: 6, hp: 711, kw: 523, nm: 800, acc: 2.5, top: 322,
+    cons: 11.5, urban: 14.8, highway: 9.6, co2: 261, battery: 1.9, doors: 2, seats: 4, thybrid: true },
+
+  { name: "2026 Porsche 911 Targa 4 GTS", brand: "Porsche", model: "911", version: "Targa 4 GTS T-Hybrid", year: 2026,
+    body: "CABRIOLET", segment: "SPORT", layout: "F6T", fuel: "HYBRID", transmission: "DUAL_CLUTCH", gears: 8,
+    drivetrain: "AWD", engine: 3.6, cylinders: 6, hp: 541, kw: 398, nm: 610, acc: 3.2, top: 312,
+    cons: 10.7, urban: 13.9, highway: 8.9, co2: 243, battery: 1.9, doors: 2, seats: 4, thybrid: true },
+
+  { name: "2026 Porsche 911 Targa 4S", brand: "Porsche", model: "911", version: "Targa 4S", year: 2026,
+    body: "CABRIOLET", segment: "SPORT", layout: "F6T", fuel: "PETROL", transmission: "DUAL_CLUTCH", gears: 8,
+    drivetrain: "AWD", engine: 3.0, cylinders: 6, hp: 480, kw: 353, nm: 530, acc: 3.6, top: 304,
+    cons: 11.1, urban: 14.5, highway: 9.3, co2: 251, doors: 2, seats: 4 },
+
+  // The GT cars keep the seven-speed PDK and, in Europe, leave the factory
+  // as two-seaters.
+  { name: "2026 Porsche 911 GT3", brand: "Porsche", model: "911", version: "GT3", year: 2026,
+    body: "COUPE", segment: "SPORT", layout: "F6", fuel: "PETROL", transmission: "DUAL_CLUTCH", gears: 7,
+    drivetrain: "RWD", engine: 4.0, cylinders: 6, hp: 510, kw: 375, nm: 450, acc: 3.4, top: 311,
+    cons: 13.8, urban: 19.6, highway: 10.8, co2: 312, doors: 2, seats: 2 },
+
+  { name: "2026 Porsche 911 GT3 RS", brand: "Porsche", model: "911", version: "GT3 RS", year: 2026,
+    body: "COUPE", segment: "SPORT", layout: "F6", fuel: "PETROL", transmission: "DUAL_CLUTCH", gears: 7,
+    drivetrain: "RWD", engine: 4.0, cylinders: 6, hp: 525, kw: 386, nm: 465, acc: 3.2, top: 296,
+    cons: 13.4, urban: 19.1, highway: 10.5, co2: 305, doors: 2, seats: 2 },
+
+  // Production of every 718 ended in October 2025, and this was the first and
+  // last combustion GT4 RS — so the template says 2025, used, collector.
+  { name: "2025 Porsche 718 Cayman GT4 RS", brand: "Porsche", model: "718 Cayman", version: "GT4 RS", year: 2025,
+    body: "COUPE", segment: "COLLECTOR", layout: "F6", fuel: "PETROL", transmission: "DUAL_CLUTCH", gears: 7,
+    drivetrain: "RWD", engine: 4.0, cylinders: 6, hp: 500, kw: 368, nm: 450, acc: 3.4, top: 315,
+    cons: 13.0, urban: 18.5, highway: 10.2, co2: 295, doors: 2, seats: 2, condition: "USED" },
+
   // ── Lamborghini ─────────────────────────────────────────────────────
   { name: "2026 Lamborghini Revuelto", brand: "Lamborghini", model: "Revuelto", version: "HPEV", year: 2026,
     body: "COUPE", segment: "SPORT", layout: "V12", fuel: "PLUGIN_HYBRID", transmission: "DUAL_CLUTCH", gears: 8,
@@ -217,6 +266,13 @@ const PRICE = {
   "2026 BMW X3 M50": 78000, "2026 BMW X5 M Competition": 165000, "2026 BMW M5": 148000,
   "2026 BMW M3 Competition": 108000, "2026 BMW M4 Competition": 115000, "2026 BMW M2": 79000,
   "2026 BMW X6 M Competition": 172000, "2025 BMW X4 M Competition": 118000,
+  "2026 Porsche 911 Carrera 4S": 150000,
+  "2026 Porsche 911 Turbo S": 275000,
+  "2026 Porsche 911 Targa 4 GTS": 200000,
+  "2026 Porsche 911 Targa 4S": 165000,
+  "2026 Porsche 911 GT3": 200000,
+  "2026 Porsche 911 GT3 RS": 260000,
+  "2025 Porsche 718 Cayman GT4 RS": 165000,
   "2026 Lamborghini Revuelto": 560000, "2026 Lamborghini Urus Performante": 295000,
   "2026 Lamborghini Urus SE": 305000, "2026 Lamborghini Temerario": 330000,
 };
@@ -227,6 +283,7 @@ const COLOURS = {
   BMW: ["black", "black"],
   Ferrari: ["red", "black"],
   Lamborghini: ["yellow", "black"],
+  Porsche: ["white", "black"],
 };
 
 /* ── Equipment by kind of car ──────────────────────────────────────────── */
@@ -271,6 +328,7 @@ function description(car, loc) {
     `${t.to100} ${decimal(car.acc, loc)} ${t.sec}, ${t.top} ${car.top} km/h.`,
   ];
   if (car.phev) lines.push(t.phev);
+  else if (car.thybrid) lines.push(t.thybrid);
   else if (car.mhev) lines.push(t.mhev);
   lines.push(t.closing);
   return lines.join(" ");
