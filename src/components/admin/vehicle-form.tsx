@@ -134,6 +134,10 @@ function SaveBar({
         type="submit"
         name="intent"
         value="draft"
+        // The fields carry HTML `required`, which would block the submit before
+        // it reaches the server. A draft is allowed to be incomplete, so this
+        // button skips the browser's own check; the server still validates.
+        formNoValidate
         className="btn btn-solid cursor-pointer"
         disabled={pending}
       >
