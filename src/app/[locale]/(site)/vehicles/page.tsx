@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { pageAlternates } from "@/lib/seo";
 import { getDictionary, resolveLocale, localePath } from "@/i18n";
 import { listVehicles, getAvailableBrands, type VehicleFilters as Filters } from "@/lib/vehicles";
 import { VehicleCard } from "@/components/vehicle-card";
@@ -14,8 +15,11 @@ export async function generateMetadata({
 }: {
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
-  const t = getDictionary((await params).locale);
-  return { title: t.vehicles.title, description: t.vehicles.subtitle };
+  const { locale } = await params;
+  const t = getDictionary(locale);
+  return { title: t.vehicles.title, description: t.meta.vehicles,
+    alternates: pageAlternates(locale, "/vehicles"),
+  };
 }
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;

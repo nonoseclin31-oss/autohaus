@@ -2,9 +2,15 @@ import type { Dictionary } from "./en";
 
 const de: Dictionary = {
   meta: {
-    title: "Autohaus Motion — Premium-Fahrzeugverkauf & Langzeitmiete",
+    title: "Premiumfahrzeuge & Langzeitmiete | Autohaus Motion",
     description:
       "Deutsches Autohaus mit Sitz in Frankfurt. Ausgewählte Premium- und Performance-Fahrzeuge zum Verkauf sowie maßgeschneiderte Langzeitmietlösungen.",
+    // Search snippets. Kept apart from the page copy: a subtitle reads
+    // well on screen but is too short to fill a result.
+    vehicles: "Unser Bestand an Premium- und Sportfahrzeugen, jedes geprüft, zertifiziert und fahrbereit. Lieferung europaweit ab unserem Showroom in Roetgen.",
+    rental: "Langzeitmiete mit einer festen Monatsrate für Fahrzeug, Wartung, Garantie und Pannenhilfe. Von 24 bis 60 Monaten, ohne Überraschungen.",
+    about: "Autohaus Motion GmbH, deutsches Autohaus in Roetgen bei Aachen. Premium- und Sportfahrzeuge, Verkauf und Langzeitmiete in ganz Europa.",
+    contact: "Sprechen Sie mit uns über ein Fahrzeug, eine Langzeitmiete oder Ihre Inzahlungnahme. Showroom Bundesstraße 124 in Roetgen, Lieferung europaweit.",
   },
   nav: {
     home: "Startseite",

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { pageAlternates } from "@/lib/seo";
 import { getDictionary, resolveLocale, localePath } from "@/i18n";
 import { getRentalVehicles, vehicleTitle } from "@/lib/vehicles";
 import { VehicleCard } from "@/components/vehicle-card";
@@ -16,8 +17,11 @@ export async function generateMetadata({
 }: {
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
-  const t = getDictionary((await params).locale);
-  return { title: t.rental.title, description: t.rental.subtitle };
+  const { locale } = await params;
+  const t = getDictionary(locale);
+  return { title: t.rental.title, description: t.meta.rental,
+    alternates: pageAlternates(locale, "/rental"),
+  };
 }
 
 export default async function RentalPage({ params }: { params: Promise<{ locale: string }> }) {

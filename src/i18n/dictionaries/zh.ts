@@ -2,9 +2,15 @@ import type { Dictionary } from "./en";
 
 const zh: Dictionary = {
   meta: {
-    title: "Autohaus Motion — 高端车辆销售与长期租赁",
+    title: "高端车销售与长期租赁 | Autohaus Motion",
     description:
       "总部位于法兰克福的德国车行。精选高端与性能车辆现车销售，并提供量身定制的长期租赁方案。",
+    // Search snippets. Kept apart from the page copy: a subtitle reads
+    // well on screen but is too short to fill a result.
+    vehicles: "浏览我们的高端与性能车库存，每一辆均经过检测、认证并可立即上路。自罗特根展厅发货，配送至全欧洲。",
+    rental: "长期租赁，每月固定租金涵盖车辆、保养、质保与道路救援。租期 24 至 60 个月，费用透明无意外。",
+    about: "Autohaus Motion GmbH，位于德国亚琛附近罗特根的汽车经销商。销售与长期租赁高端及性能车，服务遍及全欧洲。",
+    contact: "就购车、长期租赁或置换与我们联系。展厅位于罗特根 Bundesstrasse 124，配送至全欧洲。",
   },
   nav: {
     home: "首页",

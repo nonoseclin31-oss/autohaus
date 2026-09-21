@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { pageAlternates } from "@/lib/seo";
 import { getDictionary, resolveLocale } from "@/i18n";
 import { LeadForm } from "@/components/lead-form";
 import { IconPin, IconPhone, IconMail, IconClock } from "@/components/icons";
@@ -9,8 +10,11 @@ export async function generateMetadata({
 }: {
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
-  const t = getDictionary((await params).locale);
-  return { title: t.contact.title, description: t.contact.subtitle };
+  const { locale } = await params;
+  const t = getDictionary(locale);
+  return { title: t.contact.title, description: t.meta.contact,
+    alternates: pageAlternates(locale, "/contact"),
+  };
 }
 
 export default async function ContactPage({ params }: { params: Promise<{ locale: string }> }) {

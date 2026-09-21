@@ -1,8 +1,14 @@
 const en = {
   meta: {
-    title: "Autohaus Motion — Premium vehicle sales & long-term rental",
+    title: "Premium cars for sale & long-term rental | Autohaus Motion",
     description:
       "German dealership based in Frankfurt. Curated premium and performance vehicles for sale, plus tailor-made long-term rental solutions.",
+    // Search snippets. Kept apart from the page copy: a subtitle reads
+    // well on screen but is too short to fill a result.
+    vehicles: "Browse our stock of premium and performance cars, each inspected, certified and road-ready. Delivery across Europe from our Roetgen showroom.",
+    rental: "Long-term car rental with one fixed monthly payment covering the vehicle, servicing, warranty and roadside assistance. 24 to 60 months, no surprises.",
+    about: "Autohaus Motion GmbH, a German dealership in Roetgen near Aachen. Premium and performance cars, sold and rented long-term across Europe.",
+    contact: "Talk to our team about a car, a long-term rental or a trade-in. Showroom at Bundesstrasse 124, Roetgen, and delivery throughout Europe.",
   },
   nav: {
     home: "Home",

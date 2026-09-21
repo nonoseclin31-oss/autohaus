@@ -2,9 +2,15 @@ import type { Dictionary } from "./en";
 
 const fr: Dictionary = {
   meta: {
-    title: "Autohaus Motion — Vente de véhicules premium & location longue durée",
+    title: "Véhicules premium & location longue durée | Autohaus Motion",
     description:
       "Concessionnaire allemand basé à Francfort. Véhicules premium et sportifs sélectionnés à la vente, ainsi que des solutions de location longue durée sur mesure.",
+    // Search snippets. Kept apart from the page copy: a subtitle reads
+    // well on screen but is too short to fill a result.
+    vehicles: "Parcourez notre stock de véhicules premium et sportifs, tous contrôlés, certifiés et prêts à rouler. Livraison dans toute l'Europe depuis Roetgen.",
+    rental: "La location longue durée avec un loyer mensuel fixe couvrant le véhicule, l'entretien, la garantie et l'assistance. De 24 à 60 mois, sans surprise.",
+    about: "Autohaus Motion GmbH, concession allemande à Roetgen près d'Aix-la-Chapelle. Véhicules premium et sportifs, à la vente et en location longue durée.",
+    contact: "Parlez à notre équipe d'un véhicule, d'une location longue durée ou d'une reprise. Showroom Bundesstrasse 124 à Roetgen, livraison partout en Europe.",
   },
   nav: {
     home: "Accueil",

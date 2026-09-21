@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
+import { pageAlternates } from "@/lib/seo";
 import { getDictionary, resolveLocale, localePath } from "@/i18n";
 import { Reveal } from "@/components/reveal";
 import { IconShield, IconWrench, IconFlag, IconArrowRight } from "@/components/icons";
@@ -11,8 +12,11 @@ export async function generateMetadata({
 }: {
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
-  const t = getDictionary((await params).locale);
-  return { title: t.about.title, description: t.about.subtitle };
+  const { locale } = await params;
+  const t = getDictionary(locale);
+  return { title: t.about.title, description: t.meta.about,
+    alternates: pageAlternates(locale, "/about"),
+  };
 }
 
 export default async function AboutPage({ params }: { params: Promise<{ locale: string }> }) {

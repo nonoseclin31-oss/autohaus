@@ -5,6 +5,8 @@ import type { Metadata } from "next";
 import {
   getDictionary, resolveLocale, localePath, formatCurrency, formatNumber, formatDate, formatMonthYear,
 } from "@/i18n";
+import { absoluteUrl, breadcrumbSchema, pageAlternates, vehicleSchema } from "@/lib/seo";
+import { JsonLd } from "@/components/json-ld";
 import { getVehicleBySlug, getSimilarVehicles, vehicleTitle, vehicleTranslation } from "@/lib/vehicles";
 import { prisma } from "@/lib/prisma";
 import { VehicleGallery } from "@/components/vehicle-gallery";
@@ -39,8 +41,10 @@ export async function generateMetadata({
   return {
     title,
     description: tr?.description?.slice(0, 160) ?? `${title} — ${vehicle.year} — ${vehicle.mileage} km`,
+    alternates: pageAlternates(locale, `/vehicles/${slug}`),
     openGraph: {
       title,
+      url: absoluteUrl(locale, `/vehicles/${slug}`),
       images: vehicle.images[0]?.url ? [vehicle.images[0].url] : undefined,
     },
   };
@@ -157,8 +161,23 @@ export default async function VehicleDetailPage({
     }))
     .filter((g) => g.items.length);
 
+  const schemaDescription =
+    tr?.description?.slice(0, 300) ??
+    `${vehicleTitle(vehicle)} — ${vehicle.year}, ${vehicle.mileage} km, ${vehicle.powerHp} hp.`;
+
   return (
     <>
+      {/* The listing as a Vehicle with an Offer, so a result can carry the
+          price, year and mileage; plus where the page sits in the site. */}
+      <JsonLd data={vehicleSchema(locale, vehicle, schemaDescription)} />
+      <JsonLd
+        data={breadcrumbSchema(locale, [
+          { name: t.nav.home, path: "" },
+          { name: t.nav.vehicles, path: "/vehicles" },
+          { name: vehicleTitle(vehicle), path: `/vehicles/${vehicle.slug}` },
+        ])}
+      />
+
       {/* Breadcrumb */}
       <div className="border-b border-line bg-surface">
         <div className="mx-auto flex max-w-7xl items-center gap-2 px-4 py-3 text-sm sm:px-6 lg:px-8">

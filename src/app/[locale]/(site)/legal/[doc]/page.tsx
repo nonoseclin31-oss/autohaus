@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
+import { pageAlternates } from "@/lib/seo";
 import { getDictionary, resolveLocale } from "@/i18n";
 import { IconAlert } from "@/components/icons";
 import { COMPANY } from "@/lib/utils";
@@ -23,7 +24,10 @@ export async function generateMetadata({
   const { locale, doc } = await params;
   const t = getDictionary(locale);
   if (!DOCS.includes(doc as Doc)) return { title: "404" };
-  return { title: titleFor(doc as Doc, t) };
+  return {
+    title: titleFor(doc as Doc, t),
+    alternates: pageAlternates(locale, `/legal/${doc}`),
+  };
 }
 
 export default async function LegalPage({

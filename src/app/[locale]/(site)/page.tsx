@@ -3,6 +3,8 @@ import Image from "next/image";
 import { getDictionary, resolveLocale, localePath, formatNumber, formatCurrency } from "@/i18n";
 import { getFeaturedVehicles } from "@/lib/vehicles";
 import { prisma } from "@/lib/prisma";
+import { JsonLd } from "@/components/json-ld";
+import { dealerSchema } from "@/lib/seo";
 import { VehicleCard } from "@/components/vehicle-card";
 import { Reveal } from "@/components/reveal";
 import { QuickSearch } from "@/components/quick-search";
@@ -50,6 +52,10 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
 
   return (
     <>
+      {/* The dealership itself: name, address and phone, which is what a
+          local search result is assembled from. */}
+      <JsonLd data={dealerSchema(locale, t.meta.description)} />
+
       {/* ───────────────────────── Hero ───────────────────────── */}
       <section className="studio relative overflow-hidden">
         <div className="hairlines absolute inset-0 opacity-70" aria-hidden="true" />
