@@ -78,6 +78,75 @@
 }
 
 /* ══════════════════════════════════════════════════════════════
+   Light theme — sand, the one the site ships with
+
+   The tokens in @theme above are the original stone palette: an
+   off-white canvas at luminance 0.955, near-paper. This block warms
+   it to a sand beige at 0.875 — still unmistakably a light theme,
+   but with the colour of the room rather than the colour of the
+   screen behind it. It is the daylight counterpart of the taupe.
+
+   Warming the canvas darkens the whole scale, and several accents
+   that only just cleared 4.5:1 against near-white no longer do. They
+   are darkened here to match rather than left to fail: bronze, the
+   success and warning colours, the muted text tier and the oversized
+   numerals all move a step down. Brand red is kept exactly for fills
+   and gains a slightly deeper twin for text, the same arrangement the
+   dark themes use in the other direction.
+
+   The original stone palette is kept as data-theme="light1".
+
+   Measured, not eyeballed: every text colour clears 4.5:1 on all four
+   surfaces, the numerals clear 3:1, and white on the brand red stays
+   at 5.9:1.
+   ══════════════════════════════════════════════════════════════ */
+
+:root[data-theme="light"],
+:root:not([data-theme]) {
+  color-scheme: light;
+
+  --color-canvas: #f5f0e6;
+  --color-surface: #fffdf8;
+  --color-surface-2: #efe9dd;
+  --color-surface-3: #e8e1d2;
+  --color-line: #e2dbcc;
+  --color-line-strong: #cec4b1;
+
+  --color-studio-top: #fffdf8;
+  --color-hairline: rgba(12, 10, 9, 0.04);
+  --color-stamp-bg: rgba(255, 253, 248, 0.88);
+
+  /* 15.2:1 · 5.9:1 · 4.9:1 on the canvas */
+  --color-fg: #0c0a09;
+  --color-muted: #57534e;
+  --color-subtle: #655e58;
+  --color-numeral: #807a73;
+
+  /* The fill is the brand red untouched; the text twin is a shade
+     deeper so it holds on the darkest surface of the scale too. */
+  --color-red: #c8102e;
+  --color-red-text: #bb0e2b;
+  --color-red-wash: #f9ece9;
+
+  /* Gold stays a fill — ink on it is 6.0:1. Bronze is its text form
+     and had to darken with the canvas. */
+  --color-gold: #ca8a04;
+  --color-bronze: #7c5a07;
+  --color-gold-wash: #f8f0dc;
+
+  --color-ok: #127036;
+  --color-ok-wash: #eef5ea;
+  --color-warn: #a04908;
+  --color-info: #035d8f;
+}
+
+/* Red as text, in the sand palette as in the dark ones. */
+:root[data-theme="light"] .text-red,
+:root:not([data-theme]) .text-red {
+  color: var(--color-red-text);
+}
+
+/* ══════════════════════════════════════════════════════════════
    Dark theme, first palette — kept as "dark1"
 
    A near-black canvas. Handsome, but it made every light surface on
