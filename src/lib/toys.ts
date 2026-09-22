@@ -1,6 +1,6 @@
 import type { Prisma } from "@prisma/client";
 import { prisma } from "./prisma";
-import { isWaterToy, type Locale } from "./taxonomy";
+import { isAccessory, isWaterToy, type Locale } from "./taxonomy";
 import { parseJsonArray } from "./utils";
 
 /**
@@ -291,6 +291,9 @@ export function toyTranslation(
 export function toyUsage(
   toy: { kind: string; mileage: number | null; engineHours: number | null },
 ): { value: number; unit: "km" | "h" } | null {
+  // A helmet has neither. Returning "0 km" for one would be a fact nobody
+  // meant to state.
+  if (isAccessory(toy.kind)) return null;
   if (isWaterToy(toy.kind)) {
     return toy.engineHours === null ? null : { value: toy.engineHours, unit: "h" };
   }

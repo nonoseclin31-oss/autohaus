@@ -285,6 +285,13 @@ const ar: Dictionary = {
     requestThisOffer: "اطلب هذا العرض",
     offersTitle: "سيارات متاحة للتأجير طويل الأمد",
     offersSubtitle: "جاهزة للتسليم، بأقساط شهرية تبدأ من المبالغ الموضحة.",
+    // How the offers below may be ordered. Its own short list rather than
+    // the catalogue's: this page sells one number, a monthly payment.
+    sortStandard: "الترتيب الافتراضي",
+    sortPrice: "السعر",
+    sortMileage: "المسافة المقطوعة",
+    sortRegistration: "أول تسجيل",
+    sortListed: "تاريخ الإدراج",
     noOffers: "لا توجد سيارات تأجير منشورة حالياً. تواصل معنا لمعرفة المتوفر.",
     audienceTitle: "للشركات والأفراد",
     businessTitle: "الشركات",
@@ -595,7 +602,7 @@ const ar: Dictionary = {
     toyTemplateNamePlaceholder: "مثال: Sea-Doo RXP-X 325",
     toyTemplates: "قوالب Big Toys",
     fKind: "العائلة",
-    fKindHelp: "يحدد الحقول المطلوبة: الكيلومترات لما يسير على عجلات، وساعات التشغيل لما يطفو على الماء.",
+    fKindHelp: "يحدد الحقول المطلوبة: الكيلومترات لما يسير على عجلات، وساعات التشغيل لما يطفو على الماء، ولا شيء من ذلك للإكسسوارات.",
     fCategory: "الاستخدام",
     fHullId: "الرقم التسلسلي / HIN",
     fDisplacement: "سعة المحرك (سم³)",

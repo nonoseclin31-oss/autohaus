@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser, logActivity } from "@/lib/auth";
 import { can, canEditToy, canDeleteToy } from "@/lib/rbac";
-import { LOCALES } from "@/lib/taxonomy";
+import { LOCALES, isAccessory } from "@/lib/taxonomy";
 import { slugify, generateReference, toInt, toFloat, toStr, toBool, toDate, parseJsonArray } from "@/lib/utils";
 import { resolveLocale } from "@/i18n";
 import { TOY_HERO_RANK, TOYS_GRID_SIZE } from "@/lib/toys";
@@ -22,7 +22,7 @@ export type ToyFormState = {
 type ImagePayload = { url: string; alt?: string | null };
 
 const STATUSES = ["AVAILABLE", "RESERVED", "SOLD", "COMING_SOON"];
-const KINDS = ["MOTORCYCLE", "QUAD", "JETSKI", "BOAT"];
+const KINDS = ["MOTORCYCLE", "QUAD", "BUGGY", "JETSKI", "BOAT", "ACCESSORY"];
 
 /** Every public path a change to one listing can show up on. */
 function revalidateToy(locale: string, slug?: string | null) {
@@ -109,7 +109,9 @@ export async function saveToy(
   if (!asDraft) {
     if (!year || year < 1950 || year > new Date().getFullYear() + 2) fieldErrors.year = "required";
     if (price === null || price < 0) fieldErrors.price = "required";
-    if (powerHp === null || powerHp < 0) fieldErrors.powerHp = "required";
+    // An accessory has no engine, so it cannot be asked for its power. The
+    // column is not nullable, so it stores a zero the listing never shows.
+    if (!isAccessory(kind) && (powerHp === null || powerHp < 0)) fieldErrors.powerHp = "required";
   }
   if (Object.keys(fieldErrors).length) {
     return { status: "error", message: "validation", fieldErrors };

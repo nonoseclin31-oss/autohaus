@@ -6,6 +6,7 @@ import { getQuotableVehicles, getRentalVehicles } from "@/lib/vehicles";
 import { VehicleCard } from "@/components/vehicle-card";
 import { FinanceSimulator } from "@/components/finance-simulator";
 import { Reveal } from "@/components/reveal";
+import { RentalSort } from "@/components/rental-sort";
 import {
   IconCheckCircle, IconArrowRight, IconTruck, IconUser, IconCar, IconChevronDown,
 } from "@/components/icons";
@@ -24,10 +25,17 @@ export async function generateMetadata({
   };
 }
 
-export default async function RentalPage({ params }: { params: Promise<{ locale: string }> }) {
+export default async function RentalPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ locale: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
   const locale = resolveLocale((await params).locale);
   const t = getDictionary(locale);
-  const vehicles = await getRentalVehicles(locale, 12);
+  const sort = (await searchParams).sort;
+  const vehicles = await getRentalVehicles(locale, 12, typeof sort === "string" ? sort : undefined);
 
   const steps = [
     { n: "01", title: t.rental.step1Title, body: t.rental.step1Body },
@@ -164,11 +172,17 @@ export default async function RentalPage({ params }: { params: Promise<{ locale:
       {/* Offers */}
       <section id="offers" className="border-y border-line bg-surface scroll-mt-24">
         <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
-          <Reveal className="mb-8">
-            <h2 className="display text-3xl sm:text-4xl">
-              {t.rental.offersTitle}
-            </h2>
-            <p className="mt-2 text-muted">{t.rental.offersSubtitle}</p>
+          {/* The sort sits on the heading row on a wide screen and drops
+              under it on a phone, where a select beside a 2.25rem heading
+              would squeeze both. */}
+          <Reveal className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <h2 className="display text-3xl sm:text-4xl">
+                {t.rental.offersTitle}
+              </h2>
+              <p className="mt-2 text-muted">{t.rental.offersSubtitle}</p>
+            </div>
+            {vehicles.length ? <RentalSort locale={locale} /> : null}
           </Reveal>
 
           {vehicles.length ? (

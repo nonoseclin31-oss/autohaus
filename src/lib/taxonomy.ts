@@ -267,14 +267,35 @@ export const COLOR_HEX: Record<string, string> = {
 export const TOY_KINDS = build([
   ["MOTORCYCLE", "Motorcycle", "Moto", "Motorrad", "摩托车", "دراجة نارية", "Motocicleta"],
   ["QUAD", "Quad / ATV", "Quad", "Quad / ATV", "四轮越野车", "دراجة رباعية", "Quad / ATV"],
+  ["BUGGY", "Buggy", "Buggy", "Buggy", "沙滩车", "عربة بَغي", "Buggy"],
   ["JETSKI", "Jet ski", "Jet-ski", "Jetski", "水上摩托", "جت سكي", "Moto acuática"],
   ["BOAT", "Boat", "Bateau", "Boot", "游艇", "قارب", "Embarcación"],
+  ["ACCESSORY", "Accessories", "Accessoires", "Zubehör", "配件", "إكسسوارات", "Accesorios"],
 ]);
 
-/** Which of the two worlds a kind belongs to — it decides the unit shown. */
+/**
+ * Three worlds, not two.
+ *
+ * Land and water decide which figure says how used a machine is — kilometres
+ * for what rolls, engine hours for what floats. Accessories are neither: a
+ * helmet has no engine, no licence category and no mileage, so the whole
+ * powertrain half of the listing is dropped for them rather than left as a
+ * column of empty fields inviting a guess.
+ */
 export const WATER_KINDS: readonly string[] = ["JETSKI", "BOAT"];
+export const ACCESSORY_KIND = "ACCESSORY";
+
 export function isWaterToy(kind: string | null | undefined): boolean {
   return !!kind && WATER_KINDS.includes(kind);
+}
+
+export function isAccessory(kind: string | null | undefined): boolean {
+  return kind === ACCESSORY_KIND;
+}
+
+/** Everything with an engine — which is everything except the accessories. */
+export function isMotorised(kind: string | null | undefined): boolean {
+  return !!kind && !isAccessory(kind);
 }
 
 export const TOY_CATEGORIES = build([

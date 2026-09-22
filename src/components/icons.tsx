@@ -366,3 +366,25 @@ export const IconEngineBadge = (p: IconProps) => (
     <path d="M8 14.5h8l-1 6H9Z" />
   </Svg>
 );
+
+/* A buggy: roll cage over a short wheelbase, which is the one silhouette that
+   cannot be mistaken for the quad beside it in the family picker. */
+export const IconBuggy = (p: IconProps) => (
+  <Svg {...p}>
+    <circle cx="6" cy="17" r="2.6" />
+    <circle cx="18" cy="17" r="2.6" />
+    <path d="M8.6 17h6.8" />
+    <path d="M3.4 15V13a1 1 0 0 1 1-1h15.2a1 1 0 0 1 1 1v2" />
+    <path d="M5.5 12 8 5.5h8L18.5 12" />
+    <path d="M9 12V5.9M15 12V5.9" />
+  </Svg>
+);
+
+/* Accessories, drawn as a helmet — the one object every rider, driver and
+   pilot in the four other families already owns. */
+export const IconHelmet = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M3.5 13a8.5 8.5 0 0 1 17 0v3.5a2 2 0 0 1-2 2H12l-3.6 2.2V18.5H5.5a2 2 0 0 1-2-2Z" />
+    <path d="M3.8 12.2h9.4a2 2 0 0 0 1.9-1.4l1.2-3.8" />
+  </Svg>
+);

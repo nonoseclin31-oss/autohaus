@@ -32,6 +32,11 @@ const PAGES = [
   { path: "", name: "home" },
   { path: "/vehicles", name: "vehicles" },
   { path: "/rental", name: "rental" },
+  // Big Toys has the longest labels on the site — six family chips and five
+  // select placeholders, in every language — so it is the page most likely
+  // to overflow when the language changes.
+  { path: "/big-toys", name: "big-toys" },
+  { path: "/about", name: "about" },
   { path: "/contact", name: "contact" },
 ];
 

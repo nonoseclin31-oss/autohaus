@@ -285,6 +285,13 @@ const zh: Dictionary = {
     requestThisOffer: "索取此方案",
     offersTitle: "可长期租赁的车辆",
     offersSubtitle: "现车可交付，月付自所示金额起。",
+    // How the offers below may be ordered. Its own short list rather than
+    // the catalogue's: this page sells one number, a monthly payment.
+    sortStandard: "默认排序",
+    sortPrice: "价格",
+    sortMileage: "行驶里程",
+    sortRegistration: "首次上牌",
+    sortListed: "上架时间",
     noOffers: "目前尚未发布可租赁车辆。请联系我们了解最新库存。",
     audienceTitle: "面向企业与个人客户",
     businessTitle: "企业客户",
@@ -595,7 +602,7 @@ const zh: Dictionary = {
     toyTemplateNamePlaceholder: "例如 Sea-Doo RXP-X 325",
     toyTemplates: "Big Toys 模板",
     fKind: "类别",
-    fKindHelp: "决定表单需要填写的数据：有轮子的填公里数，有船体的填发动机小时数。",
+    fKindHelp: "决定表单需要填写的数据：有轮子的填公里数，有船体的填发动机小时数，配件则两者都不需要。",
     fCategory: "用途",
     fHullId: "序列号 / HIN",
     fDisplacement: "排量（立方厘米）",

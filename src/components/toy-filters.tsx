@@ -8,16 +8,18 @@ import {
   type Locale as TaxLocale,
 } from "@/lib/taxonomy";
 import {
-  IconMotorcycle, IconQuad, IconJetski, IconBoat, IconCompass,
-  IconX, IconSpinner, IconCheck,
+  IconMotorcycle, IconQuad, IconBuggy, IconJetski, IconBoat, IconHelmet,
+  IconCompass, IconX, IconSpinner, IconCheck,
 } from "./icons";
 import { cn } from "@/lib/utils";
 
 const KIND_ICONS: Record<string, typeof IconMotorcycle> = {
   MOTORCYCLE: IconMotorcycle,
   QUAD: IconQuad,
+  BUGGY: IconBuggy,
   JETSKI: IconJetski,
   BOAT: IconBoat,
+  ACCESSORY: IconHelmet,
 };
 
 const SELECT_KEYS = ["brand", "category", "engineType", "condition"] as const;
@@ -92,10 +94,13 @@ export function ToyFilters({
           {t.toys.families}
         </h2>
 
-        {/* Scrolls sideways on a phone rather than wrapping to two rows: five
-            chips at 44px tall would otherwise eat a third of the screen. */}
+        {/* Wraps rather than scrolls sideways. With four families a scroll
+            strip was compact and harmless; with seven chips it hid five of
+            them behind a swipe, and the family is the first cut a visitor
+            makes on this page. Two rows of visible chips beat one row of
+            hidden ones — so the chips shrink on a phone instead. */}
         <div
-          className="no-scrollbar -mx-4 mt-3 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:px-0"
+          className="mt-3 flex flex-wrap gap-2"
           role="group"
           aria-label={t.toys.families}
         >
@@ -239,14 +244,17 @@ function FamilyChip({
       disabled={disabled}
       aria-pressed={active}
       className={cn(
-        "inline-flex min-h-11 shrink-0 cursor-pointer items-center gap-2 rounded-full border px-4 text-sm font-semibold uppercase tracking-[0.08em] transition-all duration-200",
+        // 44px tall everywhere — the target size does not shrink with the
+        // label. Only the padding and the tracking give way on a phone.
+        "inline-flex min-h-11 shrink-0 cursor-pointer items-center gap-1.5 rounded-full border px-3 text-[0.8125rem] font-semibold uppercase tracking-[0.04em] transition-all duration-200 sm:gap-2 sm:px-4 sm:text-sm sm:tracking-[0.08em]",
         active
           ? "border-red bg-red text-white shadow-[var(--shadow-sm)]"
           : "border-line-strong bg-surface/60 text-muted hover:border-red hover:text-fg",
         disabled && "cursor-not-allowed opacity-40 hover:border-line-strong hover:text-muted",
       )}
     >
-      <Icon size={17} className="shrink-0" />
+      <Icon size={16} className="shrink-0 sm:hidden" />
+      <Icon size={17} className="hidden shrink-0 sm:block" />
       {text}
       <span className={cn("text-xs tabular-nums", active ? "text-white/75" : "text-subtle")}>
         {count}

@@ -12,13 +12,14 @@ import { getDictionary, localePath, LOCALE_META, LOCALES, type Locale } from "@/
 import {
   TOY_KINDS, TOY_CATEGORIES, TOY_ENGINES, TOY_TRANSMISSIONS, TOY_LICENCES,
   TOY_BRANDS, TOY_EQUIPMENT_GROUPS, CONDITIONS, COLORS, VEHICLE_STATUS,
-  toyEquipmentByGroup, toyEquipmentLabel, isWaterToy, label, optionsFor,
+  toyEquipmentByGroup, toyEquipmentLabel, isAccessory, isWaterToy, label, optionsFor,
   type Locale as TaxLocale,
 } from "@/lib/taxonomy";
 import {
   IconCompass, IconEngineBadge, IconRuler, IconWrench, IconEuro,
   IconCheckCircle, IconImage, IconGlobe, IconEye, IconEyeOff, IconSpinner,
   IconAlert, IconCheck, IconDots, IconMotorcycle, IconQuad, IconJetski, IconBoat,
+  IconBuggy, IconHelmet,
 } from "../icons";
 import { cn } from "@/lib/utils";
 
@@ -54,8 +55,10 @@ type Permissions = { canPublish: boolean; canSetStatus: boolean; canAssignOwner:
 const KIND_ICONS: Record<string, typeof IconMotorcycle> = {
   MOTORCYCLE: IconMotorcycle,
   QUAD: IconQuad,
+  BUGGY: IconBuggy,
   JETSKI: IconJetski,
   BOAT: IconBoat,
+  ACCESSORY: IconHelmet,
 };
 
 /* ───────────────────────── Field primitives ───────────────────────── */
@@ -292,6 +295,9 @@ export function ToyForm({
   // invite someone to fill it with a guess.
   const [kind, setKind] = useState(values.kind ?? "MOTORCYCLE");
   const water = isWaterToy(kind);
+  // An accessory has no powertrain at all, so its whole section goes rather
+  // than standing there as a column of fields nobody can fill honestly.
+  const accessory = isAccessory(kind);
 
   const groups = toyEquipmentByGroup();
   const err = (field: string) => (state.fieldErrors?.[field] ? t.common.required : undefined);
@@ -340,7 +346,7 @@ export function ToyForm({
 
   const tabs = [
     { id: "identity", label: t.admin.secIdentity, Icon: IconCompass },
-    { id: "engine", label: t.admin.secToyEngine, Icon: IconEngineBadge },
+    ...(accessory ? [] : [{ id: "engine", label: t.admin.secToyEngine, Icon: IconEngineBadge }]),
     { id: "measures", label: t.admin.secToyMeasures, Icon: IconRuler },
     { id: "papers", label: t.admin.secToyPapers, Icon: IconWrench },
     { id: "pricing", label: t.admin.secPricing, Icon: IconEuro },
@@ -349,6 +355,10 @@ export function ToyForm({
     { id: "content", label: t.admin.secContent, Icon: IconGlobe },
     { id: "publication", label: t.admin.secPublication, Icon: IconEye },
   ];
+
+  useEffect(() => {
+    if (accessory && tab === "engine") setTab("identity");
+  }, [accessory, tab]);
 
   function toggleEquipment(key: string) {
     setEquipment((prev) => {
@@ -459,7 +469,7 @@ export function ToyForm({
               {t.admin.fKind} <span className="text-red">*</span>
             </legend>
             <p className="field-help mb-3">{t.admin.fKindHelp}</p>
-            <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
               {Object.keys(TOY_KINDS).map((key) => {
                 const Icon = KIND_ICONS[key];
                 const active = kind === key;
@@ -501,7 +511,9 @@ export function ToyForm({
 
             <Field id="version" label={t.admin.fVersion} className="sm:col-span-2">
               <Text id="version" name="version" defaultValue={values.version ?? ""} maxLength={120}
-                placeholder={water ? "300 HP Rotax · Premium" : "R 1300 GS Trophy"} />
+                placeholder={
+                  accessory ? "Taille M · Noir" : water ? "300 HP Rotax · Premium" : "R 1300 GS Trophy"
+                } />
             </Field>
 
             <Field id="year" label={t.admin.fYear} required error={err("year")}>
@@ -604,8 +616,9 @@ export function ToyForm({
         <Panel id="measures" active={tab === "measures"}>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {/* The one figure that says how used it is. Which one it is
-                depends entirely on the family, so only that one is asked. */}
-            {water ? (
+                depends entirely on the family, so only that one is asked —
+                and an accessory has neither. */}
+            {accessory ? null : water ? (
               <Field id="engineHours" label={t.admin.fEngineHours}>
                 <Num id="engineHours" name="engineHours" min={0} max={50000} step={1}
                   defaultValue={values.engineHours ?? ""} />
@@ -617,16 +630,18 @@ export function ToyForm({
               </Field>
             )}
 
-            <Field id="seats" label={t.admin.fSeatsToy}>
-              <Num id="seats" name="seats" min={1} max={30} step={1} defaultValue={values.seats ?? ""} />
-            </Field>
+            {accessory ? null : (
+              <Field id="seats" label={t.admin.fSeatsToy}>
+                <Num id="seats" name="seats" min={1} max={30} step={1} defaultValue={values.seats ?? ""} />
+              </Field>
+            )}
 
             <Field id="dryWeight" label={t.admin.fDryWeight}>
               <Num id="dryWeight" name="dryWeight" min={0} max={50000} step={1}
                 defaultValue={values.dryWeight ?? ""} />
             </Field>
 
-            {water ? (
+            {water && !accessory ? (
               <>
                 <Field id="lengthM" label={t.admin.fLength}>
                   <Num id="lengthM" name="lengthM" min={0} max={120} step={0.01}
@@ -639,15 +654,19 @@ export function ToyForm({
               </>
             ) : null}
 
-            <Field id="fuelCapacity" label={t.admin.fFuelCapacity}>
-              <Num id="fuelCapacity" name="fuelCapacity" min={0} max={20000} step={0.1}
-                defaultValue={values.fuelCapacity ?? ""} />
-            </Field>
+            {accessory ? null : (
+              <>
+                <Field id="fuelCapacity" label={t.admin.fFuelCapacity}>
+                  <Num id="fuelCapacity" name="fuelCapacity" min={0} max={20000} step={0.1}
+                    defaultValue={values.fuelCapacity ?? ""} />
+                </Field>
 
-            <Field id="rangeKm" label={t.admin.fRangeKm}>
-              <Num id="rangeKm" name="rangeKm" min={0} max={10000} step={1}
-                defaultValue={values.rangeKm ?? ""} />
-            </Field>
+                <Field id="rangeKm" label={t.admin.fRangeKm}>
+                  <Num id="rangeKm" name="rangeKm" min={0} max={10000} step={1}
+                    defaultValue={values.rangeKm ?? ""} />
+                </Field>
+              </>
+            )}
 
             <Field id="colorExterior" label={t.spec.colorExterior}>
               <Select id="colorExterior" name="colorExterior" defaultValue={values.colorExterior ?? ""}
@@ -659,15 +678,19 @@ export function ToyForm({
         {/* ── Paperwork & condition ── */}
         <Panel id="papers" active={tab === "papers"}>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            <Field id="licence" label={t.admin.fLicence}>
-              <Select id="licence" name="licence" defaultValue={values.licence ?? ""}
-                options={optionsFor(TOY_LICENCES, tax)} placeholder="—" />
-            </Field>
+            {accessory ? null : (
+              <>
+                <Field id="licence" label={t.admin.fLicence}>
+                  <Select id="licence" name="licence" defaultValue={values.licence ?? ""}
+                    options={optionsFor(TOY_LICENCES, tax)} placeholder="—" />
+                </Field>
 
-            <Field id="firstRegistration" label={t.spec.firstRegistration}>
-              <input id="firstRegistration" name="firstRegistration" type="date" className="input"
-                defaultValue={values.firstRegistration ?? ""} />
-            </Field>
+                <Field id="firstRegistration" label={t.spec.firstRegistration}>
+                  <input id="firstRegistration" name="firstRegistration" type="date" className="input"
+                    defaultValue={values.firstRegistration ?? ""} />
+                </Field>
+              </>
+            )}
 
             <Field id="previousOwners" label={t.spec.owners}>
               <Num id="previousOwners" name="previousOwners" min={0} max={50} step={1}
@@ -681,10 +704,14 @@ export function ToyForm({
           </div>
 
           <div className="grid gap-3 sm:grid-cols-2">
-            <Toggle name="registered" label={t.admin.fRegistered} defaultChecked={values.registered ?? true} />
-            <Toggle name="trailerIncluded" label={t.admin.fTrailer} defaultChecked={values.trailerIncluded} />
-            <Toggle name="serviceHistory" label={t.spec.serviceHistory} defaultChecked={values.serviceHistory} />
-            <Toggle name="accidentFree" label={t.spec.accidentFree} defaultChecked={values.accidentFree ?? true} />
+            {accessory ? null : (
+              <>
+                <Toggle name="registered" label={t.admin.fRegistered} defaultChecked={values.registered ?? true} />
+                <Toggle name="trailerIncluded" label={t.admin.fTrailer} defaultChecked={values.trailerIncluded} />
+                <Toggle name="serviceHistory" label={t.spec.serviceHistory} defaultChecked={values.serviceHistory} />
+                <Toggle name="accidentFree" label={t.spec.accidentFree} defaultChecked={values.accidentFree ?? true} />
+              </>
+            )}
           </div>
         </Panel>
 

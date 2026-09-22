@@ -3,11 +3,11 @@ import Image from "next/image";
 import { StatusVignette, SoldOverlay } from "./status-vignette";
 import {
   IconCalendar, IconGauge, IconClock, IconBolt, IconImage, IconStar,
-  IconSeat, IconRuler, IconEngineBadge,
+  IconSeat, IconRuler, IconEngineBadge, IconCheck,
 } from "./icons";
 import { formatCurrency, formatNumber, getDictionary, localePath, type Locale } from "@/i18n";
 import {
-  label, CONDITIONS, TOY_KINDS, isWaterToy, type Locale as TaxLocale,
+  label, CONDITIONS, TOY_KINDS, isAccessory, isWaterToy, type Locale as TaxLocale,
 } from "@/lib/taxonomy";
 import { toyUsage, type ToyListItem } from "@/lib/toys";
 import { cn } from "@/lib/utils";
@@ -36,6 +36,10 @@ export function ToyCard({
   const title = [toy.brand, toy.model].filter(Boolean).join(" ");
   const sold = toy.status === "SOLD";
   const water = isWaterToy(toy.kind);
+  // An accessory has no engine and no odometer. Its card shows what it does
+  // have — what it is, what condition it is in, what it costs — rather than
+  // four slots of em dashes.
+  const accessory = isAccessory(toy.kind);
   const usage = toyUsage(toy);
 
   return (
@@ -133,8 +137,14 @@ export function ToyCard({
           ) : null}
 
           {/* The measure that matters in each world: how big the engine is on
-              land, how long the hull is on water. */}
-          {water ? (
+              land, how long the hull is on water, and for an accessory the
+              one fact a buyer actually asks about. */}
+          {accessory ? (
+            <li className="flex items-start gap-2">
+              <IconCheck size={14} className="mt-0.5 shrink-0 text-subtle" />
+              <span className="min-w-0">{label(CONDITIONS, toy.condition, tax)}</span>
+            </li>
+          ) : water ? (
             toy.lengthM ? (
               <li className="flex items-start gap-2">
                 <IconRuler size={14} className="mt-0.5 shrink-0 text-subtle" />
@@ -150,7 +160,7 @@ export function ToyCard({
             </li>
           ) : null}
 
-          {toy.seats ? (
+          {toy.seats && !accessory ? (
             /* The number alone, with the seat icon and an accessible label.
                "1 places" is wrong in French and Spanish, "2 place" is wrong
                in English, and a card is not the place to carry six sets of
@@ -182,11 +192,13 @@ export function ToyCard({
             </p>
           </div>
 
-          <div className="flex shrink-0 items-center gap-1.5 whitespace-nowrap">
-            <IconBolt size={14} className="text-red" />
-            <span className="font-semibold tabular-nums">{toy.powerHp}</span>
-            <span className="text-xs text-subtle">{t.common.hp}</span>
-          </div>
+          {accessory ? null : (
+            <div className="flex shrink-0 items-center gap-1.5 whitespace-nowrap">
+              <IconBolt size={14} className="text-red" />
+              <span className="font-semibold tabular-nums">{toy.powerHp}</span>
+              <span className="text-xs text-subtle">{t.common.hp}</span>
+            </div>
+          )}
         </div>
 
         {toy.trailerIncluded ? (

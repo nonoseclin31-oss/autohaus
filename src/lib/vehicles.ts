@@ -215,11 +215,33 @@ export async function getHomeShowcase(locale: Locale) {
   return { hero, grid: grid.slice(0, HOME_GRID_SIZE) };
 }
 
-export async function getRentalVehicles(locale: Locale, take = 12) {
+/**
+ * How the long-term rental offers may be ordered.
+ *
+ * Its own small list rather than the catalogue's `sort`: this page offers one
+ * thing, a monthly payment, so its default is the cheapest monthly first and
+ * the alternatives are the four a renter actually asks for. `nulls: "last"`
+ * on the registration date matters — a car with no date recorded would
+ * otherwise head the list of the newest ones.
+ */
+export const RENTAL_SORTS = ["price", "mileage", "registration", "listed"] as const;
+export type RentalSort = (typeof RENTAL_SORTS)[number];
+
+function rentalOrderBy(sort: string | undefined): Prisma.VehicleOrderByWithRelationInput[] {
+  switch (sort) {
+    case "price": return [{ price: "asc" }];
+    case "mileage": return [{ mileage: "asc" }];
+    case "registration": return [{ firstRegistration: { sort: "desc", nulls: "last" } }];
+    case "listed": return [{ createdAt: "desc" }];
+    default: return [{ rentalMonthly: "asc" }];
+  }
+}
+
+export async function getRentalVehicles(locale: Locale, take = 12, sort?: string) {
   const rows = await prisma.vehicle.findMany({
     where: { published: true, rentalAvailable: true, status: { not: "SOLD" } },
     select: LIST_SELECT,
-    orderBy: [{ rentalMonthly: "asc" }],
+    orderBy: rentalOrderBy(sort),
     take,
   });
   return rows.map((row) => toListItem(row as unknown as RawListRow, locale));

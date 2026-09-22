@@ -283,6 +283,13 @@ const en = {
     requestThisOffer: "Request this offer",
     offersTitle: "Vehicles available for long-term rental",
     offersSubtitle: "Ready to deliver, with monthly rates starting from the figures shown.",
+    // How the offers below may be ordered. Its own short list rather than
+    // the catalogue's: this page sells one number, a monthly payment.
+    sortStandard: "Standard sorting",
+    sortPrice: "Price",
+    sortMileage: "Mileage",
+    sortRegistration: "First registration",
+    sortListed: "Date listed",
     noOffers: "No rental vehicle is published at the moment. Contact us for current availability.",
     audienceTitle: "For businesses and private drivers",
     businessTitle: "Businesses",
@@ -598,7 +605,7 @@ const en = {
     toyTemplateNamePlaceholder: "e.g. Sea-Doo RXP-X 325",
     toyTemplates: "Big Toy templates",
     fKind: "Family",
-    fKindHelp: "Decides which figures the form asks for: kilometres for what rolls, engine hours for what floats.",
+    fKindHelp: "Decides which figures the form asks for: kilometres for what rolls, engine hours for what floats, and none of it for an accessory.",
     fCategory: "Use",
     fHullId: "Serial number / HIN",
     fDisplacement: "Displacement (cm³)",

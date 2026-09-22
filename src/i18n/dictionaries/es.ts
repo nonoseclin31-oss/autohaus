@@ -285,6 +285,13 @@ const es: Dictionary = {
     requestThisOffer: "Solicitar esta oferta",
     offersTitle: "Vehículos disponibles en alquiler a largo plazo",
     offersSubtitle: "Listos para entregar, con cuotas mensuales desde los importes indicados.",
+    // How the offers below may be ordered. Its own short list rather than
+    // the catalogue's: this page sells one number, a monthly payment.
+    sortStandard: "Orden estándar",
+    sortPrice: "Precio",
+    sortMileage: "Kilometraje",
+    sortRegistration: "Primera matriculación",
+    sortListed: "Fecha de publicación",
     noOffers: "Por el momento no hay ningún vehículo de alquiler publicado. Contáctanos para conocer la disponibilidad.",
     audienceTitle: "Para empresas y particulares",
     businessTitle: "Empresas",
@@ -595,7 +602,7 @@ const es: Dictionary = {
     toyTemplateNamePlaceholder: "p. ej. Sea-Doo RXP-X 325",
     toyTemplates: "Plantillas Big Toys",
     fKind: "Familia",
-    fKindHelp: "Decide qué cifras pide el formulario: kilómetros para lo que rueda, horas de motor para lo que flota.",
+    fKindHelp: "Decide qué cifras pide el formulario: kilómetros para lo que rueda, horas de motor para lo que flota, y nada de eso para un accesorio.",
     fCategory: "Uso",
     fHullId: "Número de serie / HIN",
     fDisplacement: "Cilindrada (cm³)",

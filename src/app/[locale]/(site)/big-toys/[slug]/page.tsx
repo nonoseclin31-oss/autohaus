@@ -7,7 +7,7 @@ import { getToyBySlug, getSimilarToys, toyTitle, toyEquipment, toyTranslation, t
 import {
   label, TOY_KINDS, TOY_CATEGORIES, TOY_ENGINES, TOY_TRANSMISSIONS, TOY_LICENCES,
   CONDITIONS, COLORS, TOY_EQUIPMENT, TOY_EQUIPMENT_GROUPS, toyEquipmentLabel,
-  isWaterToy, type Locale as TaxLocale,
+  isAccessory, isWaterToy, type Locale as TaxLocale,
 } from "@/lib/taxonomy";
 import { VehicleGallery } from "@/components/vehicle-gallery";
 import { LeadForm } from "@/components/lead-form";
@@ -65,6 +65,9 @@ export default async function ToyDetailPage({
   const title = toyTitle(toy);
   const tr = toyTranslation(toy.translations, tax);
   const water = isWaterToy(toy.kind);
+  // An accessory has no powertrain. Every engine row below is dropped for one
+  // rather than printed empty.
+  const accessory = isAccessory(toy.kind);
   const usage = toyUsage(toy);
   const equipment = toyEquipment(toy);
   const similar = await getSimilarToys(toy, locale);
@@ -72,7 +75,9 @@ export default async function ToyDetailPage({
   /** The four figures above the fold, chosen per family. */
   const keyFacts = [
     { Icon: IconCalendar, label: t.spec.year, value: String(toy.year) },
-    { Icon: IconBolt, label: t.spec.power, value: `${formatNumber(toy.powerHp, locale)} ${t.common.hp}` },
+    accessory
+      ? null
+      : { Icon: IconBolt, label: t.spec.power, value: `${formatNumber(toy.powerHp, locale)} ${t.common.hp}` },
     usage
       ? {
           Icon: usage.unit === "km" ? IconGauge : IconClock,
@@ -80,53 +85,65 @@ export default async function ToyDetailPage({
           value: `${formatNumber(usage.value, locale)} ${usage.unit === "km" ? t.common.km : t.toys.hoursShort}`,
         }
       : null,
-    water
-      ? toy.lengthM
-        ? { Icon: IconRuler, label: t.toys.length, value: `${formatNumber(toy.lengthM, locale)} m` }
-        : null
-      : toy.displacement
-        ? { Icon: IconEngineBadge, label: t.toys.displacement, value: `${formatNumber(toy.displacement, locale)} cm³` }
-        : null,
-    toy.seats ? { Icon: IconSeat, label: t.toys.seats, value: String(toy.seats) } : null,
+    accessory
+      ? null
+      : water
+        ? toy.lengthM
+          ? { Icon: IconRuler, label: t.toys.length, value: `${formatNumber(toy.lengthM, locale)} m` }
+          : null
+        : toy.displacement
+          ? { Icon: IconEngineBadge, label: t.toys.displacement, value: `${formatNumber(toy.displacement, locale)} cm³` }
+          : null,
+    toy.seats && !accessory ? { Icon: IconSeat, label: t.toys.seats, value: String(toy.seats) } : null,
     { Icon: IconCheck, label: t.vehicles.condition, value: label(CONDITIONS, toy.condition, tax) },
   ].filter(Boolean) as { Icon: typeof IconBolt; label: string; value: string }[];
 
   /** The full sheet. Anything not filled in is dropped rather than dashed. */
+  const engineSpecs: { term: string; value: string }[] = accessory
+    ? []
+    : [
+        { term: t.vehicles.fuel, value: label(TOY_ENGINES, toy.engineType, tax) },
+        { term: t.toys.displacement, value: toy.displacement ? `${formatNumber(toy.displacement, locale)} cm³` : "" },
+        { term: t.toys.cylinders, value: toy.cylinders ? String(toy.cylinders) : "" },
+        { term: t.toys.strokes, value: toy.strokes ? `${toy.strokes}${t.toys.strokeValue}` : "" },
+        { term: t.vehicles.transmission, value: toy.transmission ? label(TOY_TRANSMISSIONS, toy.transmission, tax) : "" },
+        // Only worth a line when there is more than one — "1 engine" is noise.
+        { term: t.toys.engines, value: toy.engineCount && toy.engineCount > 1 ? String(toy.engineCount) : "" },
+        { term: t.spec.power, value: toy.powerKw ? `${formatNumber(toy.powerKw, locale)} kW` : "" },
+        { term: t.spec.torque, value: toy.torqueNm ? `${formatNumber(toy.torqueNm, locale)} Nm` : "" },
+        {
+          term: t.toys.topSpeed,
+          value: toy.topSpeed ? `${formatNumber(toy.topSpeed, locale)} ${water ? t.toys.knots : "km/h"}` : "",
+        },
+        { term: t.toys.length, value: toy.lengthM ? `${formatNumber(toy.lengthM, locale)} m` : "" },
+        { term: t.toys.beam, value: toy.beamM ? `${formatNumber(toy.beamM, locale)} m` : "" },
+        { term: t.toys.seats, value: toy.seats ? String(toy.seats) : "" },
+        { term: t.toys.tank, value: toy.fuelCapacity ? `${formatNumber(toy.fuelCapacity, locale)} L` : "" },
+        { term: t.toys.range, value: toy.rangeKm ? `${formatNumber(toy.rangeKm, locale)} ${t.common.km}` : "" },
+        { term: t.toys.licence, value: toy.licence ? label(TOY_LICENCES, toy.licence, tax) : "" },
+        { term: t.toys.hullId, value: toy.hullId ?? "" },
+      ];
+
   const specs: { term: string; value: string }[] = [
     { term: t.toys.category, value: toy.category ? label(TOY_CATEGORIES, toy.category, tax) : "" },
-    { term: t.vehicles.fuel, value: label(TOY_ENGINES, toy.engineType, tax) },
-    { term: t.toys.displacement, value: toy.displacement ? `${formatNumber(toy.displacement, locale)} cm³` : "" },
-    { term: t.toys.cylinders, value: toy.cylinders ? String(toy.cylinders) : "" },
-    { term: t.toys.strokes, value: toy.strokes ? `${toy.strokes}${t.toys.strokeValue}` : "" },
-    { term: t.vehicles.transmission, value: toy.transmission ? label(TOY_TRANSMISSIONS, toy.transmission, tax) : "" },
-    // Only worth a line when there is more than one — "1 engine" is noise.
-    { term: t.toys.engines, value: toy.engineCount && toy.engineCount > 1 ? String(toy.engineCount) : "" },
-    { term: t.spec.power, value: toy.powerKw ? `${formatNumber(toy.powerKw, locale)} kW` : "" },
-    { term: t.spec.torque, value: toy.torqueNm ? `${formatNumber(toy.torqueNm, locale)} Nm` : "" },
-    {
-      term: t.toys.topSpeed,
-      value: toy.topSpeed ? `${formatNumber(toy.topSpeed, locale)} ${water ? t.toys.knots : "km/h"}` : "",
-    },
-    { term: t.toys.length, value: toy.lengthM ? `${formatNumber(toy.lengthM, locale)} m` : "" },
-    { term: t.toys.beam, value: toy.beamM ? `${formatNumber(toy.beamM, locale)} m` : "" },
+    ...engineSpecs,
+    // A trailer or a top case has a weight and a colour even though it has
+    // no engine, so these stay for every family.
     { term: t.toys.dryWeight, value: toy.dryWeight ? `${formatNumber(toy.dryWeight, locale)} kg` : "" },
-    { term: t.toys.seats, value: toy.seats ? String(toy.seats) : "" },
-    { term: t.toys.tank, value: toy.fuelCapacity ? `${formatNumber(toy.fuelCapacity, locale)} L` : "" },
-    { term: t.toys.range, value: toy.rangeKm ? `${formatNumber(toy.rangeKm, locale)} ${t.common.km}` : "" },
     { term: t.spec.colorExterior, value: toy.colorExterior ? label(COLORS, toy.colorExterior, tax) : "" },
-    { term: t.toys.licence, value: toy.licence ? label(TOY_LICENCES, toy.licence, tax) : "" },
     { term: t.spec.firstRegistration, value: toy.firstRegistration ? formatMonthYear(toy.firstRegistration, locale) : "" },
     { term: t.spec.owners, value: toy.previousOwners !== null ? String(toy.previousOwners) : "" },
     { term: t.spec.warranty, value: toy.warrantyMonths ? `${toy.warrantyMonths} ${t.common.months}` : "" },
-    { term: t.toys.hullId, value: toy.hullId ?? "" },
   ].filter((row) => row.value !== "");
 
   /** Yes/no facts, shown as ticks rather than as rows that say "no". */
+  // Three of these only mean something about a machine. "Accident-free" on an
+  // exhaust is not reassurance, it is noise.
   const flags = [
     toy.trailerIncluded ? t.toys.trailer : null,
-    toy.registered ? t.toys.registered : null,
-    toy.serviceHistory ? t.spec.serviceHistory : null,
-    toy.accidentFree ? t.spec.accidentFree : null,
+    accessory ? null : toy.registered ? t.toys.registered : null,
+    accessory ? null : toy.serviceHistory ? t.spec.serviceHistory : null,
+    accessory ? null : toy.accidentFree ? t.spec.accidentFree : null,
   ].filter(Boolean) as string[];
 
   const groups = Object.keys(TOY_EQUIPMENT_GROUPS)
