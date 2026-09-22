@@ -94,19 +94,18 @@ export function SiteHeader({
                   // second line inside the header without it.
                   "cursor-pointer whitespace-nowrap rounded-sm px-2.5 py-2 text-[0.8125rem] font-semibold uppercase tracking-[0.06em] transition-colors duration-200",
                   item.universe
-                    // The doorway is marked: a hairline frame and a compass,
-                    // so it is read as leading somewhere else rather than as
-                    // one more page of the same site.
+                    // The doorway is marked by one small champagne compass and
+                    // nothing else. A framed chip said "different" loudly
+                    // enough to look like a button among links; the icon says
+                    // it quietly, and the label keeps the nav's own rhythm.
                     ? cn(
-                        "inline-flex items-center gap-1.5 rounded-full border px-3",
-                        isActive(item.href)
-                          ? "border-bronze/60 bg-gold-wash text-bronze"
-                          : "border-line-strong text-muted hover:border-bronze hover:text-bronze",
+                        "inline-flex items-center gap-1.5",
+                        isActive(item.href) ? "text-bronze" : "text-muted hover:text-bronze",
                       )
                     : isActive(item.href) ? "text-red" : "text-muted hover:text-fg",
                 )}
               >
-                {item.universe ? <IconCompass size={14} className="shrink-0" /> : null}
+                {item.universe ? <IconCompass size={14} className="shrink-0 text-bronze" /> : null}
                 {item.label}
               </Link>
             ))}
@@ -176,13 +175,13 @@ export function SiteHeader({
                   onClick={item.universe ? gate.onLinkClick(localePath(locale, item.href)) : undefined}
                   className={cn(
                     "cursor-pointer rounded-sm px-3 py-3.5 text-base font-semibold uppercase tracking-[0.06em] transition-colors duration-200",
+                    item.universe ? "flex items-center gap-2.5" : "block",
                     item.universe
-                      ? "mt-1 flex items-center gap-2 rounded-full border border-bronze/50 bg-gold-wash text-bronze"
-                      : "block",
-                    !item.universe && (isActive(item.href) ? "bg-red-wash text-red" : "text-fg hover:bg-surface-2"),
+                      ? isActive(item.href) ? "bg-gold-wash text-bronze" : "text-fg hover:bg-surface-2"
+                      : isActive(item.href) ? "bg-red-wash text-red" : "text-fg hover:bg-surface-2",
                   )}
                 >
-                  {item.universe ? <IconCompass size={17} className="shrink-0" /> : null}
+                  {item.universe ? <IconCompass size={17} className="shrink-0 text-bronze" /> : null}
                   {item.label}
                 </Link>
               ))}

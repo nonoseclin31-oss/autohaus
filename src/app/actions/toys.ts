@@ -9,11 +9,14 @@ import { LOCALES } from "@/lib/taxonomy";
 import { slugify, generateReference, toInt, toFloat, toStr, toBool, toDate, parseJsonArray } from "@/lib/utils";
 import { resolveLocale } from "@/i18n";
 import { TOY_HERO_RANK, TOYS_GRID_SIZE } from "@/lib/toys";
+import { toyPayloadFromForm } from "@/lib/toy-templates";
 
 export type ToyFormState = {
   status: "idle" | "error" | "success";
   message?: string;
   fieldErrors?: Record<string, string>;
+  /** Set when the submission saved a template rather than the listing. */
+  templateSaved?: string;
 };
 
 type ImagePayload = { url: string; alt?: string | null };
@@ -51,12 +54,50 @@ export async function saveToy(
 
   const brand = toStr(formData.get("brand"));
   const model = toStr(formData.get("model"));
-  const year = toInt(formData.get("year"));
-  const price = toInt(formData.get("price"));
-  const powerHp = toInt(formData.get("powerHp"));
 
   let kind = toStr(formData.get("kind")) ?? "MOTORCYCLE";
   if (!KINDS.includes(kind)) kind = "MOTORCYCLE";
+
+  // ── Save as a template ───────────────────────────────────
+  // Handled before anything is written, so saving a template from an open
+  // listing never touches the listing itself.
+  if (toStr(formData.get("intent")) === "template") {
+    if (!can(user.role, "vehicle.create")) return { status: "error", message: "forbidden" };
+
+    const templateName = toStr(formData.get("templateName"));
+    if (!templateName) return { status: "error", message: "template-name" };
+    if (!brand || !model) {
+      return {
+        status: "error",
+        message: "validation",
+        fieldErrors: { ...(!brand && { brand: "required" }), ...(!model && { model: "required" }) },
+      };
+    }
+
+    try {
+      const template = await prisma.toyTemplate.create({
+        data: {
+          name: templateName.slice(0, 80),
+          kind,
+          brand,
+          model,
+          version: toStr(formData.get("version")),
+          payload: toyPayloadFromForm(formData),
+          createdById: user.id,
+        },
+      });
+      await logActivity(user.id, "toyTemplate.created", "ToyTemplate", template.id, `${templateName} — ${brand} ${model}`);
+    } catch {
+      return { status: "error", message: "server" };
+    }
+
+    revalidatePath(`/${locale}/admin/toys/new`);
+    return { status: "success", templateSaved: templateName };
+  }
+
+  const year = toInt(formData.get("year"));
+  const price = toInt(formData.get("price"));
+  const powerHp = toInt(formData.get("powerHp"));
 
   // A draft is something someone started and will come back to. It never
   // reaches the public site, so it only needs to be recognisable in the list.
@@ -362,4 +403,27 @@ export async function saveToyShowcase(
   revalidatePath(`/${locale}/admin/toys/showcase`);
   revalidatePath(`/${locale}/big-toys`);
   return { status: "saved" };
+}
+
+/** Remove a saved Big Toy template. Its author may delete it; so may a manager. */
+export async function deleteToyTemplate(formData: FormData): Promise<void> {
+  const user = await getCurrentUser();
+  if (!user) return;
+
+  const id = toStr(formData.get("id"));
+  const locale = resolveLocale(toStr(formData.get("locale")));
+  if (!id) return;
+
+  const template = await prisma.toyTemplate.findUnique({
+    where: { id },
+    select: { name: true, createdById: true },
+  });
+  if (!template) return;
+
+  const mine = template.createdById === user.id;
+  if (!mine && !can(user.role, "vehicle.update.any")) return;
+
+  await prisma.toyTemplate.delete({ where: { id } });
+  await logActivity(user.id, "toyTemplate.deleted", "ToyTemplate", id, template.name);
+  revalidatePath(`/${locale}/admin/toys/new`);
 }

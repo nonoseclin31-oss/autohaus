@@ -592,6 +592,8 @@ const zh: Dictionary = {
     secToyEngine: "动力与性能",
     secToyMeasures: "尺寸与使用",
     secToyPapers: "手续与车况",
+    toyTemplateNamePlaceholder: "例如 Sea-Doo RXP-X 325",
+    toyTemplates: "Big Toys 模板",
     fKind: "类别",
     fKindHelp: "决定表单需要填写的数据：有轮子的填公里数，有船体的填发动机小时数。",
     fCategory: "用途",

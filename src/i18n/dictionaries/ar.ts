@@ -592,6 +592,8 @@ const ar: Dictionary = {
     secToyEngine: "المحرك والأداء",
     secToyMeasures: "القياسات والاستخدام",
     secToyPapers: "الأوراق والحالة",
+    toyTemplateNamePlaceholder: "مثال: Sea-Doo RXP-X 325",
+    toyTemplates: "قوالب Big Toys",
     fKind: "العائلة",
     fKindHelp: "يحدد الحقول المطلوبة: الكيلومترات لما يسير على عجلات، وساعات التشغيل لما يطفو على الماء.",
     fCategory: "الاستخدام",

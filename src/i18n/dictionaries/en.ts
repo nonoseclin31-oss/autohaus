@@ -595,6 +595,8 @@ const en = {
     secToyEngine: "Engine & performance",
     secToyMeasures: "Measurements & use",
     secToyPapers: "Paperwork & condition",
+    toyTemplateNamePlaceholder: "e.g. Sea-Doo RXP-X 325",
+    toyTemplates: "Big Toy templates",
     fKind: "Family",
     fKindHelp: "Decides which figures the form asks for: kilometres for what rolls, engine hours for what floats.",
     fCategory: "Use",

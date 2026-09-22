@@ -494,16 +494,12 @@
   .logo-wordmark { background-image: url("/brand/logo-wordmark.png"); }
   .logo-full { background-image: url("/brand/logo-full.png"); }
 
-  /* Big Toys is a dark canvas whatever theme the visitor picked, so the
-     wordmark follows the surface it sits on rather than the theme. */
   [data-theme="dark"] .logo-wordmark,
   [data-theme="dark1"] .logo-wordmark,
-  [data-theme="dark2"] .logo-wordmark,
-  [data-universe="toys"] .logo-wordmark { background-image: url("/brand/logo-wordmark-dark.png"); }
+  [data-theme="dark2"] .logo-wordmark { background-image: url("/brand/logo-wordmark-dark.png"); }
   [data-theme="dark"] .logo-full,
   [data-theme="dark1"] .logo-full,
-  [data-theme="dark2"] .logo-full,
-  [data-universe="toys"] .logo-full { background-image: url("/brand/logo-full-dark.png"); }
+  [data-theme="dark2"] .logo-full { background-image: url("/brand/logo-full-dark.png"); }
 
 
   .flag-rule {
@@ -899,40 +895,113 @@
   body { background: #fff; }
 }
 
+
 /* ══════════════════════════════════════════════════════════════
    BIG TOYS — a second universe
 
    Motorcycles, quads, jet skis and boats do not belong in the same
    room as a Mercedes saloon, and the page says so before a word is
-   read. Everything the dealership signals — warm sand, editorial
-   serif, signal red, sharp 4px corners — is inverted here: a marine
-   night canvas, condensed uppercase display type, turquoise where
-   the red was, champagne where the gold was, and soft 14px corners.
+   read. Everything the dealership signals is inverted: warm sand
+   becomes cool water, the editorial serif becomes condensed capitals,
+   signal red becomes turquoise, gold becomes champagne, and the sharp
+   4px corners soften to 14.
 
-   It is a scope, not a theme. `[data-universe="toys"]` redefines the
+   It is a scope, not a theme. `data-universe="toys"` redefines the
    same tokens the rest of the site is built on, so every existing
-   component — cards, buttons, inputs, vignettes — arrives dressed
-   for the new room without being rewritten. It layers on top of
-   whichever light or dark theme the visitor chose, and wins, because
-   this page has one look on purpose.
+   component — cards, buttons, inputs, vignettes — arrives dressed for
+   the new room without being rewritten.
 
-   Measured, not eyeballed. On the canvas: fg 17.3:1 · muted 10.2:1
-   · subtle 8.3:1 · turquoise text 10.5:1 · champagne 12.9:1, and the
-   numerals clear 3:1. White on the turquoise action fill is 4.5:1;
-   the canvas ink on champagne is 9:1.
+   It comes in both themes, because the visitor's choice of light or
+   dark belongs to the visitor, not to the page. The light palette is
+   a marina at noon and the dark one is the same marina at night; both
+   are unmistakably not the dealership.
+
+   How the two are selected:
+     · The light block matches `:root[data-universe="toys"]`, which
+       ties the theme rules above on specificity and, coming later in
+       the file, wins on <html>. The bare attribute selector in the
+       same block dresses the page wrapper and the header, which are
+       ordinary elements no theme rule competes for.
+     · The dark block adds the theme attribute, which outranks both.
+
+   Measured, not eyeballed. Light, on the canvas: fg 16.2:1 · muted
+   6.9:1 · subtle 5.6:1 · teal text 6.7:1 · bronze 5.8:1, numerals
+   3.2:1 on the darkest surface, white on the teal fill 5.8:1, ink on
+   champagne 7.0:1. Dark, on the canvas: fg 17.3:1 · muted 10.2:1 ·
+   subtle 8.3:1 · turquoise 10.5:1 · champagne 12.9:1, numerals 3.7:1
+   at worst, white on the teal fill 4.5:1.
    ══════════════════════════════════════════════════════════════ */
 
-/* Two selectors, one block. `:root[data-universe="toys"]` matches the
-   specificity of the theme rules above (`:root[data-theme="light"]`) and,
-   coming later in the file, wins on <html> — without it the light theme kept
-   the body and footer sand-coloured under a marine page. The bare attribute
-   selector is what dresses the page wrapper and the header, which are
-   ordinary elements no theme rule competes for. */
+/* ── Light: a marina at noon ──────────────────────────────── */
 :root[data-universe="toys"],
 [data-universe="toys"] {
+  color-scheme: light;
+
+  /* Surfaces — sea haze. Cool where the dealership is warm, which is
+     what makes the two read as different rooms rather than two moods
+     of the same one. */
+  --color-canvas: #eaf2f4;
+  --color-surface: #fbfeff;
+  --color-surface-2: #dfeaed;
+  --color-surface-3: #d3e2e6;
+  --color-line: #cfdfe3;
+  --color-line-strong: #9fbac2;
+
+  --color-flag-dark: #0d2129;
+  --color-studio-top: #fbfeff;
+  --color-hairline: rgba(6, 22, 28, 0.045);
+  --color-stamp-bg: rgba(251, 254, 255, 0.88);
+
+  --color-ink: #0d2129;
+  --color-ink-soft: #16323c;
+
+  --color-fg: #06161c;
+  --color-muted: #3b565f;
+  --color-subtle: #48646d;
+  --color-numeral: #657e87;
+
+  /* The action colour. Red is the dealership's; here it is the water.
+     The fill takes white text; `--color-red-text` is the darker twin
+     for text, which no fill could carry. */
+  --color-red: #0a7268;
+  --color-red-text: #065f57;
+  --color-red-bright: #0c8478;
+  --color-red-deep: #075a52;
+  --color-red-wash: #dcecea;
+
+  /* Champagne rather than the dealership's gold — the only warm
+     colour in the room, which is what makes it read as the accent. */
+  --color-gold: #d1a13f;
+  --color-bronze: #78570b;
+  --color-gold-wash: #f5eddb;
+
+  --color-ok: #0f6b34;
+  --color-ok-wash: #e4f0e8;
+  --color-warn: #9a4708;
+  --color-info: #02597f;
+
+  /* The hero wash and the caustics, as tokens: the two palettes need
+     the same shapes in different weights, and a second copy of the
+     gradients would be a second thing to keep in step. */
+  --toys-wash-a: rgba(10, 114, 104, 0.16);
+  --toys-wash-b: rgba(209, 161, 63, 0.16);
+  --toys-wash-c: rgba(12, 132, 120, 0.13);
+  --toys-caustic-a: rgba(6, 95, 87, 0.05);
+  --toys-caustic-b: rgba(120, 87, 11, 0.045);
+
+  background-color: var(--color-canvas);
+  color: var(--color-fg);
+}
+
+/* ── Dark: the same marina at night ───────────────────────── */
+:root[data-theme="dark"][data-universe="toys"],
+:root[data-theme="dark1"][data-universe="toys"],
+:root[data-theme="dark2"][data-universe="toys"],
+[data-theme="dark"] [data-universe="toys"],
+[data-theme="dark1"] [data-universe="toys"],
+[data-theme="dark2"] [data-universe="toys"] {
   color-scheme: dark;
 
-  /* Surfaces — the sea at night, each a readable step from the last */
   --color-canvas: #08131a;
   --color-surface: #0e1d26;
   --color-surface-2: #142732;
@@ -954,18 +1023,12 @@
   --color-subtle: #95b0bd;
   --color-numeral: #6e8b99;
 
-  /* The action colour. Red is the dealership's; here it is the water.
-     Same arrangement as the dark themes: the fill takes white text,
-     and text switches to a lighter twin that no fill could carry. */
   --color-red: #0d857a;
   --color-red-text: #4fd6c4;
   --color-red-bright: #16b6a4;
   --color-red-deep: #0a6d64;
   --color-red-wash: #0c2b2c;
 
-  /* Champagne rather than the dealership's gold — warmer, softer, and
-     the only warm colour in the room, which is what makes it read as
-     the prestige accent. */
   --color-gold: #e8c88a;
   --color-bronze: #efd39b;
   --color-gold-wash: #241f14;
@@ -982,6 +1045,12 @@
   --shadow-md: 0 10px 30px -10px rgba(0, 0, 0, 0.6);
   --shadow-lg: 0 32px 64px -20px rgba(0, 0, 0, 0.7);
 
+  --toys-wash-a: rgba(13, 133, 122, 0.30);
+  --toys-wash-b: rgba(232, 200, 138, 0.13);
+  --toys-wash-c: rgba(22, 182, 164, 0.16);
+  --toys-caustic-a: rgba(120, 230, 220, 0.05);
+  --toys-caustic-b: rgba(232, 200, 138, 0.04);
+
   background-color: var(--color-canvas);
   color: var(--color-fg);
 }
@@ -992,7 +1061,7 @@
 :root[data-universe="toys"] ::selection,
 [data-universe="toys"] ::selection { background: var(--color-red); color: #fff; }
 [data-universe="toys"] :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
-  outline-color: var(--color-red-text);
+  outline-color: var(--color-red);
 }
 
 @layer components {
@@ -1051,14 +1120,15 @@
   }
 
   /* ── Big Toys: the water ─────────────────────────────────
-     Two slow aurora washes and a horizon glow. No image: a photo
-     here would fight the listings, which are themselves photos. */
+     Two slow aurora washes and a horizon glow, built from tokens so
+     the same shapes carry both palettes. No image: a photo here
+     would fight the listings, which are themselves photos. */
   .tide {
     background-color: var(--color-canvas);
     background-image:
-      radial-gradient(ellipse 80% 60% at 8% -10%, rgba(13, 133, 122, 0.30), transparent 62%),
-      radial-gradient(ellipse 70% 55% at 96% 4%, rgba(232, 200, 138, 0.13), transparent 58%),
-      radial-gradient(ellipse 120% 45% at 50% 108%, rgba(22, 182, 164, 0.16), transparent 70%),
+      radial-gradient(ellipse 80% 60% at 8% -10%, var(--toys-wash-a), transparent 62%),
+      radial-gradient(ellipse 70% 55% at 96% 4%, var(--toys-wash-b), transparent 58%),
+      radial-gradient(ellipse 120% 45% at 50% 108%, var(--toys-wash-c), transparent 70%),
       linear-gradient(180deg, var(--color-studio-top) 0%, var(--color-canvas) 55%);
   }
 
@@ -1081,16 +1151,21 @@
      drifting against each other; cheap, and it never repeats badly. */
   .caustics {
     background-image:
-      repeating-linear-gradient(64deg, rgba(120, 230, 220, 0.05) 0 2px, transparent 2px 26px),
-      repeating-linear-gradient(-58deg, rgba(232, 200, 138, 0.04) 0 2px, transparent 2px 34px);
+      repeating-linear-gradient(64deg, var(--toys-caustic-a) 0 2px, transparent 2px 26px),
+      repeating-linear-gradient(-58deg, var(--toys-caustic-b) 0 2px, transparent 2px 34px);
     animation: caustics-drift 26s linear infinite;
   }
 
   /* ── The universe gate ───────────────────────────────────
      The full-screen wipe played when the visitor crosses from the
      dealership into Big Toys. It enters over the old page, the
-     navigation happens behind it, and it leaves upward — so the
-     two universes never share a frame. */
+     navigation happens behind it, and it leaves upward — so the two
+     universes never share a frame.
+
+     It is portalled onto the body, outside the universe scope, and
+     plays while the old page is still mounted — so it cannot read
+     the Big Toys tokens and carries its own colours, chosen from
+     the theme the visitor is in. */
   .gate {
     position: fixed;
     inset: 0;
@@ -1099,11 +1174,30 @@
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    background-color: #08131a;
+
+    --gate-bg: #eaf2f4;
+    --gate-glow-a: rgba(10, 114, 104, 0.22);
+    --gate-glow-b: rgba(209, 161, 63, 0.18);
+    --gate-line-a: #0a7268;
+    --gate-line-b: #78570b;
+    --gate-ink: #06161c;
+
+    background-color: var(--gate-bg);
     background-image:
-      radial-gradient(ellipse 90% 70% at 50% 120%, rgba(22, 182, 164, 0.35), transparent 65%),
-      radial-gradient(ellipse 70% 50% at 50% -10%, rgba(232, 200, 138, 0.14), transparent 60%);
+      radial-gradient(ellipse 90% 70% at 50% 120%, var(--gate-glow-a), transparent 65%),
+      radial-gradient(ellipse 70% 50% at 50% -10%, var(--gate-glow-b), transparent 60%);
     will-change: transform;
+  }
+
+  [data-theme="dark"] .gate,
+  [data-theme="dark1"] .gate,
+  [data-theme="dark2"] .gate {
+    --gate-bg: #08131a;
+    --gate-glow-a: rgba(22, 182, 164, 0.35);
+    --gate-glow-b: rgba(232, 200, 138, 0.14);
+    --gate-line-a: #4fd6c4;
+    --gate-line-b: #efd39b;
+    --gate-ink: #f0f7fa;
   }
 
   .gate-enter { animation: gate-enter 560ms var(--ease-out-quint) both; }
@@ -1115,13 +1209,20 @@
     inset-inline: 0;
     top: 50%;
     height: 1px;
-    background: linear-gradient(90deg, transparent, #4fd6c4 30%, #efd39b 50%, #4fd6c4 70%, transparent);
+    background: linear-gradient(
+      90deg,
+      transparent,
+      var(--gate-line-a) 30%,
+      var(--gate-line-b) 50%,
+      var(--gate-line-a) 70%,
+      transparent
+    );
     animation: gate-horizon 1100ms var(--ease-out-quint) both;
   }
 
   .gate-word {
     position: relative;
-    color: #f0f7fa;
+    color: var(--gate-ink);
     font-family: var(--font-wordmark), system-ui, sans-serif;
     font-weight: 700;
     font-style: normal;

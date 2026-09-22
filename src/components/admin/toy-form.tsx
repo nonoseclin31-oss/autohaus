@@ -5,6 +5,9 @@ import { useFormStatus } from "react-dom";
 import Link from "next/link";
 import { saveToy, type ToyFormState } from "@/app/actions/toys";
 import { ImageUploader, type UploadedImage } from "./image-uploader";
+import {
+  ToyTemplatePicker, ToyTemplateNameField, type PickableToyTemplate,
+} from "./toy-template-picker";
 import { getDictionary, localePath, LOCALE_META, LOCALES, type Locale } from "@/i18n";
 import {
   TOY_KINDS, TOY_CATEGORIES, TOY_ENGINES, TOY_TRANSMISSIONS, TOY_LICENCES,
@@ -158,14 +161,15 @@ const FIELD_TAB: Record<string, string> = {
 };
 
 function SaveBar({
-  idle, busy, cancelHref, cancel, draft, more,
+  idle, busy, cancelHref, cancel, draft, more, template,
 }: {
   idle: string; busy: string; cancelHref: string; cancel: string; draft: string; more: string;
+  template: React.ReactNode;
 }) {
   const { pending } = useFormStatus();
-  // Three buttons side by side stack into three rows on a phone and swallow
-  // the screen. The two secondary ones fold into a sheet; from `md` up the
-  // very same nodes sit back in the row.
+  // Four buttons side by side wrap into four rows on a phone and swallow the
+  // screen. The three secondary ones fold into a sheet; from `md` up the very
+  // same nodes sit back in the row.
   const [open, setOpen] = useState(false);
   const bar = useRef<HTMLDivElement>(null);
   const sheet = useRef<HTMLDivElement>(null);
@@ -210,6 +214,8 @@ function SaveBar({
         <Link href={cancelHref} className="btn btn-ghost w-full cursor-pointer md:w-auto">
           {cancel}
         </Link>
+        {/* Keeps these values for the next machine of the same kind. */}
+        {template}
         <button
           type="submit"
           name="intent"
@@ -263,11 +269,14 @@ export function ToyForm({
   values = {},
   advisors,
   permissions,
+  templates,
 }: {
   locale: Locale;
   values?: ToyFormValues;
   advisors: Advisor[];
   permissions: Permissions;
+  /** Saved templates, on a new listing only. */
+  templates?: PickableToyTemplate[];
 }) {
   const t = getDictionary(locale);
   const tax = locale as TaxLocale;
@@ -287,6 +296,7 @@ export function ToyForm({
   const groups = toyEquipmentByGroup();
   const err = (field: string) => (state.fieldErrors?.[field] ? t.common.required : undefined);
   const missing = Object.keys(state.fieldErrors ?? {});
+  const templateNameMissing = state.message === "template-name";
 
   const formRef = useRef<HTMLFormElement>(null);
   const submitted = useRef<FormData | null>(null);
@@ -298,7 +308,10 @@ export function ToyForm({
   useEffect(() => {
     const form = formRef.current;
     const data = submitted.current;
-    if (state.status !== "error" || !form || !data) return;
+    // Also after saving a template: the listing itself was not saved, so
+    // emptying the form would throw away everything just typed.
+    const keepValues = state.status === "error" || !!state.templateSaved;
+    if (!keepValues || !form || !data) return;
 
     for (const element of Array.from(form.elements)) {
       const field = element as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
@@ -373,6 +386,15 @@ export function ToyForm({
 
       {/* Section navigation */}
       <nav className="lg:sticky lg:top-24 lg:self-start" aria-label={t.admin.editToy}>
+        {/* Starting from a template belongs at the top of the sections, before
+            Identity: it is the first decision, not an afterthought above the
+            form. Only on a new listing — an existing one is already filled. */}
+        {templates?.length ? (
+          <div className="mb-3 border-b border-line pb-3">
+            <ToyTemplatePicker locale={locale} templates={templates} />
+          </div>
+        ) : null}
+
         <div className="lg:hidden">
           <label htmlFor="toy-section-select" className="label">{t.common.actions}</label>
           <select
@@ -421,9 +443,11 @@ export function ToyForm({
             <span>
               {state.message === "forbidden"
                 ? t.admin.permDenied
-                : missing.length
-                  ? `${t.admin.missingFields} ${missing.map((f) => FIELD_LABEL(t, f)).join(", ")}`
-                  : t.common.error}
+                : templateNameMissing
+                  ? t.admin.errTemplateName
+                  : missing.length
+                    ? `${t.admin.missingFields} ${missing.map((f) => FIELD_LABEL(t, f)).join(", ")}`
+                    : t.common.error}
             </span>
           </p>
         ) : null}
@@ -865,6 +889,7 @@ export function ToyForm({
           cancelHref={localePath(locale, "/admin/toys")}
           draft={t.admin.saveDraft}
           more={t.admin.moreActions}
+          template={<ToyTemplateNameField locale={locale} saved={state.templateSaved} />}
         />
       </div>
     </form>

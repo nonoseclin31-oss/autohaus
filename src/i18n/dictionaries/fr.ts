@@ -592,6 +592,8 @@ const fr: Dictionary = {
     secToyEngine: "Motorisation & performances",
     secToyMeasures: "Mesures & usage",
     secToyPapers: "Papiers & état",
+    toyTemplateNamePlaceholder: "ex. Sea-Doo RXP-X 325",
+    toyTemplates: "Modèles Big Toys",
     fKind: "Famille",
     fKindHelp: "Décide des champs à remplir : les kilomètres pour ce qui roule, les heures moteur pour ce qui flotte.",
     fCategory: "Usage",

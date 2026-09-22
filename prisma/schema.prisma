@@ -32,11 +32,12 @@ model User {
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
 
-  vehicles   Vehicle[]         @relation("VehicleOwner")
-  toys       Toy[]             @relation("ToyOwner")
-  leads      Lead[]            @relation("LeadAssignee")
-  activities ActivityLog[]
-  templates  VehicleTemplate[]
+  vehicles     Vehicle[]         @relation("VehicleOwner")
+  toys         Toy[]             @relation("ToyOwner")
+  leads        Lead[]            @relation("LeadAssignee")
+  activities   ActivityLog[]
+  templates    VehicleTemplate[]
+  toyTemplates ToyTemplate[]     @relation("ToyTemplateAuthor")
 }
 
 model Vehicle {
@@ -402,4 +403,41 @@ model ToyTranslation {
   description String?
 
   @@unique([toyId, locale])
+}
+
+/// A saved set of Big Toy values, reusable as the starting point for the next
+/// one of the same kind — the same idea as VehicleTemplate, and separate for
+/// the same reason the two catalogues are: a jet ski preset has nothing to
+/// offer someone entering an estate car, and mixing them would make both
+/// pickers longer and less useful.
+///
+/// Photos are never part of one: they belong to one machine, not to a kind.
+model ToyTemplate {
+  id   String @id @default(cuid())
+  name String
+
+  /// Shown in the picker so a template is recognisable without opening it,
+  /// and so the four families can be told apart at a glance.
+  kind    String
+  brand   String
+  model   String
+  version String?
+
+  /// The form values, as JSON. Kept opaque on purpose, as for vehicles: a
+  /// column per field would mean a migration every time the form gains one.
+  payload String
+
+  usageCount Int       @default(0)
+  lastUsedAt DateTime?
+
+  createdBy   User?   @relation("ToyTemplateAuthor", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([kind])
+  @@index([brand, model])
+  @@index([lastUsedAt])
+  @@index([name])
 }
