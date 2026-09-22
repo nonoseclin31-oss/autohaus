@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { getDictionary, resolveLocale, localePath, formatNumber, formatCurrency } from "@/i18n";
-import { getFeaturedVehicles } from "@/lib/vehicles";
+import { getHomeShowcase } from "@/lib/vehicles";
 import { prisma } from "@/lib/prisma";
 import { JsonLd } from "@/components/json-ld";
 import { dealerSchema } from "@/lib/seo";
@@ -24,8 +24,8 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   const t = getDictionary(locale);
   const company = await getCompany();
 
-  const [featured, stockCount, brands] = await Promise.all([
-    getFeaturedVehicles(locale, 6),
+  const [showcase, stockCount, brands] = await Promise.all([
+    getHomeShowcase(locale),
     prisma.vehicle.count({ where: { published: true, status: { not: "SOLD" } } }),
     prisma.vehicle.findMany({
       where: { published: true },
@@ -35,7 +35,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
     }),
   ]);
 
-  const hero = featured[0] ?? null;
+  const { hero, grid: featured } = showcase;
   const bodyTypes = ["SUV", "SEDAN", "COUPE", "ESTATE", "CABRIOLET", "HATCHBACK"];
 
   const whyItems = [

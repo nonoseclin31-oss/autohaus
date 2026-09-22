@@ -159,14 +159,60 @@ export async function listVehicles(filters: VehicleFilters, locale: Locale) {
   };
 }
 
-export async function getFeaturedVehicles(locale: Locale, take = 6) {
-  const rows = await prisma.vehicle.findMany({
-    where: { published: true, status: { not: "SOLD" } },
-    select: LIST_SELECT,
-    orderBy: [{ featured: "desc" }, { createdAt: "desc" }],
-    take,
-  });
-  return rows.map((row) => toListItem(row as unknown as RawListRow, locale));
+/** How many cards the home page shows under the showcase car. */
+export const HOME_GRID_SIZE = 6;
+/** The showcase car at the top of the home page. */
+export const HERO_RANK = 0;
+
+/**
+ * The home page, as arranged in the back office.
+ *
+ * `homeRank` is a hand-picked order: 0 is the showcase car, 1-6 are the cards
+ * below it. Nothing guarantees the six slots are filled — a chosen car can be
+ * sold, unpublished or deleted long after someone arranged the page — so the
+ * remainder is topped up with the newest listings. The home page is never
+ * short of cars because of a gap in the ordering.
+ */
+export async function getHomeShowcase(locale: Locale) {
+  const [picked, pool] = await Promise.all([
+    prisma.vehicle.findMany({
+      where: { published: true, status: { not: "SOLD" }, homeRank: { not: null } },
+      select: { ...LIST_SELECT, homeRank: true },
+      orderBy: { homeRank: "asc" },
+    }),
+    prisma.vehicle.findMany({
+      where: { published: true, status: { not: "SOLD" } },
+      select: LIST_SELECT,
+      orderBy: [{ featured: "desc" }, { createdAt: "desc" }],
+      take: HOME_GRID_SIZE * 2 + 2,
+    }),
+  ]);
+
+  const chosen = picked.map((row) => ({
+    rank: row.homeRank as number,
+    item: toListItem(row as unknown as RawListRow, locale),
+  }));
+  const fallback = pool.map((row) => toListItem(row as unknown as RawListRow, locale));
+
+  const hero =
+    chosen.find((entry) => entry.rank === HERO_RANK)?.item ?? fallback[0] ?? null;
+
+  const grid = chosen
+    .filter((entry) => entry.rank > HERO_RANK)
+    .map((entry) => entry.item);
+
+  // Top up, skipping anything already on the page — including the showcase
+  // car, which would otherwise come back as the first card under itself.
+  const taken = new Set(grid.map((v) => v.id));
+  if (hero) taken.add(hero.id);
+  for (const candidate of fallback) {
+    if (grid.length >= HOME_GRID_SIZE) break;
+    if (taken.has(candidate.id)) continue;
+    taken.add(candidate.id);
+    grid.push(candidate);
+  }
+
+  return { hero, grid: grid.slice(0, HOME_GRID_SIZE) };
 }
 
 export async function getRentalVehicles(locale: Locale, take = 12) {

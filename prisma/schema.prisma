@@ -137,6 +137,11 @@ model Vehicle {
   location  String?
   views     Int     @default(0)
 
+  /// Where this listing sits on the home page, chosen by hand in the back
+  /// office. 0 is the showcase car at the top; 1-6 are the six cards below
+  /// it, in that order. Null means the listing only shows in the catalogue.
+  homeRank Int?
+
   ownerId String?
   owner   User?   @relation("VehicleOwner", fields: [ownerId], references: [id], onDelete: SetNull)
 
@@ -148,6 +153,7 @@ model Vehicle {
   updatedAt DateTime  @updatedAt
 
   @@index([status, published])
+  @@index([homeRank])
   @@index([brand, model])
   @@index([rentalAvailable])
 }

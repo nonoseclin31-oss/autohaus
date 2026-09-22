@@ -113,12 +113,23 @@ export default async function AdminVehiclesPage({
             {total} {t.vehicles.vehiclesFound}
           </p>
         </div>
-        {can(user.role, "vehicle.create") ? (
-          <Link href={localePath(locale, "/admin/vehicles/new")} className="btn btn-primary cursor-pointer">
-            <IconPlus size={17} />
-            {t.admin.addVehicle}
-          </Link>
-        ) : null}
+        <div className="flex flex-wrap items-center gap-2">
+          {can(user.role, "vehicle.update.any") ? (
+            <Link
+              href={localePath(locale, "/admin/vehicles/showcase")}
+              className="btn btn-solid cursor-pointer"
+            >
+              <IconStar size={17} />
+              {t.admin.homePage}
+            </Link>
+          ) : null}
+          {can(user.role, "vehicle.create") ? (
+            <Link href={localePath(locale, "/admin/vehicles/new")} className="btn btn-primary cursor-pointer">
+              <IconPlus size={17} />
+              {t.admin.addVehicle}
+            </Link>
+          ) : null}
+        </div>
       </div>
 
       {/* Search + filters */}

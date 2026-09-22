@@ -11,6 +11,7 @@ import {
 } from "@/lib/utils";
 import { resolveLocale } from "@/i18n";
 import { payloadFromForm } from "@/lib/vehicle-templates";
+import { HERO_RANK, HOME_GRID_SIZE } from "@/lib/vehicles";
 
 export type VehicleFormState = {
   status: "idle" | "error" | "success";
@@ -414,4 +415,73 @@ export async function deleteVehicleTemplate(formData: FormData): Promise<void> {
   await prisma.vehicleTemplate.delete({ where: { id } });
   await logActivity(user.id, "template.deleted", "VehicleTemplate", id, template.name);
   revalidatePath(`/${locale}/admin/vehicles/new`);
+}
+
+/* ──────────────────── Home page showcase ──────────────────── */
+
+export type ShowcaseState = { status: "idle" | "saved" | "error"; message?: string };
+
+/**
+ * Arrange the home page: which listing is the showcase car at the top, and
+ * which six sit in the grid under it, in which order.
+ *
+ * Everything is rewritten from the form in one go — the ranks are a single
+ * arrangement, not seven independent flags — so a stale slot cannot survive a
+ * save. Anything not on the form drops back to the catalogue only.
+ */
+export async function saveHomeShowcase(
+  _prev: ShowcaseState,
+  formData: FormData,
+): Promise<ShowcaseState> {
+  const user = await getCurrentUser();
+  if (!user || !can(user.role, "vehicle.update.any")) {
+    return { status: "error", message: "denied" };
+  }
+
+  const locale = resolveLocale(String(formData.get("locale") ?? ""));
+
+  // Only a published, unsold listing may sit on the home page. The form was
+  // built from that same list, but it may be minutes old by now.
+  const eligible = new Set(
+    (
+      await prisma.vehicle.findMany({
+        where: { published: true, status: { not: "SOLD" } },
+        select: { id: true },
+      })
+    ).map((row) => row.id),
+  );
+
+  const heroId = String(formData.get("hero") ?? "");
+  const hero = heroId && eligible.has(heroId) ? heroId : null;
+
+  const order: string[] = [];
+  for (const raw of formData.getAll("slot")) {
+    const id = String(raw);
+    if (!id || id === hero || !eligible.has(id) || order.includes(id)) continue;
+    order.push(id);
+    if (order.length >= HOME_GRID_SIZE) break;
+  }
+
+  const ranks = new Map<string, number>();
+  if (hero) ranks.set(hero, HERO_RANK);
+  order.forEach((id, index) => ranks.set(id, index + 1));
+
+  await prisma.$transaction([
+    prisma.vehicle.updateMany({ where: { homeRank: { not: null } }, data: { homeRank: null } }),
+    ...[...ranks].map(([id, rank]) =>
+      prisma.vehicle.update({ where: { id }, data: { homeRank: rank } }),
+    ),
+  ]);
+
+  await logActivity(
+    user.id,
+    "update",
+    "home",
+    null,
+    `${ranks.size} ${ranks.size === 1 ? "listing" : "listings"} placed on the home page`,
+  );
+
+  revalidatePath(`/${locale}/admin/vehicles/showcase`);
+  revalidatePath("/", "layout");
+  return { status: "saved" };
 }
