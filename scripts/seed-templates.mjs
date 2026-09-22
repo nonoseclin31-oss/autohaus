@@ -12,7 +12,13 @@
 
 import { PrismaClient } from "@prisma/client";
 import { PrismaNeon } from "@prisma/adapter-neon";
+import { neonConfig } from "@neondatabase/serverless";
 import fs from "node:fs";
+
+// Node has no WebSocket the driver can use out of the box, and the pooler
+// refuses the upgrade from here. Queries go over plain HTTP instead, exactly
+// as they do on Workers.
+neonConfig.poolQueryViaFetch = true;
 
 const LOCALES = ["en", "fr", "de", "zh", "ar", "es"];
 
@@ -20,7 +26,7 @@ const LOCALES = ["en", "fr", "de", "zh", "ar", "es"];
 
 const T = {
   en: {
-    layout: { F6T: "twin-turbo flat-six", F6: "naturally aspirated flat-six", V12: "naturally aspirated V12", V8T: "twin-turbo V8", V8: "V8", V6T: "twin-turbo V6", I6: "turbocharged straight-six", I5: "five-cylinder turbo" },
+    layout: { F6T: "twin-turbo flat-six", F6: "naturally aspirated flat-six", V12: "naturally aspirated V12", V8T: "twin-turbo V8", V8: "V8", V6T: "twin-turbo V6", I6: "turbocharged straight-six", I5: "five-cylinder turbo", V8SC: "supercharged V8", I4T: "turbocharged four-cylinder" },
     drive: { AWD: "all-wheel drive", RWD: "rear-wheel drive" },
     gearbox: { DUAL_CLUTCH: "dual-clutch gearbox", AUTOMATIC: "automatic gearbox" },
     hp: "hp", sec: "s", to100: "0–100 km/h in", top: "top speed",
@@ -30,7 +36,7 @@ const T = {
     closing: "Inspected and certified to German standards, delivered anywhere in the world.",
   },
   fr: {
-    layout: { F6T: "flat-six biturbo", F6: "flat-six atmosphérique", V12: "V12 atmosphérique", V8T: "V8 biturbo", V8: "V8", V6T: "V6 biturbo", I6: "six cylindres en ligne turbo", I5: "cinq cylindres turbo" },
+    layout: { F6T: "flat-six biturbo", F6: "flat-six atmosphérique", V12: "V12 atmosphérique", V8T: "V8 biturbo", V8: "V8", V6T: "V6 biturbo", I6: "six cylindres en ligne turbo", I5: "cinq cylindres turbo", V8SC: "V8 à compresseur", I4T: "quatre cylindres turbo" },
     drive: { AWD: "transmission intégrale", RWD: "propulsion" },
     gearbox: { DUAL_CLUTCH: "boîte à double embrayage", AUTOMATIC: "boîte automatique" },
     hp: "ch", sec: "s", to100: "0–100 km/h en", top: "vitesse maximale",
@@ -40,7 +46,7 @@ const T = {
     closing: "Contrôlée et certifiée selon les standards allemands, livrée partout dans le monde.",
   },
   de: {
-    layout: { F6T: "Sechszylinder-Boxer mit Biturbo", F6: "Sechszylinder-Boxer-Saugmotor", V12: "V12-Saugmotor", V8T: "V8-Biturbo", V8: "V8", V6T: "V6-Biturbo", I6: "Reihensechszylinder mit Turbo", I5: "Fünfzylinder-Turbo" },
+    layout: { F6T: "Sechszylinder-Boxer mit Biturbo", F6: "Sechszylinder-Boxer-Saugmotor", V12: "V12-Saugmotor", V8T: "V8-Biturbo", V8: "V8", V6T: "V6-Biturbo", I6: "Reihensechszylinder mit Turbo", I5: "Fünfzylinder-Turbo", V8SC: "V8-Kompressor", I4T: "Vierzylinder-Turbo" },
     drive: { AWD: "Allradantrieb", RWD: "Hinterradantrieb" },
     gearbox: { DUAL_CLUTCH: "Doppelkupplungsgetriebe", AUTOMATIC: "Automatikgetriebe" },
     hp: "PS", sec: "s", to100: "0–100 km/h in", top: "Höchstgeschwindigkeit",
@@ -50,7 +56,7 @@ const T = {
     closing: "Nach deutschen Standards geprüft und zertifiziert, Lieferung weltweit.",
   },
   zh: {
-    layout: { F6T: "双涡轮增压水平对置六缸", F6: "自然吸气水平对置六缸", V12: "自然吸气 V12", V8T: "双涡轮增压 V8", V8: "V8", V6T: "双涡轮增压 V6", I6: "涡轮增压直列六缸", I5: "涡轮增压五缸" },
+    layout: { F6T: "双涡轮增压水平对置六缸", F6: "自然吸气水平对置六缸", V12: "自然吸气 V12", V8T: "双涡轮增压 V8", V8: "V8", V6T: "双涡轮增压 V6", I6: "涡轮增压直列六缸", I5: "涡轮增压五缸", V8SC: "机械增压 V8", I4T: "涡轮增压四缸" },
     drive: { AWD: "四轮驱动", RWD: "后轮驱动" },
     gearbox: { DUAL_CLUTCH: "双离合变速箱", AUTOMATIC: "自动变速箱" },
     hp: "马力", sec: "秒", to100: "0–100 公里/小时加速", top: "最高时速",
@@ -60,7 +66,7 @@ const T = {
     closing: "按德国标准检测认证，配送至全球。",
   },
   ar: {
-    layout: { F6T: "ستة أسطوانات مسطّحة بشاحنين توربو", F6: "ستة أسطوانات مسطّحة بسحب طبيعي", V12: "محرك V12 بسحب طبيعي", V8T: "V8 بشاحنين توربو", V8: "V8", V6T: "V6 بشاحنين توربو", I6: "ستة أسطوانات على التوالي بتوربو", I5: "خمس أسطوانات بتوربو" },
+    layout: { F6T: "ستة أسطوانات مسطّحة بشاحنين توربو", F6: "ستة أسطوانات مسطّحة بسحب طبيعي", V12: "محرك V12 بسحب طبيعي", V8T: "V8 بشاحنين توربو", V8: "V8", V6T: "V6 بشاحنين توربو", I6: "ستة أسطوانات على التوالي بتوربو", I5: "خمس أسطوانات بتوربو", V8SC: "V8 بشاحن ميكانيكي", I4T: "أربع أسطوانات بتوربو" },
     drive: { AWD: "دفع رباعي", RWD: "دفع خلفي" },
     gearbox: { DUAL_CLUTCH: "ناقل حركة بقابضين", AUTOMATIC: "ناقل حركة أوتوماتيكي" },
     hp: "حصان", sec: "ثانية", to100: "من 0 إلى 100 كم/س في", top: "السرعة القصوى",
@@ -70,7 +76,7 @@ const T = {
     closing: "مفحوصة ومعتمدة وفق المعايير الألمانية، مع التوصيل إلى أنحاء العالم.",
   },
   es: {
-    layout: { F6T: "bóxer de seis cilindros biturbo", F6: "bóxer de seis cilindros atmosférico", V12: "V12 atmosférico", V8T: "V8 biturbo", V8: "V8", V6T: "V6 biturbo", I6: "seis cilindros en línea turbo", I5: "cinco cilindros turbo" },
+    layout: { F6T: "bóxer de seis cilindros biturbo", F6: "bóxer de seis cilindros atmosférico", V12: "V12 atmosférico", V8T: "V8 biturbo", V8: "V8", V6T: "V6 biturbo", I6: "seis cilindros en línea turbo", I5: "cinco cilindros turbo", V8SC: "V8 sobrealimentado por compresor", I4T: "cuatro cilindros turbo" },
     drive: { AWD: "tracción total", RWD: "propulsión trasera" },
     gearbox: { DUAL_CLUTCH: "caja de doble embrague", AUTOMATIC: "caja automática" },
     hp: "CV", sec: "s", to100: "0–100 km/h en", top: "velocidad máxima",
@@ -248,7 +254,61 @@ const CARS = [
     body: "COUPE", segment: "SPORT", layout: "V8T", fuel: "PLUGIN_HYBRID", transmission: "DUAL_CLUTCH", gears: 8,
     drivetrain: "AWD", engine: 4.0, cylinders: 8, hp: 920, kw: 677, nm: 730, acc: 2.7, top: 343,
     cons: 11.0, co2: 250, battery: 3.8, range: 10, charge: "30 min (7 kW)", doors: 2, seats: 2, phev: true },
+
+  // ── Land Rover ──────────────────────────────────────────────────────
+  // The 4.4 twin-turbo V8 is BMW-built and mild-hybrid; the 5.0 supercharged
+  // is Jaguar Land Rover's own and is not, which is why only one of the two
+  // Defenders carries the 48-volt line in its description.
+  { name: "2026 Land Rover Range Rover SV", brand: "Land Rover", model: "Range Rover", version: "SV P615", year: 2026,
+    body: "SUV", segment: "LUXURY", layout: "V8T", fuel: "PETROL", transmission: "AUTOMATIC", gears: 8,
+    drivetrain: "AWD", engine: 4.4, cylinders: 8, hp: 615, kw: 452, nm: 750, acc: 4.6, top: 261,
+    cons: 13.0, urban: 17.4, highway: 10.8, co2: 294, doors: 5, seats: 5, mhev: true },
+
+  { name: "2026 Land Rover Range Rover Sport SV", brand: "Land Rover", model: "Range Rover Sport", version: "SV P635", year: 2026,
+    body: "SUV", segment: "SPORT", layout: "V8T", fuel: "PETROL", transmission: "AUTOMATIC", gears: 8,
+    drivetrain: "AWD", engine: 4.4, cylinders: 8, hp: 635, kw: 467, nm: 750, acc: 3.7, top: 290,
+    cons: 11.7, urban: 15.6, highway: 9.7, co2: 271, doors: 5, seats: 5, mhev: true },
+
+  { name: "2026 Land Rover Defender Octa", brand: "Land Rover", model: "Defender 110", version: "Octa P635", year: 2026,
+    body: "SUV", segment: "OFFROAD", layout: "V8T", fuel: "PETROL", transmission: "AUTOMATIC", gears: 8,
+    drivetrain: "AWD", engine: 4.4, cylinders: 8, hp: 635, kw: 467, nm: 750, acc: 4.0, top: 250,
+    cons: 14.5, urban: 19.3, highway: 11.8, co2: 330, doors: 5, seats: 5, mhev: true },
+
+  { name: "2026 Land Rover Defender V8", brand: "Land Rover", model: "Defender 110", version: "V8 P525", year: 2026,
+    body: "SUV", segment: "OFFROAD", layout: "V8SC", fuel: "PETROL", transmission: "AUTOMATIC", gears: 8,
+    drivetrain: "AWD", engine: 5.0, cylinders: 8, hp: 525, kw: 386, nm: 625, acc: 5.2, top: 240,
+    cons: 14.8, urban: 19.8, highway: 12.0, co2: 335, doors: 5, seats: 5 },
+
+  // ── Mercedes-AMG ────────────────────────────────────────────────────
+  { name: "2026 Mercedes-AMG G 63", brand: "Mercedes-Benz", model: "G 63", version: "AMG 4MATIC+", year: 2026,
+    body: "SUV", segment: "LUXURY", layout: "V8T", fuel: "PETROL", transmission: "AUTOMATIC", gears: 9,
+    drivetrain: "AWD", engine: 4.0, cylinders: 8, hp: 585, kw: 430, nm: 850, acc: 4.3, top: 220,
+    cons: 14.7, urban: 19.6, highway: 11.9, co2: 336, doors: 5, seats: 5, mhev: true },
+
+  { name: "2026 Mercedes-AMG S 63 E Performance", brand: "Mercedes-Benz", model: "S 63", version: "AMG E Performance 4MATIC+", year: 2026,
+    body: "SEDAN", segment: "LUXURY", layout: "V8T", fuel: "PLUGIN_HYBRID", transmission: "AUTOMATIC", gears: 9,
+    drivetrain: "AWD", engine: 4.0, cylinders: 8, hp: 802, kw: 590, nm: 1430, acc: 3.3, top: 290,
+    cons: 4.4, co2: 100, battery: 13.1, range: 33, charge: "2 h (3,7 kW)", doors: 4, seats: 5, phev: true },
+
+  { name: "2026 Mercedes-AMG C 63 S E Performance", brand: "Mercedes-Benz", model: "C 63", version: "AMG S E Performance 4MATIC+", year: 2026,
+    body: "SEDAN", segment: "SPORT", layout: "I4T", fuel: "PLUGIN_HYBRID", transmission: "AUTOMATIC", gears: 9,
+    drivetrain: "AWD", engine: 2.0, cylinders: 4, hp: 680, kw: 500, nm: 1020, acc: 3.4, top: 280,
+    cons: 6.9, co2: 156, battery: 6.1, range: 13, charge: "30 min (3,7 kW)", doors: 4, seats: 5, phev: true },
+
+  // The W214 E-Class has no 63 yet — its range tops out at the E 53. So this
+  // template is the last one built, the W213, and says used rather than
+  // describing a car nobody can order.
+  { name: "2023 Mercedes-AMG E 63 S", brand: "Mercedes-Benz", model: "E 63", version: "AMG S 4MATIC+", year: 2023,
+    body: "SEDAN", segment: "SPORT", layout: "V8T", fuel: "PETROL", transmission: "AUTOMATIC", gears: 9,
+    drivetrain: "AWD", engine: 4.0, cylinders: 8, hp: 612, kw: 450, nm: 850, acc: 3.4, top: 300,
+    cons: 12.0, urban: 16.0, highway: 9.7, co2: 272, doors: 4, seats: 5, condition: "USED" },
+
+  { name: "2026 Mercedes-AMG A 45 S", brand: "Mercedes-Benz", model: "A 45", version: "AMG S 4MATIC+", year: 2026,
+    body: "HATCHBACK", segment: "SPORT", layout: "I4T", fuel: "PETROL", transmission: "DUAL_CLUTCH", gears: 8,
+    drivetrain: "AWD", engine: 2.0, cylinders: 4, hp: 421, kw: 310, nm: 500, acc: 3.9, top: 270,
+    cons: 8.5, urban: 10.8, highway: 7.2, co2: 194, doors: 5, seats: 5 },
 ];
+
 
 /* ── Indicative pricing and colours ────────────────────────────────────── */
 
@@ -275,6 +335,11 @@ const PRICE = {
   "2025 Porsche 718 Cayman GT4 RS": 165000,
   "2026 Lamborghini Revuelto": 560000, "2026 Lamborghini Urus Performante": 295000,
   "2026 Lamborghini Urus SE": 305000, "2026 Lamborghini Temerario": 330000,
+  "2026 Land Rover Range Rover SV": 235000, "2026 Land Rover Range Rover Sport SV": 195000,
+  "2026 Land Rover Defender Octa": 175000, "2026 Land Rover Defender V8": 138000,
+  "2026 Mercedes-AMG G 63": 212000, "2026 Mercedes-AMG S 63 E Performance": 228000,
+  "2026 Mercedes-AMG C 63 S E Performance": 118000, "2023 Mercedes-AMG E 63 S": 95000,
+  "2026 Mercedes-AMG A 45 S": 73000,
 };
 
 /** A colour each marque is actually associated with, inside for contrast. */
@@ -283,6 +348,8 @@ const COLOURS = {
   BMW: ["black", "black"],
   Ferrari: ["red", "black"],
   Lamborghini: ["yellow", "black"],
+  "Land Rover": ["green", "beige"],
+  "Mercedes-Benz": ["silver", "black"],
   Porsche: ["white", "black"],
 };
 
@@ -325,7 +392,7 @@ function description(car, loc) {
   const title = `${car.brand} ${car.model}${car.version ? " " + car.version : ""}`;
   const lines = [
     `${title} — ${t.layout[car.layout]} ${decimal(car.engine.toFixed(1), loc)} l, ${car.hp} ${t.hp} (${car.kw} kW), ${car.nm} Nm, ${t.drive[car.drivetrain]}, ${t.gearbox[car.transmission]}.`,
-    `${t.to100} ${decimal(car.acc, loc)} ${t.sec}, ${t.top} ${car.top} km/h.`,
+    `${t.to100} ${decimal(car.acc.toFixed(1), loc)} ${t.sec}, ${t.top} ${car.top} km/h.`,
   ];
   if (car.phev) lines.push(t.phev);
   else if (car.thybrid) lines.push(t.thybrid);
@@ -418,7 +485,8 @@ const prisma = new PrismaClient({ adapter: new PrismaNeon({ connectionString: ur
 
 const author = await prisma.user.findFirst({ where: { role: "ADMIN", active: true }, select: { id: true } });
 
-let created = 0, updated = 0;
+const replace = process.argv.includes("--replace");
+let created = 0, updated = 0, skipped = 0;
 for (const car of CARS) {
   const data = {
     name: car.name,
@@ -430,6 +498,10 @@ for (const car of CARS) {
   };
   const existing = await prisma.vehicleTemplate.findFirst({ where: { name: car.name }, select: { id: true } });
   if (existing) {
+    // A template that is already there may have been edited in the back
+    // office since. Adding a car to this list must not quietly undo that, so
+    // rewriting one is opt-in.
+    if (!replace) { skipped++; continue; }
     await prisma.vehicleTemplate.update({ where: { id: existing.id }, data });
     updated++;
   } else {
@@ -438,5 +510,5 @@ for (const car of CARS) {
   }
 }
 
-console.log(`  modèles créés: ${created} · mis à jour: ${updated} · total: ${CARS.length}`);
+console.log(`  modèles créés: ${created} · mis à jour: ${updated} · inchangés: ${skipped} · total: ${CARS.length}`);
 await prisma.$disconnect();
