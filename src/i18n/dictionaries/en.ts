@@ -430,6 +430,7 @@ const en = {
     published: "Published",
     draft: "Draft",
     saveDraft: "Save as draft",
+    moreActions: "More actions",
     publishedState: "Publication",
     visibility: "Visible on the website",
     featuredState: "Feature on the home page",

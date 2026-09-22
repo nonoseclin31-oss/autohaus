@@ -432,6 +432,7 @@ const fr: Dictionary = {
     published: "Publié",
     draft: "Brouillon",
     saveDraft: "Enregistrer le brouillon",
+    moreActions: "Plus d'actions",
     publishedState: "Publication",
     visibility: "Visible sur le site",
     featuredState: "Mettre en avant sur la page d'accueil",

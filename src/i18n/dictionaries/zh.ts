@@ -432,6 +432,7 @@ const zh: Dictionary = {
     published: "已发布",
     draft: "草稿",
     saveDraft: "保存为草稿",
+    moreActions: "更多操作",
     publishedState: "发布状态",
     visibility: "在网站上可见",
     featuredState: "在首页重点展示",

@@ -432,6 +432,7 @@ const de: Dictionary = {
     published: "Veröffentlicht",
     draft: "Entwurf",
     saveDraft: "Als Entwurf speichern",
+    moreActions: "Weitere Aktionen",
     publishedState: "Veröffentlichung",
     visibility: "Auf der Website sichtbar",
     featuredState: "Auf der Startseite hervorheben",

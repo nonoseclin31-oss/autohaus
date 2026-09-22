@@ -19,6 +19,7 @@ import { DURATIONS as RENTAL_DURATIONS, MILEAGES as RENTAL_MILEAGES } from "@/li
 import {
   IconCar, IconBolt, IconFuel, IconPalette, IconWrench, IconEuro, IconTruck,
   IconCheckCircle, IconImage, IconGlobe, IconEye, IconEyeOff, IconSpinner, IconAlert, IconCheck, IconFlag,
+  IconDots,
 } from "../icons";
 
 export type VehicleFormValues = {
@@ -177,6 +178,7 @@ function SaveBar({
   cancelHref,
   cancel,
   draft,
+  more,
   template,
 }: {
   idle: string;
@@ -184,30 +186,91 @@ function SaveBar({
   cancelHref: string;
   cancel: string;
   draft: string;
+  more: string;
   template: React.ReactNode;
 }) {
   const { pending } = useFormStatus();
+  // Four buttons side by side wrap into four rows on a phone and swallow the
+  // screen. The three secondary ones fold into a sheet instead; from `md` up
+  // the very same nodes simply sit back in the row.
+  const [open, setOpen] = useState(false);
+  const bar = useRef<HTMLDivElement>(null);
+  const sheet = useRef<HTMLDivElement>(null);
+  const trigger = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    // The sheet is drawn above the bar but sits before the trigger in the DOM,
+    // so Tab alone would walk straight past it.
+    sheet.current?.querySelector<HTMLElement>("a, button, input")?.focus();
+
+    const away = (event: PointerEvent) => {
+      if (!bar.current?.contains(event.target as Node)) setOpen(false);
+    };
+    const escape = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      setOpen(false);
+      trigger.current?.focus();
+    };
+    document.addEventListener("pointerdown", away);
+    document.addEventListener("keydown", escape);
+    return () => {
+      document.removeEventListener("pointerdown", away);
+      document.removeEventListener("keydown", escape);
+    };
+  }, [open]);
+
   return (
-    <div className="sticky bottom-0 z-20 -mx-4 mt-8 flex flex-wrap items-center justify-end gap-3 border-t border-line bg-canvas/90 px-4 py-3 backdrop-blur-xl sm:-mx-6 sm:px-6">
-      <Link href={cancelHref} className="btn btn-ghost cursor-pointer">{cancel}</Link>
-      {/* Keeps these values for the next car of the same kind. */}
-      {template}
-      {/* Saves what is there and keeps the listing off the public site, so it
-          can be picked up later — by whoever gets to it first. */}
-      <button
-        type="submit"
-        name="intent"
-        value="draft"
-        // The fields carry HTML `required`, which would block the submit before
-        // it reaches the server. A draft is allowed to be incomplete, so this
-        // button skips the browser's own check; the server still validates.
-        formNoValidate
-        className="btn btn-solid cursor-pointer"
-        disabled={pending}
+    <div
+      ref={bar}
+      className="sticky bottom-0 z-20 -mx-4 mt-8 flex items-center gap-2 border-t border-line bg-canvas/90 px-4 py-3 backdrop-blur-xl sm:-mx-6 sm:px-6 md:gap-3"
+    >
+      <div
+        ref={sheet}
+        id="vehicle-save-more"
+        className={cn(
+          // Phone: a sheet sitting on top of the bar.
+          "absolute inset-x-0 bottom-full flex-col items-stretch gap-2 border-t border-line bg-canvas px-4 py-3",
+          open ? "flex" : "hidden",
+          // Wide enough for four buttons: back in the row, always shown.
+          "md:static md:flex md:flex-1 md:flex-row md:items-center md:justify-end md:gap-3 md:border-0 md:bg-transparent md:p-0",
+        )}
       >
-        <IconEyeOff size={17} />
-        {draft}
+        <Link href={cancelHref} className="btn btn-ghost w-full cursor-pointer md:w-auto">
+          {cancel}
+        </Link>
+        {/* Keeps these values for the next car of the same kind. */}
+        {template}
+        {/* Saves what is there and keeps the listing off the public site, so it
+            can be picked up later — by whoever gets to it first. */}
+        <button
+          type="submit"
+          name="intent"
+          value="draft"
+          // The fields carry HTML `required`, which would block the submit before
+          // it reaches the server. A draft is allowed to be incomplete, so this
+          // button skips the browser's own check; the server still validates.
+          formNoValidate
+          className="btn btn-solid w-full cursor-pointer md:w-auto"
+          disabled={pending}
+        >
+          <IconEyeOff size={17} />
+          {draft}
+        </button>
+      </div>
+
+      <button
+        ref={trigger}
+        type="button"
+        onClick={() => setOpen((was) => !was)}
+        aria-expanded={open}
+        aria-controls="vehicle-save-more"
+        aria-label={more}
+        className="btn btn-solid w-11 shrink-0 cursor-pointer px-0 md:hidden"
+      >
+        <IconDots size={18} />
       </button>
+
       <button
         type="submit"
         name="intent"
@@ -217,7 +280,7 @@ function SaveBar({
         // cancels the submit without saying anything — the button looks dead.
         // The server validates and answers with the offending fields instead.
         formNoValidate
-        className="btn btn-primary cursor-pointer"
+        className="btn btn-primary flex-1 cursor-pointer md:flex-none"
         disabled={pending}
       >
         {pending ? <IconSpinner size={17} /> : <IconCheck size={17} />}
@@ -924,6 +987,7 @@ export function VehicleForm({
           cancel={t.common.cancel}
           cancelHref={localePath(locale, "/admin/vehicles")}
           draft={t.admin.saveDraft}
+          more={t.admin.moreActions}
           template={<TemplateNameField locale={locale} saved={state.templateSaved} />}
         />
       </div>

@@ -432,6 +432,7 @@ const ar: Dictionary = {
     published: "منشورة",
     draft: "مسودة",
     saveDraft: "حفظ كمسودة",
+    moreActions: "إجراءات إضافية",
     publishedState: "النشر",
     visibility: "ظاهرة على الموقع",
     featuredState: "إبرازها في الصفحة الرئيسية",

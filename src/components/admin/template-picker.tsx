@@ -200,7 +200,7 @@ export function TemplateNameField({ locale, saved }: { locale: Locale; saved?: s
 
   if (confirmed) {
     return (
-      <span className="flex items-center gap-1.5 text-sm font-medium text-ok">
+      <span className="flex items-center justify-center gap-1.5 py-2 text-sm font-medium text-ok md:justify-start md:py-0">
         <IconCheck size={15} />
         {t.admin.templateSaved}
       </span>
@@ -209,7 +209,7 @@ export function TemplateNameField({ locale, saved }: { locale: Locale; saved?: s
 
   if (!open) {
     return (
-      <button type="button" onClick={() => setOpen(true)} className="btn btn-solid cursor-pointer">
+      <button type="button" onClick={() => setOpen(true)} className="btn btn-solid w-full cursor-pointer md:w-auto">
         <IconLayers size={16} />
         {t.admin.saveTemplate}
       </button>
@@ -217,7 +217,7 @@ export function TemplateNameField({ locale, saved }: { locale: Locale; saved?: s
   }
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex w-full flex-wrap items-center gap-2 md:w-auto md:flex-nowrap">
       <input
         autoFocus
         name="templateName"
@@ -225,7 +225,7 @@ export function TemplateNameField({ locale, saved }: { locale: Locale; saved?: s
         onChange={(event) => setName(event.target.value)}
         maxLength={80}
         placeholder={t.admin.templateNamePlaceholder}
-        className="input h-10 w-56"
+        className="input h-11 w-full md:h-10 md:w-56"
         // Enter would submit the form with the primary button's intent, which
         // would publish the listing instead of saving a template.
         onKeyDown={(event) => event.key === "Enter" && event.preventDefault()}
@@ -236,7 +236,7 @@ export function TemplateNameField({ locale, saved }: { locale: Locale; saved?: s
         value="template"
         formNoValidate
         disabled={!name.trim()}
-        className={cn("btn btn-primary cursor-pointer", !name.trim() && "opacity-50")}
+        className={cn("btn btn-primary flex-1 cursor-pointer md:flex-none", !name.trim() && "opacity-50")}
       >
         <IconCheck size={16} />
         {t.common.save}
@@ -245,7 +245,7 @@ export function TemplateNameField({ locale, saved }: { locale: Locale; saved?: s
         type="button"
         onClick={() => setOpen(false)}
         aria-label={t.common.cancel}
-        className="cursor-pointer rounded-sm p-1.5 text-subtle transition-colors duration-200 hover:text-fg"
+        className="flex h-11 w-11 shrink-0 cursor-pointer items-center justify-center rounded-sm text-subtle transition-colors duration-200 hover:text-fg md:h-9 md:w-9"
       >
         <IconX size={16} />
       </button>
