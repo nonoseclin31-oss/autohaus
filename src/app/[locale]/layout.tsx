@@ -7,7 +7,8 @@ import { LOCALES, LOCALE_META, DEFAULT_LOCALE, getDictionary, isLocale, type Loc
 import { COMPANY } from "@/lib/utils";
 
 /* Inter carries the interface and all data; Playfair gives the editorial
-   display voice; Barlow Condensed is reserved for the racing wordmark. */
+   display voice; Barlow Condensed carries the racing wordmark and, upright,
+   the whole Big Toys universe. */
 const inter = Inter({
   subsets: ["latin", "latin-ext"],
   weight: ["300", "400", "500", "600", "700"],
@@ -25,7 +26,8 @@ const playfair = Playfair_Display({
 const barlowCondensed = Barlow_Condensed({
   subsets: ["latin"],
   weight: ["700", "800"],
-  style: ["italic"],
+  // Italic for the racing wordmark, upright for the Big Toys display voice.
+  style: ["normal", "italic"],
   variable: "--font-barlow-condensed",
   display: "swap",
 });

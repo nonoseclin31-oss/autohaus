@@ -30,12 +30,16 @@ export default async function SiteLayout({
             { href: "/", label: t.nav.home },
             { href: "/vehicles", label: t.nav.vehicles },
             { href: "/rental", label: t.nav.rental },
+            // Between the rental page and About, and the only item that
+            // leads out of the dealership's own universe.
+            { href: "/big-toys", label: t.nav.bigToys, universe: true },
             { href: "/about", label: t.nav.about },
             { href: "/contact", label: t.nav.contact },
           ],
           login: t.nav.login,
           admin: t.nav.admin,
           menu: t.nav.menu,
+          crossing: t.toys.enterUniverse,
         }}
       />
       {/* tabIndex={-1} so the skip link can move the keyboard here, not just

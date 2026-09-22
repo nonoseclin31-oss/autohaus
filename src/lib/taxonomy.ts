@@ -255,3 +255,137 @@ export const COLOR_HEX: Record<string, string> = {
   blue: "#1D4ED8", red: "#DC2626", green: "#15803D", yellow: "#EAB308",
   orange: "#EA580C", brown: "#78350F", beige: "#D6C7A8", gold: "#B08D3F",
 };
+
+/* ═══════════════════════════════════════════════════════════════
+   Big Toys — motorcycles, quads, jet skis and boats.
+
+   Its own vocabulary rather than the car one: a jet ski has no body
+   type and no gearbox, a boat is measured in metres and knots, and a
+   motorcycle is gated by a licence category no car buyer ever sees.
+   ═══════════════════════════════════════════════════════════════ */
+
+export const TOY_KINDS = build([
+  ["MOTORCYCLE", "Motorcycle", "Moto", "Motorrad", "摩托车", "دراجة نارية", "Motocicleta"],
+  ["QUAD", "Quad / ATV", "Quad", "Quad / ATV", "四轮越野车", "دراجة رباعية", "Quad / ATV"],
+  ["JETSKI", "Jet ski", "Jet-ski", "Jetski", "水上摩托", "جت سكي", "Moto acuática"],
+  ["BOAT", "Boat", "Bateau", "Boot", "游艇", "قارب", "Embarcación"],
+]);
+
+/** Which of the two worlds a kind belongs to — it decides the unit shown. */
+export const WATER_KINDS: readonly string[] = ["JETSKI", "BOAT"];
+export function isWaterToy(kind: string | null | undefined): boolean {
+  return !!kind && WATER_KINDS.includes(kind);
+}
+
+export const TOY_CATEGORIES = build([
+  ["SPORT", "Sport", "Sportive", "Sport", "运动型", "رياضية", "Deportiva"],
+  ["TOURING", "Touring", "Routière", "Tourer", "旅行型", "سياحية", "Turismo"],
+  ["CRUISER", "Cruiser", "Custom", "Cruiser", "巡航型", "كروزر", "Custom"],
+  ["ADVENTURE", "Adventure", "Trail", "Adventure", "探险型", "مغامرة", "Trail"],
+  ["UTILITY", "Utility", "Utilitaire", "Nutzfahrzeug", "实用型", "عملية", "Utilitario"],
+  ["RACE", "Racing", "Compétition", "Racing", "竞赛型", "سباق", "Competición"],
+  ["LUXURY", "Luxury", "Luxe", "Luxus", "豪华型", "فاخرة", "Lujo"],
+  ["WATERSPORT", "Watersports", "Sports nautiques", "Wassersport", "水上运动", "رياضات مائية", "Deportes náuticos"],
+]);
+
+export const TOY_ENGINES = build([
+  ["PETROL", "Petrol", "Essence", "Benzin", "汽油", "بنزين", "Gasolina"],
+  ["DIESEL", "Diesel", "Diesel", "Diesel", "柴油", "ديزل", "Diésel"],
+  ["ELECTRIC", "Electric", "Électrique", "Elektro", "纯电动", "كهربائية", "Eléctrico"],
+  ["HYBRID", "Hybrid", "Hybride", "Hybrid", "混合动力", "هجينة", "Híbrido"],
+]);
+
+export const TOY_TRANSMISSIONS = build([
+  ["MANUAL", "Manual", "Manuelle", "Schaltgetriebe", "手动", "يدوي", "Manual"],
+  ["AUTOMATIC", "Automatic", "Automatique", "Automatik", "自动", "أوتوماتيكي", "Automático"],
+  ["DCT", "Dual clutch", "Double embrayage", "Doppelkupplung", "双离合", "قابض مزدوج", "Doble embrague"],
+  ["CVT", "CVT", "CVT", "CVT", "无级变速", "ناقل متغير", "CVT"],
+  // Jet skis and most outboards drive the impeller or propeller straight off
+  // the crankshaft; there is no gearbox to name.
+  ["DIRECT", "Direct drive", "Prise directe", "Direktantrieb", "直接驱动", "دفع مباشر", "Transmisión directa"],
+]);
+
+/** What the buyer must hold to legally use it. */
+export const TOY_LICENCES = build([
+  ["A1", "A1 licence (125 cm³)", "Permis A1 (125 cm³)", "Führerschein A1 (125 cm³)", "A1 驾照（125 cc）", "رخصة A1 (125 سم³)", "Permiso A1 (125 cm³)"],
+  ["A2", "A2 licence (35 kW)", "Permis A2 (35 kW)", "Führerschein A2 (35 kW)", "A2 驾照（35 千瓦）", "رخصة A2 (35 كيلوواط)", "Permiso A2 (35 kW)"],
+  ["A", "Full A licence", "Permis A", "Führerschein A", "A 驾照", "رخصة A", "Permiso A"],
+  ["B", "Car licence (B)", "Permis B (voiture)", "Führerschein B", "B 驾照（汽车）", "رخصة B (سيارة)", "Permiso B (coche)"],
+  ["BOAT_INLAND", "Inland waters licence", "Permis fluvial", "Sportbootführerschein Binnen", "内河驾照", "رخصة المياه الداخلية", "Licencia de navegación interior"],
+  ["BOAT_COASTAL", "Coastal licence", "Permis côtier", "Sportbootführerschein See", "近海驾照", "رخصة ساحلية", "Licencia costera"],
+  ["NONE", "No licence required", "Aucun permis requis", "Führerscheinfrei", "无需驾照", "لا تتطلب رخصة", "Sin permiso"],
+]);
+
+/** Makes that actually exist in these four worlds — none of them sell cars. */
+export const TOY_BRANDS = [
+  "Aprilia", "Arctic Cat", "Axopar", "BMW Motorrad", "Bombardier", "Brabus Marine",
+  "BRP", "CFMOTO", "Ducati", "Fantic", "Frauscher", "Harley-Davidson", "Honda",
+  "Husqvarna", "Indian", "Jeanneau", "Kawasaki", "KTM", "Can-Am", "MV Agusta",
+  "Polaris", "Quicksilver", "Riva", "Royal Enfield", "Sea-Doo", "Segway Powersports",
+  "Sunseeker", "Suzuki", "Triumph", "Vespa", "Yamaha", "Zero Motorcycles",
+];
+
+/* ─────────────────── Big Toys equipment ────────────────────────
+   A short, honest list. A motorcycle option sheet is nothing like a
+   car's, and padding this with car entries would hand the advisor
+   tick boxes that make no sense on a jet ski.                     */
+
+export const TOY_EQUIPMENT_GROUPS = build([
+  ["RIDING", "Riding & electronics", "Pilotage & électronique", "Fahrdynamik & Elektronik", "驾控与电子", "القيادة والإلكترونيات", "Pilotaje y electrónica"],
+  ["ONBOARD", "On board", "À bord", "An Bord", "船上配置", "على المتن", "A bordo"],
+  ["PROTECTION", "Protection & finish", "Protection & finition", "Schutz & Ausstattung", "防护与外观", "الحماية والتشطيب", "Protección y acabado"],
+  ["TRANSPORT", "Transport & storage", "Transport & rangement", "Transport & Lagerung", "运输与存放", "النقل والتخزين", "Transporte y almacenaje"],
+]);
+
+const TOY_EQUIPMENT_ROWS: readonly (readonly [string, string, string, string, string, string, string, string])[] = [
+  // [key, group, en, fr, de, zh, ar, es]
+  ["t_abs", "RIDING", "Cornering ABS", "ABS en courbe", "Kurven-ABS", "弯道防抱死", "ABS في المنعطفات", "ABS en curva"],
+  ["t_traction", "RIDING", "Traction control", "Contrôle de traction", "Traktionskontrolle", "牵引力控制", "التحكم بالجر", "Control de tracción"],
+  ["t_modes", "RIDING", "Riding modes", "Modes de conduite", "Fahrmodi", "驾驶模式", "أوضاع القيادة", "Modos de conducción"],
+  ["t_quickshifter", "RIDING", "Quickshifter", "Shifter", "Schaltassistent", "快速换挡", "مبدل سريع", "Cambio rápido"],
+  ["t_cruise", "RIDING", "Cruise control", "Régulateur de vitesse", "Tempomat", "定速巡航", "مثبت السرعة", "Control de crucero"],
+  ["t_suspension", "RIDING", "Semi-active suspension", "Suspension semi-active", "Semiaktives Fahrwerk", "半主动悬挂", "تعليق شبه نشط", "Suspensión semiactiva"],
+  ["t_launch", "RIDING", "Launch control", "Launch control", "Launch Control", "弹射起步", "التحكم بالانطلاق", "Launch control"],
+  ["t_brembo", "RIDING", "Brembo brakes", "Freins Brembo", "Brembo-Bremsen", "Brembo 制动", "مكابح بريمبو", "Frenos Brembo"],
+
+  ["t_gps", "ONBOARD", "GPS chartplotter", "GPS / traceur de cartes", "GPS-Kartenplotter", "GPS 海图仪", "نظام ملاحة GPS", "GPS / plóter"],
+  ["t_display", "ONBOARD", "TFT colour display", "Écran TFT couleur", "TFT-Farbdisplay", "TFT 彩色仪表", "شاشة TFT ملونة", "Pantalla TFT a color"],
+  ["t_audio", "ONBOARD", "Audio system", "Système audio", "Audiosystem", "音响系统", "نظام صوتي", "Sistema de audio"],
+  ["t_connect", "ONBOARD", "Smartphone connectivity", "Connectivité smartphone", "Smartphone-Anbindung", "手机互联", "ربط الهاتف", "Conectividad smartphone"],
+  ["t_heatedgrips", "ONBOARD", "Heated grips", "Poignées chauffantes", "Heizgriffe", "加热手把", "مقابض مدفأة", "Puños calefactables"],
+  ["t_sundeck", "ONBOARD", "Sun deck", "Bain de soleil", "Sonnendeck", "日光浴甲板", "سطح للتشمس", "Solárium"],
+  ["t_cabin", "ONBOARD", "Cabin with berths", "Cabine avec couchages", "Kabine mit Kojen", "带铺位客舱", "مقصورة بأسرّة", "Camarote con literas"],
+  ["t_fridge", "ONBOARD", "Fridge / icebox", "Réfrigérateur / glacière", "Kühlbox", "冰箱／冰柜", "ثلاجة", "Nevera"],
+  ["t_shower", "ONBOARD", "Transom shower", "Douchette de plage arrière", "Heckdusche", "尾部淋浴", "دش خلفي", "Ducha de popa"],
+  ["t_bowthruster", "ONBOARD", "Bow thruster", "Propulseur d'étrave", "Bugstrahlruder", "船首侧推", "دافع أمامي", "Hélice de proa"],
+
+  ["t_carbon", "PROTECTION", "Carbon fibre parts", "Pièces carbone", "Carbonteile", "碳纤维部件", "أجزاء كربون", "Piezas de carbono"],
+  ["t_akrapovic", "PROTECTION", "Akrapovič exhaust", "Échappement Akrapovič", "Akrapovič-Auspuff", "Akrapovič 排气", "عادم أكرابوفيتش", "Escape Akrapovič"],
+  ["t_crashbars", "PROTECTION", "Crash bars / sliders", "Pare-carters / sliders", "Sturzbügel", "防摔杠", "قضبان حماية", "Defensas / sliders"],
+  ["t_screen", "PROTECTION", "Adjustable screen", "Bulle réglable", "Verstellbare Scheibe", "可调风挡", "حاجب قابل للتعديل", "Cúpula regulable"],
+  ["t_antifouling", "PROTECTION", "Antifouling applied", "Antifouling appliqué", "Antifouling aufgetragen", "已涂防污漆", "طلاء مضاد للنمو", "Antifouling aplicado"],
+  ["t_cover", "PROTECTION", "Fitted cover", "Housse sur mesure", "Passgenaue Abdeckung", "定制罩衣", "غطاء مفصّل", "Funda a medida"],
+  ["t_leds", "PROTECTION", "Full LED lighting", "Éclairage full LED", "Voll-LED-Beleuchtung", "全 LED 照明", "إضاءة LED كاملة", "Iluminación full LED"],
+
+  ["t_trailer", "TRANSPORT", "Trailer included", "Remorque incluse", "Trailer inklusive", "含拖车", "مقطورة مشمولة", "Remolque incluido"],
+  ["t_topcase", "TRANSPORT", "Top case & panniers", "Top-case & valises", "Topcase & Koffer", "顶箱与边箱", "صندوق وحقائب", "Top case y maletas"],
+  ["t_winch", "TRANSPORT", "Winch", "Treuil", "Seilwinde", "绞盘", "ونش", "Cabrestante"],
+  ["t_towhitch", "TRANSPORT", "Tow hitch", "Attelage", "Anhängerkupplung", "拖车钩", "خطاف جر", "Enganche de remolque"],
+];
+
+export const TOY_EQUIPMENT: Record<string, { group: string; labels: Record<Locale, string> }> = {};
+for (const [key, group, en, fr, de, zh, ar, es] of TOY_EQUIPMENT_ROWS) {
+  TOY_EQUIPMENT[key] = { group, labels: { en, fr, de, zh, ar, es } };
+}
+
+export function toyEquipmentByGroup(): Record<string, string[]> {
+  const groups: Record<string, string[]> = {};
+  for (const [key, { group }] of Object.entries(TOY_EQUIPMENT)) {
+    (groups[group] ||= []).push(key);
+  }
+  return groups;
+}
+
+export function toyEquipmentLabel(key: string, locale: Locale): string {
+  return TOY_EQUIPMENT[key]?.labels[locale] ?? key;
+}

@@ -13,27 +13,28 @@ datasource db {
 
 /// Roles: ADMIN | MANAGER | SALES | VIEWER
 model User {
-  id           String    @id @default(cuid())
-  email        String    @unique
-  name         String
-  passwordHash String
-  role         String    @default("VIEWER")
-  phone        String?
-  jobTitle     String?
-  avatarUrl    String?
-  locale       String    @default("fr")
-  active       Boolean   @default(true)
+  id                String    @id @default(cuid())
+  email             String    @unique
+  name              String
+  passwordHash      String
+  role              String    @default("VIEWER")
+  phone             String?
+  jobTitle          String?
+  avatarUrl         String?
+  locale            String    @default("fr")
+  active            Boolean   @default(true)
   // Sessions are stateless JWTs, so a stolen cookie stays valid until it
   // expires. Stamping the moment a password changed lets any token issued
   // before it be rejected — which is what makes a reset actually evict
   // whoever was using the old credentials.
   passwordChangedAt DateTime?
-  lastLoginAt  DateTime?
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+  lastLoginAt       DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
 
-  vehicles   Vehicle[]     @relation("VehicleOwner")
-  leads      Lead[]        @relation("LeadAssignee")
+  vehicles   Vehicle[]         @relation("VehicleOwner")
+  toys       Toy[]             @relation("ToyOwner")
+  leads      Lead[]            @relation("LeadAssignee")
   activities ActivityLog[]
   templates  VehicleTemplate[]
 }
@@ -52,7 +53,7 @@ model Vehicle {
 
   // ── Classification ──────────────────────────
   bodyType  String // SEDAN | SUV | COUPE | CABRIOLET | ESTATE | HATCHBACK | MPV | PICKUP | VAN
-  condition String @default("USED") // NEW | USED | DEMO | CLASSIC
+  condition String  @default("USED") // NEW | USED | DEMO | CLASSIC
   segment   String? // SPORT | LUXURY | FAMILY | CITY | ELECTRIC | OFFROAD | COLLECTOR
 
   // ── Powertrain ──────────────────────────────
@@ -88,15 +89,15 @@ model Vehicle {
   upholstery    String? // LEATHER | ALCANTARA | FABRIC | VEGAN
 
   // ── History & condition ─────────────────────
-  mileage           Int      @default(0)
+  mileage           Int       @default(0)
   firstRegistration DateTime?
   previousOwners    Int?
-  serviceHistory    Boolean  @default(false)
+  serviceHistory    Boolean   @default(false)
   warrantyMonths    Int?
   nextInspection    DateTime?
-  accidentFree      Boolean  @default(true)
-  nonSmoker         Boolean  @default(true)
-  imported          Boolean  @default(false)
+  accidentFree      Boolean   @default(true)
+  nonSmoker         Boolean   @default(true)
+  imported          Boolean   @default(false)
 
   // ── Pricing ─────────────────────────────────
   price            Int
@@ -107,21 +108,21 @@ model Vehicle {
   financingMonthly Int?
 
   // ── Long-term rental (LLD) ──────────────────
-  rentalAvailable   Boolean @default(false)
-  rentalMonthly     Int?
-  rentalDeposit     Int?
+  rentalAvailable    Boolean @default(false)
+  rentalMonthly      Int?
+  rentalDeposit      Int?
   rentalFirstPayment Int?
   /// Offered with a purchase option as well as on plain rental.
-  loaAvailable      Boolean @default(true)
+  loaAvailable       Boolean @default(true)
   /// Per-vehicle overrides for the quote. Null means the standard curve:
   /// the rate defaults to 4.9%, the residual to the duration/mileage table,
   /// and the services to a figure scaled from the price.
-  financeRate       Float?
-  residualRate      Float?
-  servicesMonthly   Int?
+  financeRate        Float?
+  residualRate       Float?
+  servicesMonthly    Int?
 
-  rentalDurations   String  @default("[]") // JSON: [24, 36, 48, 60]
-  rentalMileages    String  @default("[]") // JSON: [10000, 15000, 20000]
+  rentalDurations String @default("[]") // JSON: [24, 36, 48, 60]
+  rentalMileages  String @default("[]") // JSON: [10000, 15000, 20000]
 
   // ── Equipment (JSON array of option keys) ───
   equipment String @default("[]")
@@ -214,15 +215,15 @@ model VehicleTemplate {
 }
 
 model Lead {
-  id        String   @id @default(cuid())
-  type      String   @default("SALE") // SALE | RENTAL | CONTACT | TRADE_IN
+  id        String  @id @default(cuid())
+  type      String  @default("SALE") // SALE | RENTAL | CONTACT | TRADE_IN
   firstName String
   lastName  String
   email     String
   phone     String?
   company   String?
   message   String?
-  locale    String   @default("fr")
+  locale    String  @default("fr")
 
   // rental request specifics
   rentalDuration Int?
@@ -238,6 +239,11 @@ model Lead {
 
   vehicleId String?
   vehicle   Vehicle? @relation(fields: [vehicleId], references: [id], onDelete: SetNull)
+
+  /// A lead can point at a car or at a Big Toy, never at both: the two
+  /// catalogues are separate modules and an enquiry comes from one page.
+  toyId String?
+  toy   Toy?    @relation(fields: [toyId], references: [id], onDelete: SetNull)
 
   status       String  @default("NEW") // NEW | CONTACTED | QUALIFIED | WON | LOST
   notes        String?
@@ -266,4 +272,134 @@ model ActivityLog {
 model Setting {
   key   String @id
   value String
+}
+
+/// ═══════════════════════════════════════════════════════════════
+/// Big Toys — motorcycles, quads, jet skis and boats.
+///
+/// A separate model rather than a flag on Vehicle. A jet ski has engine
+/// hours and no gearbox, a boat has a hull length and a berth count, a
+/// motorcycle has a licence category: half of Vehicle's sixty columns
+/// would never apply, and every car query would grow a filter it could
+/// forget. The two catalogues stay apart in the data and meet only in
+/// the back office, which shows them side by side.
+/// ═══════════════════════════════════════════════════════════════
+model Toy {
+  id        String @id @default(cuid())
+  slug      String @unique
+  reference String @unique
+
+  /// MOTORCYCLE | QUAD | JETSKI | BOAT — decides which figures the
+  /// listing shows: kilometres for the two that drive, engine hours
+  /// and a hull length for the two that float.
+  kind    String
+  brand   String
+  model   String
+  version String?
+  year    Int
+  /// VIN on land, HIN (hull identification number) on water.
+  hullId  String?
+
+  condition String  @default("USED") // NEW | USED | DEMO
+  category  String? // SPORT | TOURING | CRUISER | ADVENTURE | UTILITY | RACE | LUXURY | WATERSPORT
+
+  // ── Powertrain ──────────────────────────────────
+  engineType   String  @default("PETROL") // PETROL | ELECTRIC | DIESEL | HYBRID
+  displacement Int? // cm³
+  cylinders    Int?
+  /// 2 or 4. A two-stroke is a selling point on water and a restriction
+  /// on land, so it is a field rather than a line of prose.
+  strokes      Int?
+  powerHp      Int
+  powerKw      Int?
+  torqueNm     Int?
+  topSpeed     Int? // km/h on land, knots on water
+  transmission String? // MANUAL | AUTOMATIC | DCT | CVT | DIRECT
+  /// Boats are routinely twin-engined and the pair is what is being sold.
+  engineCount  Int?    @default(1)
+
+  // ── Use & measurements ──────────────────────────
+  mileage      Int? // km — motorcycles and quads
+  engineHours  Int? // h — jet skis and boats
+  dryWeight    Int? // kg
+  seats        Int?
+  lengthM      Float? // hull length, boats
+  beamM        Float? // hull beam, boats
+  fuelCapacity Float? // litres
+  rangeKm      Int?
+
+  // ── Paperwork ───────────────────────────────────
+  trailerIncluded   Boolean   @default(false)
+  registered        Boolean   @default(true)
+  /// A1 | A2 | A | B | BOAT_INLAND | BOAT_COASTAL | NONE
+  licence           String?
+  warrantyMonths    Int?
+  serviceHistory    Boolean   @default(false)
+  accidentFree      Boolean   @default(true)
+  previousOwners    Int?
+  firstRegistration DateTime?
+
+  colorExterior String?
+
+  // ── Pricing ─────────────────────────────────────
+  price            Int
+  priceNet         Int?
+  vatDeductible    Boolean @default(false)
+  oldPrice         Int?
+  negotiable       Boolean @default(false)
+  financingMonthly Int?
+
+  equipment String  @default("[]") // JSON array of option keys
+  videoUrl  String?
+
+  images       ToyImage[]
+  translations ToyTranslation[]
+  leads        Lead[]
+
+  // ── Publication ─────────────────────────────────
+  status    String  @default("AVAILABLE") // AVAILABLE | RESERVED | SOLD | COMING_SOON
+  published Boolean @default(false)
+  featured  Boolean @default(false)
+  location  String?
+  views     Int     @default(0)
+
+  /// Where this listing sits on the Big Toys page, chosen by hand in the
+  /// back office. 0 is the showcase piece at the top; 1 and up are the
+  /// cards below it. Null means it only shows in the catalogue below.
+  homeRank Int?
+
+  ownerId String?
+  owner   User?   @relation("ToyOwner", fields: [ownerId], references: [id], onDelete: SetNull)
+
+  soldAt    DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([status, published])
+  @@index([kind, published])
+  @@index([homeRank])
+  @@index([brand, model])
+}
+
+model ToyImage {
+  id       String  @id @default(cuid())
+  toyId    String
+  toy      Toy     @relation(fields: [toyId], references: [id], onDelete: Cascade)
+  url      String
+  alt      String?
+  position Int     @default(0)
+  isCover  Boolean @default(false)
+
+  @@index([toyId, position])
+}
+
+model ToyTranslation {
+  id          String  @id @default(cuid())
+  toyId       String
+  toy         Toy     @relation(fields: [toyId], references: [id], onDelete: Cascade)
+  locale      String // en | fr | de | zh | ar | es
+  headline    String?
+  description String?
+
+  @@unique([toyId, locale])
 }

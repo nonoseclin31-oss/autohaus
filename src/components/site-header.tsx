@@ -6,11 +6,13 @@ import { usePathname } from "next/navigation";
 import { Logo } from "./logo";
 import { ThemeToggle } from "./theme-toggle";
 import { LanguageSwitcher } from "./language-switcher";
-import { IconMenu, IconX, IconPhone, IconUser } from "./icons";
+import { IconMenu, IconX, IconPhone, IconUser, IconCompass } from "./icons";
+import { useUniverseGate, UniverseGate } from "./universe-gate";
 import { localePath, type Locale } from "@/i18n";
 import { cn } from "@/lib/utils";
 
-type NavItem = { href: string; label: string };
+/** `universe` marks the doorway into Big Toys — the one link that wipes. */
+type NavItem = { href: string; label: string; universe?: boolean };
 
 export function SiteHeader({
   locale,
@@ -22,7 +24,7 @@ export function SiteHeader({
   shortName,
 }: {
   locale: Locale;
-  nav: { items: NavItem[]; login: string; admin: string; menu: string };
+  nav: { items: NavItem[]; login: string; admin: string; menu: string; crossing: string };
   languageLabel: string;
   phone: string;
   shortName: string;
@@ -30,6 +32,13 @@ export function SiteHeader({
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
+  const gate = useUniverseGate();
+
+  // Big Toys redefines every colour token, and a light header sitting on a
+  // marine page would read as a rendering fault. The header carries the
+  // scope itself rather than waiting for the layout below it.
+  const inToys = pathname.startsWith(localePath(locale, "/big-toys"));
+  const toysLabel = nav.items.find((item) => item.universe)?.label ?? "Big Toys";
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
@@ -54,7 +63,10 @@ export function SiteHeader({
 
   return (
     <>
+      <UniverseGate phase={gate.phase} word={toysLabel} label={nav.crossing} />
+
       <header
+        data-universe={inToys ? "toys" : undefined}
         className={cn(
           "sticky top-0 z-40 w-full border-b transition-[background-color,border-color,box-shadow] duration-300",
           scrolled
@@ -76,13 +88,25 @@ export function SiteHeader({
               <Link
                 key={item.href}
                 href={localePath(locale, item.href)}
+                onClick={item.universe ? gate.onLinkClick(localePath(locale, item.href)) : undefined}
                 className={cn(
                   // whitespace-nowrap: German and Spanish nav labels wrap to a
                   // second line inside the header without it.
                   "cursor-pointer whitespace-nowrap rounded-sm px-2.5 py-2 text-[0.8125rem] font-semibold uppercase tracking-[0.06em] transition-colors duration-200",
-                  isActive(item.href) ? "text-red" : "text-muted hover:text-fg",
+                  item.universe
+                    // The doorway is marked: a hairline frame and a compass,
+                    // so it is read as leading somewhere else rather than as
+                    // one more page of the same site.
+                    ? cn(
+                        "inline-flex items-center gap-1.5 rounded-full border px-3",
+                        isActive(item.href)
+                          ? "border-bronze/60 bg-gold-wash text-bronze"
+                          : "border-line-strong text-muted hover:border-bronze hover:text-bronze",
+                      )
+                    : isActive(item.href) ? "text-red" : "text-muted hover:text-fg",
                 )}
               >
+                {item.universe ? <IconCompass size={14} className="shrink-0" /> : null}
                 {item.label}
               </Link>
             ))}
@@ -149,11 +173,16 @@ export function SiteHeader({
                 <Link
                   key={item.href}
                   href={localePath(locale, item.href)}
+                  onClick={item.universe ? gate.onLinkClick(localePath(locale, item.href)) : undefined}
                   className={cn(
-                    "block cursor-pointer rounded-sm px-3 py-3.5 text-base font-semibold uppercase tracking-[0.06em] transition-colors duration-200",
-                    isActive(item.href) ? "bg-red-wash text-red" : "text-fg hover:bg-surface-2",
+                    "cursor-pointer rounded-sm px-3 py-3.5 text-base font-semibold uppercase tracking-[0.06em] transition-colors duration-200",
+                    item.universe
+                      ? "mt-1 flex items-center gap-2 rounded-full border border-bronze/50 bg-gold-wash text-bronze"
+                      : "block",
+                    !item.universe && (isActive(item.href) ? "bg-red-wash text-red" : "text-fg hover:bg-surface-2"),
                   )}
                 >
+                  {item.universe ? <IconCompass size={17} className="shrink-0" /> : null}
                   {item.label}
                 </Link>
               ))}

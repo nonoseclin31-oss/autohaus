@@ -494,12 +494,16 @@
   .logo-wordmark { background-image: url("/brand/logo-wordmark.png"); }
   .logo-full { background-image: url("/brand/logo-full.png"); }
 
+  /* Big Toys is a dark canvas whatever theme the visitor picked, so the
+     wordmark follows the surface it sits on rather than the theme. */
   [data-theme="dark"] .logo-wordmark,
   [data-theme="dark1"] .logo-wordmark,
-  [data-theme="dark2"] .logo-wordmark { background-image: url("/brand/logo-wordmark-dark.png"); }
+  [data-theme="dark2"] .logo-wordmark,
+  [data-universe="toys"] .logo-wordmark { background-image: url("/brand/logo-wordmark-dark.png"); }
   [data-theme="dark"] .logo-full,
   [data-theme="dark1"] .logo-full,
-  [data-theme="dark2"] .logo-full { background-image: url("/brand/logo-full-dark.png"); }
+  [data-theme="dark2"] .logo-full,
+  [data-universe="toys"] .logo-full { background-image: url("/brand/logo-full-dark.png"); }
 
 
   .flag-rule {
@@ -893,4 +897,273 @@
 @media print {
   .no-print { display: none !important; }
   body { background: #fff; }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   BIG TOYS — a second universe
+
+   Motorcycles, quads, jet skis and boats do not belong in the same
+   room as a Mercedes saloon, and the page says so before a word is
+   read. Everything the dealership signals — warm sand, editorial
+   serif, signal red, sharp 4px corners — is inverted here: a marine
+   night canvas, condensed uppercase display type, turquoise where
+   the red was, champagne where the gold was, and soft 14px corners.
+
+   It is a scope, not a theme. `[data-universe="toys"]` redefines the
+   same tokens the rest of the site is built on, so every existing
+   component — cards, buttons, inputs, vignettes — arrives dressed
+   for the new room without being rewritten. It layers on top of
+   whichever light or dark theme the visitor chose, and wins, because
+   this page has one look on purpose.
+
+   Measured, not eyeballed. On the canvas: fg 17.3:1 · muted 10.2:1
+   · subtle 8.3:1 · turquoise text 10.5:1 · champagne 12.9:1, and the
+   numerals clear 3:1. White on the turquoise action fill is 4.5:1;
+   the canvas ink on champagne is 9:1.
+   ══════════════════════════════════════════════════════════════ */
+
+/* Two selectors, one block. `:root[data-universe="toys"]` matches the
+   specificity of the theme rules above (`:root[data-theme="light"]`) and,
+   coming later in the file, wins on <html> — without it the light theme kept
+   the body and footer sand-coloured under a marine page. The bare attribute
+   selector is what dresses the page wrapper and the header, which are
+   ordinary elements no theme rule competes for. */
+:root[data-universe="toys"],
+[data-universe="toys"] {
+  color-scheme: dark;
+
+  /* Surfaces — the sea at night, each a readable step from the last */
+  --color-canvas: #08131a;
+  --color-surface: #0e1d26;
+  --color-surface-2: #142732;
+  --color-surface-3: #1b323f;
+  --color-line: #1d3541;
+  --color-line-strong: #3a5a6b;
+
+  --color-flag-dark: #eaf3f6;
+  --color-studio-top: #0e1d26;
+  --color-hairline: rgba(190, 235, 246, 0.05);
+  --color-stamp-bg: rgba(8, 19, 26, 0.86);
+
+  /* Inverted planes: lighter than the canvas, as in the dark themes */
+  --color-ink: #16303c;
+  --color-ink-soft: #1b3a48;
+
+  --color-fg: #f0f7fa;
+  --color-muted: #a9c3cf;
+  --color-subtle: #95b0bd;
+  --color-numeral: #6e8b99;
+
+  /* The action colour. Red is the dealership's; here it is the water.
+     Same arrangement as the dark themes: the fill takes white text,
+     and text switches to a lighter twin that no fill could carry. */
+  --color-red: #0d857a;
+  --color-red-text: #4fd6c4;
+  --color-red-bright: #16b6a4;
+  --color-red-deep: #0a6d64;
+  --color-red-wash: #0c2b2c;
+
+  /* Champagne rather than the dealership's gold — warmer, softer, and
+     the only warm colour in the room, which is what makes it read as
+     the prestige accent. */
+  --color-gold: #e8c88a;
+  --color-bronze: #efd39b;
+  --color-gold-wash: #241f14;
+
+  --color-ok: #72dda3;
+  --color-ok-wash: #0d2b1e;
+  --color-warn: #f2c076;
+  --color-info: #7ec9e8;
+
+  /* Elevation goes black here: a warm shadow on a marine canvas
+     reads as dirt rather than depth. */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.35);
+  --shadow-sm: 0 2px 8px -1px rgba(0, 0, 0, 0.45);
+  --shadow-md: 0 10px 30px -10px rgba(0, 0, 0, 0.6);
+  --shadow-lg: 0 32px 64px -20px rgba(0, 0, 0, 0.7);
+
+  background-color: var(--color-canvas);
+  color: var(--color-fg);
+}
+
+/* Turquoise as text, the same swap the dark themes make for red. */
+:root[data-universe="toys"] .text-red,
+[data-universe="toys"] .text-red { color: var(--color-red-text); }
+:root[data-universe="toys"] ::selection,
+[data-universe="toys"] ::selection { background: var(--color-red); color: #fff; }
+[data-universe="toys"] :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline-color: var(--color-red-text);
+}
+
+@layer components {
+  /* ── Big Toys: shape ─────────────────────────────────────
+     The dealership is built on 4px corners and a serif display.
+     Softening the radius and swapping to condensed uppercase is
+     what makes the page feel like a different product rather than
+     the same one after dark. */
+
+  [data-universe="toys"] .card,
+  [data-universe="toys"] .panel { border-radius: 14px; }
+
+  [data-universe="toys"] .btn {
+    border-radius: 999px;
+    letter-spacing: 0.1em;
+  }
+
+  [data-universe="toys"] .input,
+  [data-universe="toys"] .select,
+  [data-universe="toys"] .textarea { border-radius: 10px; }
+
+  [data-universe="toys"] .chip { border-radius: 999px; }
+
+  /* Barlow Condensed, upright and set in capitals: the wordmark's
+     own voice, borrowed for a whole page. Playfair's editorial
+     serif belongs to the cars. */
+  .toys-display {
+    font-family: var(--font-wordmark), var(--font-sans);
+    font-weight: 700;
+    font-style: normal;
+    text-transform: uppercase;
+    letter-spacing: 0.01em;
+    line-height: 0.95;
+  }
+
+  /* Barlow Condensed is Latin-only and crushes both scripts at this
+     line height, exactly as Playfair does elsewhere. */
+  html[lang="zh-Hans"] .toys-display,
+  html[lang="ar"] .toys-display {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    letter-spacing: 0;
+    line-height: 1.3;
+    text-transform: none;
+  }
+
+  .toys-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.26em;
+    color: var(--color-bronze);
+  }
+
+  /* ── Big Toys: the water ─────────────────────────────────
+     Two slow aurora washes and a horizon glow. No image: a photo
+     here would fight the listings, which are themselves photos. */
+  .tide {
+    background-color: var(--color-canvas);
+    background-image:
+      radial-gradient(ellipse 80% 60% at 8% -10%, rgba(13, 133, 122, 0.30), transparent 62%),
+      radial-gradient(ellipse 70% 55% at 96% 4%, rgba(232, 200, 138, 0.13), transparent 58%),
+      radial-gradient(ellipse 120% 45% at 50% 108%, rgba(22, 182, 164, 0.16), transparent 70%),
+      linear-gradient(180deg, var(--color-studio-top) 0%, var(--color-canvas) 55%);
+  }
+
+  /* The horizon: one hairline of light across a section edge. */
+  .tide-rule {
+    height: 1px;
+    width: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      var(--color-red) 18%,
+      var(--color-gold) 50%,
+      var(--color-red) 82%,
+      transparent 100%
+    );
+    opacity: 0.55;
+  }
+
+  /* Caustics — the light net on a pool floor. Two offset gradients
+     drifting against each other; cheap, and it never repeats badly. */
+  .caustics {
+    background-image:
+      repeating-linear-gradient(64deg, rgba(120, 230, 220, 0.05) 0 2px, transparent 2px 26px),
+      repeating-linear-gradient(-58deg, rgba(232, 200, 138, 0.04) 0 2px, transparent 2px 34px);
+    animation: caustics-drift 26s linear infinite;
+  }
+
+  /* ── The universe gate ───────────────────────────────────
+     The full-screen wipe played when the visitor crosses from the
+     dealership into Big Toys. It enters over the old page, the
+     navigation happens behind it, and it leaves upward — so the
+     two universes never share a frame. */
+  .gate {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background-color: #08131a;
+    background-image:
+      radial-gradient(ellipse 90% 70% at 50% 120%, rgba(22, 182, 164, 0.35), transparent 65%),
+      radial-gradient(ellipse 70% 50% at 50% -10%, rgba(232, 200, 138, 0.14), transparent 60%);
+    will-change: transform;
+  }
+
+  .gate-enter { animation: gate-enter 560ms var(--ease-out-quint) both; }
+  .gate-leave { animation: gate-leave 680ms var(--ease-out-quint) both; }
+
+  /* The horizon line that crosses the screen as the gate lands. */
+  .gate-horizon {
+    position: absolute;
+    inset-inline: 0;
+    top: 50%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #4fd6c4 30%, #efd39b 50%, #4fd6c4 70%, transparent);
+    animation: gate-horizon 1100ms var(--ease-out-quint) both;
+  }
+
+  .gate-word {
+    position: relative;
+    color: #f0f7fa;
+    font-family: var(--font-wordmark), system-ui, sans-serif;
+    font-weight: 700;
+    font-style: normal;
+    text-transform: uppercase;
+    letter-spacing: 0.34em;
+    /* Indented by the tracking so the block stays optically centred. */
+    text-indent: 0.34em;
+    animation: gate-word 1100ms var(--ease-out-quint) both;
+  }
+}
+
+@keyframes caustics-drift {
+  from { background-position: 0 0, 0 0; }
+  to   { background-position: 340px 220px, -300px 260px; }
+}
+
+@keyframes gate-enter {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+
+@keyframes gate-leave {
+  from { transform: translateY(0); }
+  to   { transform: translateY(-100%); }
+}
+
+@keyframes gate-horizon {
+  0%   { transform: scaleX(0); opacity: 0; }
+  40%  { transform: scaleX(1); opacity: 1; }
+  100% { transform: scaleX(1); opacity: 0.25; }
+}
+
+@keyframes gate-word {
+  0%   { opacity: 0; filter: blur(14px); transform: scale(0.94); }
+  45%  { opacity: 1; filter: blur(0); transform: scale(1); }
+  100% { opacity: 1; filter: blur(0); transform: scale(1.04); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .caustics { animation: none; }
+  /* The gate is never mounted when motion is reduced — these are the
+     safety net for a preference that changes mid-transition. */
+  .gate-enter, .gate-leave, .gate-horizon, .gate-word { animation: none; }
+  .gate-leave { display: none; }
 }

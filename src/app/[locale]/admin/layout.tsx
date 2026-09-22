@@ -32,6 +32,7 @@ export default async function AdminLayout({
         backOffice: t.admin.backOffice,
         dashboard: t.admin.dashboard,
         vehicles: t.admin.vehicles,
+        toys: t.admin.toys,
         leads: t.admin.leads,
         users: t.admin.users,
         activity: t.admin.activity,
@@ -42,6 +43,9 @@ export default async function AdminLayout({
         language: t.common.language,
         menu: t.nav.menu,
         close: t.common.close,
+        catalogues: t.admin.navCatalogues,
+        administration: t.admin.navAdministration,
+        enquiries: t.admin.navActivityGroup,
       }}
       permissions={{
         users: can(user.role, "user.read"),

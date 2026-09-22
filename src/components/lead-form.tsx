@@ -20,7 +20,11 @@ export function LeadForm({
   locale,
   type = "CONTACT",
   vehicleId,
+  /** A Big Toy instead of a car. The two are never both set. */
+  toyId,
   vehicleLabel,
+  /** Overrides "Vehicle concerned" — a Big Toy is not a vehicle. */
+  subjectLabel,
   rentalDuration,
   rentalMileage,
   /** The quote the visitor had on screen, sent with the request. */
@@ -30,7 +34,9 @@ export function LeadForm({
   locale: Locale;
   type?: "SALE" | "RENTAL" | "CONTACT" | "TRADE_IN";
   vehicleId?: string;
+  toyId?: string;
   vehicleLabel?: string;
+  subjectLabel?: string;
   rentalDuration?: number;
   rentalMileage?: number;
   finance?: {
@@ -60,6 +66,7 @@ export function LeadForm({
       <input type="hidden" name="type" value={type} />
       <input type="hidden" name="locale" value={locale} />
       {vehicleId ? <input type="hidden" name="vehicleId" value={vehicleId} /> : null}
+      {toyId ? <input type="hidden" name="toyId" value={toyId} /> : null}
       {/* The configured offer travels with the request, so the advisor answers
           the quote the customer was looking at rather than a fresh one. */}
       {finance ? (
@@ -78,7 +85,7 @@ export function LeadForm({
 
       {vehicleLabel ? (
         <p className="rounded-sm border border-line bg-surface-2 px-3 py-2 text-sm">
-          <span className="text-subtle">{t.forms.interestedIn}: </span>
+          <span className="text-subtle">{subjectLabel ?? t.forms.interestedIn}: </span>
           <strong className="text-fg">{vehicleLabel}</strong>
         </p>
       ) : null}

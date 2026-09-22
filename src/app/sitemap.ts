@@ -18,6 +18,7 @@ const STATIC_PATHS: { path: string; priority: number; changeFrequency: MetadataR
   { path: "", priority: 1, changeFrequency: "daily" },
   { path: "/vehicles", priority: 0.9, changeFrequency: "daily" },
   { path: "/rental", priority: 0.8, changeFrequency: "weekly" },
+  { path: "/big-toys", priority: 0.8, changeFrequency: "daily" },
   { path: "/about", priority: 0.5, changeFrequency: "monthly" },
   { path: "/contact", priority: 0.6, changeFrequency: "monthly" },
   { path: "/legal/imprint", priority: 0.2, changeFrequency: "yearly" },
@@ -74,5 +75,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ),
   );
 
-  return [...pages, ...listings];
+  // The Big Toys catalogue is a second public surface and needs the same
+  // treatment — its listings are as crawlable as the cars'.
+  let toys: { slug: string; updatedAt: Date }[] = [];
+  try {
+    toys = await prisma.toy.findMany({
+      where: { published: true },
+      select: { slug: true, updatedAt: true },
+      orderBy: { updatedAt: "desc" },
+    });
+  } catch {
+    // As above: a partial sitemap still beats none.
+  }
+
+  const toyListings: MetadataRoute.Sitemap = toys.flatMap((toy) =>
+    LOCALES.map((locale) => entry(`/big-toys/${toy.slug}`, locale, toy.updatedAt, 0.8, "weekly")),
+  );
+
+  return [...pages, ...listings, ...toyListings];
 }

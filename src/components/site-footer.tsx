@@ -11,6 +11,7 @@ export function SiteFooter({ locale, company }: { locale: Locale; company: Compa
   const explore = [
     { href: "/vehicles", label: t.nav.vehicles },
     { href: "/rental", label: t.nav.rental },
+    { href: "/big-toys", label: t.nav.bigToys },
     { href: "/about", label: t.nav.about },
     { href: "/contact", label: t.nav.contact },
   ];

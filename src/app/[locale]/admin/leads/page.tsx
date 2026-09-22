@@ -6,7 +6,7 @@ import { can } from "@/lib/rbac";
 import { prisma } from "@/lib/prisma";
 import { label, LEAD_TYPES, LEAD_STATUS, optionsFor, type Locale as TaxLocale } from "@/lib/taxonomy";
 import { updateLead, deleteLead } from "@/app/actions/leads";
-import { IconInbox, IconMail, IconPhone, IconTrash, IconCar, IconCheck } from "@/components/icons";
+import { IconInbox, IconMail, IconPhone, IconTrash, IconCar, IconCheck, IconCompass } from "@/components/icons";
 import { cn } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
@@ -44,6 +44,8 @@ export default async function AdminLeadsPage({
       take: 100,
       include: {
         vehicle: { select: { id: true, brand: true, model: true, slug: true, reference: true } },
+        // An enquiry comes from one catalogue or the other, never both.
+        toy: { select: { id: true, brand: true, model: true, slug: true, reference: true } },
         assignedTo: { select: { id: true, name: true } },
       },
     }),
@@ -169,6 +171,17 @@ export default async function AdminLeadsPage({
                       <IconCar size={14} className="text-red" />
                       {lead.vehicle.brand} {lead.vehicle.model}
                       <span className="font-mono text-xs text-subtle">{lead.vehicle.reference}</span>
+                    </Link>
+                  ) : null}
+
+                  {lead.toy ? (
+                    <Link
+                      href={localePath(locale, `/admin/toys/${lead.toy.id}`)}
+                      className="inline-flex cursor-pointer items-center gap-1.5 rounded-sm bg-gold-wash px-2.5 py-1.5 text-sm text-muted transition-colors duration-200 hover:text-fg"
+                    >
+                      <IconCompass size={14} className="text-bronze" />
+                      {lead.toy.brand} {lead.toy.model}
+                      <span className="font-mono text-xs text-subtle">{lead.toy.reference}</span>
                     </Link>
                   ) : null}
 

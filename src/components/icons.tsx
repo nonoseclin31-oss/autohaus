@@ -274,3 +274,95 @@ export const IconSpinner = ({ size = 20, ...props }: IconProps) => (
     <path d="M21 12a9 9 0 1 1-6.22-8.56" />
   </svg>
 );
+
+/* ── Big Toys ──────────────────────────────────────────────────
+   Four families and their section marks. Drawn in the same 24×24
+   stroke geometry as everything above, so they sit beside the car
+   icons in the back office without looking borrowed. */
+
+export const IconMotorcycle = (p: IconProps) => (
+  <Svg {...p}>
+    <circle cx="5" cy="17" r="3.2" />
+    <circle cx="19" cy="17" r="3.2" />
+    <path d="M8 17h5l3.2-5H12l-2-2.5H7.5" />
+    <path d="M14.5 12 13 8.5h2.6" />
+    <path d="m16.2 12 1.9 3.6" />
+  </Svg>
+);
+
+export const IconQuad = (p: IconProps) => (
+  <Svg {...p}>
+    <circle cx="5" cy="16.5" r="3" />
+    <circle cx="19" cy="16.5" r="3" />
+    <path d="M8 16.5h8" />
+    <path d="M4.5 13.5V11a1.5 1.5 0 0 1 1.5-1.5h9.2a2 2 0 0 1 1.8 1.1l1.4 2.9" />
+    <path d="M8.5 9.5 10 6.5h4" />
+  </Svg>
+);
+
+export const IconJetski = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M2.5 18.5c1.6 0 1.6 1.4 3.2 1.4s1.6-1.4 3.2-1.4 1.6 1.4 3.2 1.4 1.6-1.4 3.2-1.4 1.6 1.4 3.2 1.4 1.6-1.4 3.2-1.4" />
+    <path d="M4 15.5h9.5a5 5 0 0 0 4.3-2.4l1.7-2.8h-4.3l-2 2.4H7.2A3.2 3.2 0 0 0 4 15.5Z" />
+    <path d="m13.8 10.3-.6-3.1h2.8" />
+  </Svg>
+);
+
+export const IconBoat = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M2.5 18.5c1.6 0 1.6 1.4 3.2 1.4s1.6-1.4 3.2-1.4 1.6 1.4 3.2 1.4 1.6-1.4 3.2-1.4 1.6 1.4 3.2 1.4" />
+    <path d="M3.5 15.5h13.2a3 3 0 0 0 2.8-2l.8-2.3H4.8a1.3 1.3 0 0 0-1.2 1.8Z" />
+    <path d="M12 11.2V3.5l6 7.7" />
+    <path d="M9 11.2V6.8L6 11.2" />
+  </Svg>
+);
+
+/* The nav mark for the Big Toys universe: a compass rose, which is the
+   one symbol that covers all four families without picking a favourite. */
+export const IconCompass = (p: IconProps) => (
+  <Svg {...p}>
+    <circle cx="12" cy="12" r="9" />
+    <path d="m15.2 8.8-1.8 4.6-4.6 1.8 1.8-4.6Z" />
+  </Svg>
+);
+
+export const IconAnchor = (p: IconProps) => (
+  <Svg {...p}>
+    <circle cx="12" cy="5" r="2.2" />
+    <path d="M12 7.2V21" />
+    <path d="M8.5 11h7" />
+    <path d="M4 14a8 8 0 0 0 16 0" />
+  </Svg>
+);
+
+export const IconWave = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M2 8.5c1.8 0 1.8 1.6 3.7 1.6S7.5 8.5 9.3 8.5s1.9 1.6 3.7 1.6 1.9-1.6 3.7-1.6 1.9 1.6 3.3 1.6" />
+    <path d="M2 13.5c1.8 0 1.8 1.6 3.7 1.6s1.8-1.6 3.6-1.6 1.9 1.6 3.7 1.6 1.9-1.6 3.7-1.6 1.9 1.6 3.3 1.6" />
+    <path d="M2 18.5c1.8 0 1.8 1.6 3.7 1.6s1.8-1.6 3.6-1.6 1.9 1.6 3.7 1.6 1.9-1.6 3.7-1.6 1.9 1.6 3.3 1.6" />
+  </Svg>
+);
+
+export const IconRuler = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M3.5 14.8 14.8 3.5a1.5 1.5 0 0 1 2.1 0l3.6 3.6a1.5 1.5 0 0 1 0 2.1L9.2 20.5a1.5 1.5 0 0 1-2.1 0l-3.6-3.6a1.5 1.5 0 0 1 0-2.1Z" />
+    <path d="m8 10.5 1.8 1.8M11 7.5l1.8 1.8M14 4.5l1.8 1.8M5 13.5l1.8 1.8" />
+  </Svg>
+);
+
+export const IconWeight = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M6.2 8h11.6l2 12H4.2Z" />
+    <circle cx="12" cy="5" r="2" />
+  </Svg>
+);
+
+/* Engine capacity — a piston in its bore. Used where a car listing would
+   show a fuel type: on a motorcycle the cubic capacity is the headline. */
+export const IconEngineBadge = (p: IconProps) => (
+  <Svg {...p}>
+    <rect x="6" y="3.5" width="12" height="7" rx="1.5" />
+    <path d="M9.5 10.5v4M14.5 10.5v4" />
+    <path d="M8 14.5h8l-1 6H9Z" />
+  </Svg>
+);

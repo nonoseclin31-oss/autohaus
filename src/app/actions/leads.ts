@@ -16,6 +16,7 @@ const leadSchema = z.object({
   message: z.string().trim().max(4000).optional().nullable(),
   locale: z.string().trim().max(5).default("fr"),
   vehicleId: z.string().trim().max(40).optional().nullable(),
+  toyId: z.string().trim().max(40).optional().nullable(),
   rentalDuration: z.number().int().positive().max(120).optional().nullable(),
   rentalMileage: z.number().int().positive().max(200000).optional().nullable(),
   // The quote the visitor configured. Bounded like everything else: these
@@ -56,6 +57,7 @@ export async function submitLead(
     message: optional(formData.get("message")),
     locale: optional(formData.get("locale")) ?? "fr",
     vehicleId: optional(formData.get("vehicleId")),
+    toyId: optional(formData.get("toyId")),
     rentalDuration: optionalInt(formData.get("rentalDuration")),
     rentalMileage: optionalInt(formData.get("rentalMileage")),
     financeFormula: optional(formData.get("financeFormula")),
@@ -90,6 +92,7 @@ export async function submitLead(
         message: data.message,
         locale: data.locale,
         vehicleId: data.vehicleId,
+        toyId: data.toyId,
         rentalDuration: data.rentalDuration,
         rentalMileage: data.rentalMileage,
         // Only LLD and LOA exist; anything else is a stale or forged field.

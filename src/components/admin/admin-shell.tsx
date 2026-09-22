@@ -11,14 +11,25 @@ import { signOut } from "@/app/actions/auth";
 import { localePath, type Locale } from "@/i18n";
 import {
   IconDashboard, IconCar, IconInbox, IconUsers, IconActivity, IconSettings,
-  IconLogout, IconMenu, IconArrowLeft, IconUser,
+  IconLogout, IconMenu, IconArrowLeft, IconUser, IconCompass,
 } from "../icons";
 import { cn } from "@/lib/utils";
 
+type NavEntry = {
+  href: string;
+  label: string;
+  Icon: typeof IconCar;
+  exact: boolean;
+  show: boolean;
+  /** Big Toys wears champagne here, as it does on its own pages. */
+  accent?: boolean;
+};
+
 type Labels = {
-  backOffice: string; dashboard: string; vehicles: string; leads: string;
+  backOffice: string; dashboard: string; vehicles: string; toys: string; leads: string;
   users: string; activity: string; settings: string; profile: string; viewSite: string; logout: string;
   language: string; menu: string; close: string;
+  catalogues: string; administration: string; enquiries: string;
 };
 
 export function AdminShell({
@@ -42,14 +53,47 @@ export function AdminShell({
 
   useEffect(() => setOpen(false), [pathname]);
 
-  const nav = [
-    { href: "/admin", label: labels.dashboard, Icon: IconDashboard, exact: true, show: true },
-    { href: "/admin/vehicles", label: labels.vehicles, Icon: IconCar, exact: false, show: true },
-    { href: "/admin/leads", label: labels.leads, Icon: IconInbox, exact: false, show: true },
-    { href: "/admin/users", label: labels.users, Icon: IconUsers, exact: false, show: permissions.users },
-    { href: "/admin/activity", label: labels.activity, Icon: IconActivity, exact: false, show: permissions.activity },
-    { href: "/admin/settings", label: labels.settings, Icon: IconSettings, exact: false, show: permissions.settings },
-  ].filter((item) => item.show);
+  /**
+   * The back office in four labelled groups.
+   *
+   * Cars and Big Toys are two entries under one "Catalogues" heading, which
+   * is the whole point of the arrangement: they are visibly two modules
+   * sharing one interface, rather than one list with a hidden filter. The
+   * Big Toys entry carries the champagne accent its own universe uses, so
+   * it is recognisable before the label is read.
+   */
+  const groups: { heading: string | null; items: NavEntry[] }[] = [
+    {
+      heading: null,
+      items: [
+        { href: "/admin", label: labels.dashboard, Icon: IconDashboard, exact: true, show: true },
+      ],
+    },
+    {
+      heading: labels.catalogues,
+      items: [
+        { href: "/admin/vehicles", label: labels.vehicles, Icon: IconCar, exact: false, show: true },
+        { href: "/admin/toys", label: labels.toys, Icon: IconCompass, exact: false, show: true, accent: true },
+      ],
+    },
+    {
+      heading: labels.enquiries,
+      items: [
+        { href: "/admin/leads", label: labels.leads, Icon: IconInbox, exact: false, show: true },
+      ],
+    },
+    {
+      heading: labels.administration,
+      items: [
+        { href: "/admin/users", label: labels.users, Icon: IconUsers, exact: false, show: permissions.users },
+        { href: "/admin/activity", label: labels.activity, Icon: IconActivity, exact: false, show: permissions.activity },
+        { href: "/admin/settings", label: labels.settings, Icon: IconSettings, exact: false, show: permissions.settings },
+      ],
+    },
+  ]
+    .map((group) => ({ ...group, items: group.items.filter((item) => item.show) }))
+    // A role with none of a group's pages must not be shown its heading.
+    .filter((group) => group.items.length);
 
   function isActive(href: string, exact: boolean) {
     const full = localePath(locale, href);
@@ -67,26 +111,35 @@ export function AdminShell({
         </p>
       </div>
 
-      <nav className="flex-1 space-y-1 overflow-y-auto p-3" aria-label={labels.backOffice}>
-        {nav.map(({ href, label: navLabel, Icon, exact }) => {
-          const active = isActive(href, exact);
-          return (
-            <Link
-              key={href}
-              href={localePath(locale, href)}
-              aria-current={active ? "page" : undefined}
-              className={cn(
-                "flex cursor-pointer items-center gap-3 rounded-sm px-3 py-2.5 text-sm font-semibold transition-colors duration-200",
-                active
-                  ? "border-s-2 border-red bg-surface-2 text-fg"
-                  : "border-s-2 border-transparent text-muted hover:bg-surface-2 hover:text-fg",
-              )}
-            >
-              <Icon size={18} className={active ? "text-red" : ""} />
-              {navLabel}
-            </Link>
-          );
-        })}
+      <nav className="flex-1 space-y-5 overflow-y-auto p-3" aria-label={labels.backOffice}>
+        {groups.map((group, index) => (
+          <div key={group.heading ?? `group-${index}`} className="space-y-1">
+            {group.heading ? (
+              <p className="px-3 pb-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-subtle">
+                {group.heading}
+              </p>
+            ) : null}
+            {group.items.map(({ href, label: navLabel, Icon, exact, accent }) => {
+              const active = isActive(href, exact);
+              return (
+                <Link
+                  key={href}
+                  href={localePath(locale, href)}
+                  aria-current={active ? "page" : undefined}
+                  className={cn(
+                    "flex cursor-pointer items-center gap-3 rounded-sm px-3 py-2.5 text-sm font-semibold transition-colors duration-200",
+                    active
+                      ? cn("bg-surface-2 text-fg border-s-2", accent ? "border-bronze" : "border-red")
+                      : "border-s-2 border-transparent text-muted hover:bg-surface-2 hover:text-fg",
+                  )}
+                >
+                  <Icon size={18} className={cn(active && (accent ? "text-bronze" : "text-red"))} />
+                  {navLabel}
+                </Link>
+              );
+            })}
+          </div>
+        ))}
       </nav>
 
       <div className="space-y-3 border-t border-line p-4">

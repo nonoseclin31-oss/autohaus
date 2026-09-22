@@ -75,3 +75,12 @@ export function canDeleteVehicle(user: { id: string; role: string } | null): boo
 export function permissionsOf(role: string | null | undefined): Permission[] {
   return isRole(role) ? MATRIX[role] : [];
 }
+
+/**
+ * Big Toys follow the catalogue rules, not rules of their own: whoever may
+ * list a car may list a jet ski, and an advisor owns what they created in
+ * either module. They are separate sections of the back office, which is a
+ * question of interface, not of privilege.
+ */
+export const canEditToy = canEditVehicle;
+export const canDeleteToy = canDeleteVehicle;
