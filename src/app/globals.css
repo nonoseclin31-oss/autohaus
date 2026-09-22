@@ -1119,6 +1119,18 @@
     color: var(--color-bronze);
   }
 
+  /* The sweeping loader bar runs this universe's colours. The shared rule
+     hard-codes the German gold, which is the dealership's, not the
+     marina's — so the whole gradient is restated rather than patched. */
+  [data-universe="toys"] .loader-bar {
+    background: linear-gradient(
+      90deg,
+      var(--color-red-text) 0%, var(--color-red-text) 33%,
+      var(--color-red-bright) 33%, var(--color-red-bright) 66%,
+      var(--color-gold) 66%, var(--color-gold) 100%
+    );
+  }
+
   /* ── Big Toys: the water ─────────────────────────────────
      Two slow aurora washes and a horizon glow, built from tokens so
      the same shapes carry both palettes. No image: a photo here

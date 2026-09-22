@@ -7,7 +7,6 @@ import { listToys, getToyHero, getToyBrands, getToyKindCounts, toyUsage, type To
 import { label, TOY_KINDS, CONDITIONS, isWaterToy, type Locale as TaxLocale } from "@/lib/taxonomy";
 import { ToyCard } from "@/components/toy-card";
 import { ToyFilters as ToyFilterBar } from "@/components/toy-filters";
-import { UniverseScope } from "@/components/universe-scope";
 import { Reveal } from "@/components/reveal";
 import { StatusVignette } from "@/components/status-vignette";
 import {
@@ -98,9 +97,7 @@ export default async function BigToysPage({
   };
 
   return (
-    <div data-universe="toys" className="min-h-screen">
-      <UniverseScope />
-
+    <>
       {/* ── Hero ────────────────────────────────────────────── */}
       <section className="tide relative overflow-hidden border-b border-line">
         <div className="caustics pointer-events-none absolute inset-0" aria-hidden="true" />
@@ -335,7 +332,7 @@ export default async function BigToysPage({
           )}
         </div>
       </section>
-    </div>
+    </>
   );
 }
 

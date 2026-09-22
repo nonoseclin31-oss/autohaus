@@ -3,6 +3,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { SplashScreen } from "@/components/splash-screen";
 import { getDictionary, resolveLocale } from "@/i18n";
 import { getCompany } from "@/lib/company";
+import { inToysUniverse } from "@/lib/route";
 
 export default async function SiteLayout({
   children,
@@ -17,9 +18,14 @@ export default async function SiteLayout({
   // One query for the whole tree; the header and footer both need it.
   const company = await getCompany();
 
+  // Which universe the document opened in. The layout renders once per page
+  // load and is kept across client navigations, so this is the path the
+  // visitor arrived on — exactly what decides whose first-paint splash plays.
+  const openedInToys = await inToysUniverse();
+
   return (
     <div className="flex min-h-screen flex-col">
-      <SplashScreen />
+      <SplashScreen suppressed={openedInToys} />
       <SiteHeader
         locale={locale}
         languageLabel={t.common.language}

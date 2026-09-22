@@ -31,7 +31,15 @@ export function middleware(request: NextRequest) {
   const hasLocale = LOCALES.some(
     (locale) => pathname === `/${locale}` || pathname.startsWith(`/${locale}/`),
   );
-  if (hasLocale) return NextResponse.next();
+  if (hasLocale) {
+    // A layout cannot ask which page is below it, and the site shell needs to
+    // know: the first-load splash belongs to the dealership, and Big Toys
+    // opens with its own. Passing the path along as a header is the only way
+    // to decide that before the first paint rather than after it.
+    const headers = new Headers(request.headers);
+    headers.set("x-pathname", pathname);
+    return NextResponse.next({ request: { headers } });
+  }
 
   const locale = pickLocale(request);
   const url = request.nextUrl.clone();

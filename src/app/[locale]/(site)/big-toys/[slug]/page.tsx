@@ -12,7 +12,6 @@ import {
 import { VehicleGallery } from "@/components/vehicle-gallery";
 import { LeadForm } from "@/components/lead-form";
 import { ToyCard } from "@/components/toy-card";
-import { UniverseScope } from "@/components/universe-scope";
 import {
   IconArrowLeft, IconAlert, IconBolt, IconCalendar, IconGauge, IconClock,
   IconRuler, IconSeat, IconEngineBadge, IconCheck, IconPhone, IconMail, IconUser,
@@ -154,9 +153,7 @@ export default async function ToyDetailPage({
     .filter((entry) => entry.keys.length);
 
   return (
-    <div data-universe="toys" className="min-h-screen">
-      <UniverseScope />
-
+    <>
       {/* Breadcrumb */}
       <div className="border-b border-line bg-surface">
         <div className="mx-auto flex max-w-7xl items-center gap-2 px-4 py-3 text-sm sm:px-6 lg:px-8">
@@ -379,6 +376,6 @@ export default async function ToyDetailPage({
           </section>
         ) : null}
       </div>
-    </div>
+    </>
   );
 }
