@@ -11,7 +11,7 @@ import {
 } from "@/lib/utils";
 import { resolveLocale } from "@/i18n";
 import { payloadFromForm } from "@/lib/vehicle-templates";
-import { HERO_RANK, HOME_GRID_SIZE } from "@/lib/vehicles";
+import { CATALOG_PIN_LIMIT, HERO_RANK, HOME_GRID_SIZE } from "@/lib/vehicles";
 
 export type VehicleFormState = {
   status: "idle" | "error" | "success";
@@ -229,6 +229,14 @@ export async function saveVehicle(
     soldAt: status === "SOLD" ? new Date() : null,
   };
 
+  // The date the catalogue's newest-first order reads. Stamped when a listing
+  // becomes public and left alone afterwards, so that editing a price does
+  // not send a car back to the top of the page.
+  const wasPublished = isUpdate
+    ? ((await prisma.vehicle.findUnique({ where: { id: id! }, select: { published: true } }))?.published ?? false)
+    : false;
+  const publishedAt = published && !wasPublished ? new Date() : undefined;
+
   // Only ADMIN/MANAGER may reassign an advisor; SALES owns what they create.
   const ownerInput = toStr(formData.get("ownerId"));
   const ownerId = can(user.role, "vehicle.update.any") ? ownerInput : isUpdate ? undefined : user.id;
@@ -242,13 +250,17 @@ export async function saveVehicle(
     if (isUpdate) {
       await prisma.vehicle.update({
         where: { id: id! },
-        data: { ...data, ...(ownerId !== undefined ? { ownerId } : {}) },
+        data: {
+          ...data,
+          ...(ownerId !== undefined ? { ownerId } : {}),
+          ...(publishedAt ? { publishedAt } : {}),
+        },
       });
       vehicleId = id!;
       await prisma.vehicleImage.deleteMany({ where: { vehicleId } });
     } else {
       const created = await prisma.vehicle.create({
-        data: { ...data, ownerId: ownerId ?? user.id },
+        data: { ...data, ownerId: ownerId ?? user.id, publishedAt: publishedAt ?? null },
       });
       vehicleId = created.id;
     }
@@ -347,7 +359,18 @@ export async function togglePublished(formData: FormData): Promise<void> {
   });
   if (!vehicle || !canEditVehicle(user, vehicle)) return;
 
-  await prisma.vehicle.update({ where: { id }, data: { published: !vehicle.published } });
+  await prisma.vehicle.update({
+    where: { id },
+    data: {
+      published: !vehicle.published,
+      // Going public — now, or again after having been taken down — is what
+      // "newest first" on the catalogue page is measured from. Taking a
+      // listing down leaves the date alone: it is only read for published
+      // listings, and keeping it means a listing hidden for an afternoon
+      // comes back where it was rather than at the top of the page.
+      ...(vehicle.published ? {} : { publishedAt: new Date() }),
+    },
+  });
   await logActivity(user.id, vehicle.published ? "vehicle.unpublished" : "vehicle.published", "Vehicle", id);
 
   revalidatePath(`/${locale}/admin/vehicles`);
@@ -483,5 +506,67 @@ export async function saveHomeShowcase(
 
   revalidatePath(`/${locale}/admin/vehicles/showcase`);
   revalidatePath("/", "layout");
+  return { status: "saved" };
+}
+
+/* ─────────────────── Catalogue page order ─────────────────── */
+
+/**
+ * Pin listings to the top of the "vehicles for sale" page, in a chosen order.
+ *
+ * Its own field and its own screen, apart from the home page: the two pages
+ * are arranged independently, and nothing here touches `homeRank`.
+ *
+ * The whole arrangement is rewritten from the form in one go — the ranks are
+ * one ordering, not a flag per car — so a listing dropped from the form loses
+ * its rank and falls back among the others, newest first.
+ */
+export async function saveCatalogOrder(
+  _prev: ShowcaseState,
+  formData: FormData,
+): Promise<ShowcaseState> {
+  const user = await getCurrentUser();
+  if (!user || !can(user.role, "vehicle.update.any")) {
+    return { status: "error", message: "denied" };
+  }
+
+  const locale = resolveLocale(String(formData.get("locale") ?? ""));
+
+  // Only a published, unsold listing can be pinned. The form was built from
+  // that same list, but it may be minutes old by now.
+  const eligible = new Set(
+    (
+      await prisma.vehicle.findMany({
+        where: { published: true, status: { not: "SOLD" } },
+        select: { id: true },
+      })
+    ).map((row) => row.id),
+  );
+
+  const order: string[] = [];
+  for (const raw of formData.getAll("pinned")) {
+    const id = String(raw);
+    if (!id || !eligible.has(id) || order.includes(id)) continue;
+    order.push(id);
+    if (order.length >= CATALOG_PIN_LIMIT) break;
+  }
+
+  await prisma.$transaction([
+    prisma.vehicle.updateMany({ where: { catalogRank: { not: null } }, data: { catalogRank: null } }),
+    ...order.map((id, index) =>
+      prisma.vehicle.update({ where: { id }, data: { catalogRank: index + 1 } }),
+    ),
+  ]);
+
+  await logActivity(
+    user.id,
+    "update",
+    "catalog",
+    null,
+    `${order.length} ${order.length === 1 ? "listing" : "listings"} pinned to the top of the catalogue`,
+  );
+
+  revalidatePath(`/${locale}/admin/vehicles/order`);
+  revalidatePath(`/${locale}/vehicles`);
   return { status: "saved" };
 }

@@ -231,7 +231,7 @@ export const BRANDS = [
   "Alfa Romeo", "Alpine", "Aston Martin", "Audi", "Bentley", "BMW", "BYD", "Citroën",
   "Cupra", "DS", "Ferrari", "Fiat", "Ford", "Honda", "Hyundai", "Jaguar", "Kia",
   "Lamborghini", "Land Rover", "Lexus", "Maserati", "Mazda", "McLaren", "Mercedes-Benz",
-  "Mini", "Nissan", "Opel", "Peugeot", "Polestar", "Porsche", "Renault", "SEAT",
+  "Mini", "Nissan", "Opel", "Peugeot", "Polestar", "Porsche", "Renault", "Rolls-Royce", "SEAT",
   "Skoda", "Tesla", "Toyota", "Volkswagen", "Volvo",
 ];
 

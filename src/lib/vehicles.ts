@@ -118,15 +118,46 @@ export function buildWhere(filters: VehicleFilters) {
   return where;
 }
 
-function buildOrderBy(sort: string | undefined) {
+/**
+ * How the catalogue is ordered.
+ *
+ * The default answers two things at once. `catalogRank` is the handful of
+ * listings pinned to the top of the page in the back office, in the order
+ * chosen there; everything else has no rank and falls through to the date it
+ * went public, newest first. `nulls: "last"` is what keeps the unpinned cars
+ * behind the pinned ones rather than in front of them.
+ *
+ * `createdAt` is the last word for the rare row with no publication date —
+ * one published before that date was recorded, or a draft being previewed.
+ *
+ * The four chosen sorts ignore the pinning on purpose: a visitor who asks for
+ * the cheapest car first is asking a question, and a pinned listing is not
+ * the answer to it.
+ */
+export const CATALOG_DEFAULT_ORDER: Prisma.VehicleOrderByWithRelationInput[] = [
+  { catalogRank: { sort: "asc", nulls: "last" } },
+  { publishedAt: { sort: "desc", nulls: "last" } },
+  { createdAt: "desc" },
+];
+
+function buildOrderBy(sort: string | undefined): Prisma.VehicleOrderByWithRelationInput[] {
   switch (sort) {
-    case "price_asc": return [{ price: "asc" as const }];
-    case "price_desc": return [{ price: "desc" as const }];
-    case "mileage_asc": return [{ mileage: "asc" as const }];
-    case "power_desc": return [{ powerHp: "desc" as const }];
-    default: return [{ featured: "desc" as const }, { createdAt: "desc" as const }];
+    case "price_asc": return [{ price: "asc" }];
+    case "price_desc": return [{ price: "desc" }];
+    case "mileage_asc": return [{ mileage: "asc" }];
+    case "power_desc": return [{ powerHp: "desc" }];
+    default: return CATALOG_DEFAULT_ORDER;
   }
 }
+
+/**
+ * How many listings may be pinned to the top of the catalogue page.
+ *
+ * A limit rather than none: pinning everything is the same as pinning
+ * nothing, except that the newest car would then arrive at the bottom of the
+ * page instead of the top.
+ */
+export const CATALOG_PIN_LIMIT = 12;
 
 /** Sold vehicles always sink to the bottom of a public list. */
 function sinkSold(items: VehicleListItem[]): VehicleListItem[] {

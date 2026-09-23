@@ -144,6 +144,20 @@ model Vehicle {
   /// it, in that order. Null means the listing only shows in the catalogue.
   homeRank Int?
 
+  /// Where this listing sits at the top of the catalogue page, chosen by hand
+  /// in the back office: 1 is the first card, 2 the second, and so on. Null —
+  /// which is the normal case — means it takes its place by date, newest
+  /// first. Deliberately separate from `homeRank`: the two pages are arranged
+  /// independently, and the home page is not disturbed by this one.
+  catalogRank Int?
+
+  /// When the listing went public, which is what "newest first" means to a
+  /// visitor. Distinct from `createdAt`: a car can be drafted in October and
+  /// published in December, and it is December that should put it on top.
+  /// Set the first time it is published, and again if it is published anew
+  /// after having been taken down.
+  publishedAt DateTime?
+
   ownerId String?
   owner   User?   @relation("VehicleOwner", fields: [ownerId], references: [id], onDelete: SetNull)
 
@@ -156,6 +170,8 @@ model Vehicle {
 
   @@index([status, published])
   @@index([homeRank])
+  @@index([catalogRank])
+  @@index([published, publishedAt])
   @@index([brand, model])
   @@index([rentalAvailable])
 }

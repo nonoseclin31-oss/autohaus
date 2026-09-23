@@ -26,63 +26,69 @@ const LOCALES = ["en", "fr", "de", "zh", "ar", "es"];
 
 const T = {
   en: {
-    layout: { F6T: "twin-turbo flat-six", F6: "naturally aspirated flat-six", V12: "naturally aspirated V12", V8T: "twin-turbo V8", V8: "V8", V6T: "twin-turbo V6", I6: "turbocharged straight-six", I5: "five-cylinder turbo", V8SC: "supercharged V8", I4T: "turbocharged four-cylinder" },
+    layout: { F6T: "twin-turbo flat-six", F6: "naturally aspirated flat-six", V12: "naturally aspirated V12", V12T: "twin-turbo V12", EV: "electric drivetrain", V8T: "twin-turbo V8", V8: "V8", V6T: "twin-turbo V6", I6: "turbocharged straight-six", I5: "five-cylinder turbo", V8SC: "supercharged V8", I4T: "turbocharged four-cylinder" },
     drive: { AWD: "all-wheel drive", RWD: "rear-wheel drive" },
     gearbox: { DUAL_CLUTCH: "dual-clutch gearbox", AUTOMATIC: "automatic gearbox" },
     hp: "hp", sec: "s", to100: "0–100 km/h in", top: "top speed",
     phev: "Plug-in hybrid: it runs on electricity alone for short journeys and recharges from a wall box.",
     mhev: "A 48-volt system smooths the stop-start and recovers energy under braking.",
     thybrid: "Performance hybrid: it never plugs in — the battery is charged by the engine and by braking, and exists to fill the turbos.",
+    ev: "Fully electric: {b} kWh battery, {r} km of WLTP range.",
     closing: "Inspected and certified to German standards, delivered anywhere in the world.",
   },
   fr: {
-    layout: { F6T: "flat-six biturbo", F6: "flat-six atmosphérique", V12: "V12 atmosphérique", V8T: "V8 biturbo", V8: "V8", V6T: "V6 biturbo", I6: "six cylindres en ligne turbo", I5: "cinq cylindres turbo", V8SC: "V8 à compresseur", I4T: "quatre cylindres turbo" },
+    layout: { F6T: "flat-six biturbo", F6: "flat-six atmosphérique", V12: "V12 atmosphérique", V12T: "V12 biturbo", EV: "chaîne de traction électrique", V8T: "V8 biturbo", V8: "V8", V6T: "V6 biturbo", I6: "six cylindres en ligne turbo", I5: "cinq cylindres turbo", V8SC: "V8 à compresseur", I4T: "quatre cylindres turbo" },
     drive: { AWD: "transmission intégrale", RWD: "propulsion" },
     gearbox: { DUAL_CLUTCH: "boîte à double embrayage", AUTOMATIC: "boîte automatique" },
     hp: "ch", sec: "s", to100: "0–100 km/h en", top: "vitesse maximale",
     phev: "Hybride rechargeable : elle roule en tout électrique sur les trajets courts et se recharge sur une borne.",
     mhev: "Un réseau 48 volts adoucit le stop-and-start et récupère l'énergie au freinage.",
     thybrid: "Hybride de performance : elle ne se branche pas — la batterie se recharge en roulant et au freinage, et sert à supprimer le temps de réponse des turbos.",
+    ev: "100 % électrique : batterie de {b} kWh, {r} km d'autonomie WLTP.",
     closing: "Contrôlée et certifiée selon les standards allemands, livrée partout dans le monde.",
   },
   de: {
-    layout: { F6T: "Sechszylinder-Boxer mit Biturbo", F6: "Sechszylinder-Boxer-Saugmotor", V12: "V12-Saugmotor", V8T: "V8-Biturbo", V8: "V8", V6T: "V6-Biturbo", I6: "Reihensechszylinder mit Turbo", I5: "Fünfzylinder-Turbo", V8SC: "V8-Kompressor", I4T: "Vierzylinder-Turbo" },
+    layout: { F6T: "Sechszylinder-Boxer mit Biturbo", F6: "Sechszylinder-Boxer-Saugmotor", V12: "V12-Saugmotor", V12T: "V12-Biturbo", EV: "Elektroantrieb", V8T: "V8-Biturbo", V8: "V8", V6T: "V6-Biturbo", I6: "Reihensechszylinder mit Turbo", I5: "Fünfzylinder-Turbo", V8SC: "V8-Kompressor", I4T: "Vierzylinder-Turbo" },
     drive: { AWD: "Allradantrieb", RWD: "Hinterradantrieb" },
     gearbox: { DUAL_CLUTCH: "Doppelkupplungsgetriebe", AUTOMATIC: "Automatikgetriebe" },
     hp: "PS", sec: "s", to100: "0–100 km/h in", top: "Höchstgeschwindigkeit",
     phev: "Plug-in-Hybrid: rein elektrisch auf kurzen Strecken, Aufladung an der Wallbox.",
     mhev: "Ein 48-Volt-System glättet die Start-Stopp-Automatik und rekuperiert beim Bremsen.",
     thybrid: "Performance-Hybrid: kein Stecker — die Batterie lädt im Fahren und beim Bremsen und dient dazu, das Turboloch zu schließen.",
+    ev: "Vollelektrisch: {b} kWh Batterie, {r} km WLTP-Reichweite.",
     closing: "Nach deutschen Standards geprüft und zertifiziert, Lieferung weltweit.",
   },
   zh: {
-    layout: { F6T: "双涡轮增压水平对置六缸", F6: "自然吸气水平对置六缸", V12: "自然吸气 V12", V8T: "双涡轮增压 V8", V8: "V8", V6T: "双涡轮增压 V6", I6: "涡轮增压直列六缸", I5: "涡轮增压五缸", V8SC: "机械增压 V8", I4T: "涡轮增压四缸" },
+    layout: { F6T: "双涡轮增压水平对置六缸", F6: "自然吸气水平对置六缸", V12: "自然吸气 V12", V12T: "双涡轮增压 V12", EV: "纯电动驱动", V8T: "双涡轮增压 V8", V8: "V8", V6T: "双涡轮增压 V6", I6: "涡轮增压直列六缸", I5: "涡轮增压五缸", V8SC: "机械增压 V8", I4T: "涡轮增压四缸" },
     drive: { AWD: "四轮驱动", RWD: "后轮驱动" },
     gearbox: { DUAL_CLUTCH: "双离合变速箱", AUTOMATIC: "自动变速箱" },
     hp: "马力", sec: "秒", to100: "0–100 公里/小时加速", top: "最高时速",
     phev: "插电式混合动力：短途可纯电行驶，可通过充电桩充电。",
     mhev: "48 伏系统让启停更平顺，并在制动时回收能量。",
     thybrid: "性能混合动力：无需插电——电池在行驶与制动中充电，用于消除涡轮迟滞。",
+    ev: "纯电动：{b} 千瓦时电池，WLTP 续航 {r} 公里。",
     closing: "按德国标准检测认证，配送至全球。",
   },
   ar: {
-    layout: { F6T: "ستة أسطوانات مسطّحة بشاحنين توربو", F6: "ستة أسطوانات مسطّحة بسحب طبيعي", V12: "محرك V12 بسحب طبيعي", V8T: "V8 بشاحنين توربو", V8: "V8", V6T: "V6 بشاحنين توربو", I6: "ستة أسطوانات على التوالي بتوربو", I5: "خمس أسطوانات بتوربو", V8SC: "V8 بشاحن ميكانيكي", I4T: "أربع أسطوانات بتوربو" },
+    layout: { F6T: "ستة أسطوانات مسطّحة بشاحنين توربو", F6: "ستة أسطوانات مسطّحة بسحب طبيعي", V12: "محرك V12 بسحب طبيعي", V12T: "محرك V12 بشاحنين توربو", EV: "مجموعة نقل حركة كهربائية", V8T: "V8 بشاحنين توربو", V8: "V8", V6T: "V6 بشاحنين توربو", I6: "ستة أسطوانات على التوالي بتوربو", I5: "خمس أسطوانات بتوربو", V8SC: "V8 بشاحن ميكانيكي", I4T: "أربع أسطوانات بتوربو" },
     drive: { AWD: "دفع رباعي", RWD: "دفع خلفي" },
     gearbox: { DUAL_CLUTCH: "ناقل حركة بقابضين", AUTOMATIC: "ناقل حركة أوتوماتيكي" },
     hp: "حصان", sec: "ثانية", to100: "من 0 إلى 100 كم/س في", top: "السرعة القصوى",
     phev: "هجينة قابلة للشحن: تسير كهربائيًا بالكامل في المشاوير القصيرة وتُشحن من محطة منزلية.",
     mhev: "نظام 48 فولت يجعل التشغيل والإيقاف أكثر سلاسة ويستعيد الطاقة عند الفرملة.",
     thybrid: "هجينة أداء: لا تُشحن بالكهرباء — تُشحن البطارية أثناء القيادة وعند الفرملة، ووظيفتها إلغاء تأخّر التوربو.",
+    ev: "كهربائية بالكامل: بطارية {b} كيلوواط·ساعة، ومدى {r} كم وفق WLTP.",
     closing: "مفحوصة ومعتمدة وفق المعايير الألمانية، مع التوصيل إلى أنحاء العالم.",
   },
   es: {
-    layout: { F6T: "bóxer de seis cilindros biturbo", F6: "bóxer de seis cilindros atmosférico", V12: "V12 atmosférico", V8T: "V8 biturbo", V8: "V8", V6T: "V6 biturbo", I6: "seis cilindros en línea turbo", I5: "cinco cilindros turbo", V8SC: "V8 sobrealimentado por compresor", I4T: "cuatro cilindros turbo" },
+    layout: { F6T: "bóxer de seis cilindros biturbo", F6: "bóxer de seis cilindros atmosférico", V12: "V12 atmosférico", V12T: "V12 biturbo", EV: "propulsión eléctrica", V8T: "V8 biturbo", V8: "V8", V6T: "V6 biturbo", I6: "seis cilindros en línea turbo", I5: "cinco cilindros turbo", V8SC: "V8 sobrealimentado por compresor", I4T: "cuatro cilindros turbo" },
     drive: { AWD: "tracción total", RWD: "propulsión trasera" },
     gearbox: { DUAL_CLUTCH: "caja de doble embrague", AUTOMATIC: "caja automática" },
     hp: "CV", sec: "s", to100: "0–100 km/h en", top: "velocidad máxima",
     phev: "Híbrido enchufable: circula en eléctrico puro en trayectos cortos y se recarga en un punto de carga.",
     mhev: "Un sistema de 48 voltios suaviza el arranque-parada y recupera energía al frenar.",
     thybrid: "Híbrido de prestaciones: no se enchufa — la batería se carga al rodar y al frenar, y sirve para eliminar el retardo de los turbos.",
+    ev: "100 % eléctrico: batería de {b} kWh y {r} km de autonomía WLTP.",
     closing: "Revisado y certificado según estándares alemanes, con entrega en todo el mundo.",
   },
 };
@@ -307,6 +313,127 @@ const CARS = [
     body: "HATCHBACK", segment: "SPORT", layout: "I4T", fuel: "PETROL", transmission: "DUAL_CLUTCH", gears: 8,
     drivetrain: "AWD", engine: 2.0, cylinders: 4, hp: 421, kw: 310, nm: 500, acc: 3.9, top: 270,
     cons: 8.5, urban: 10.8, highway: 7.2, co2: 194, doors: 5, seats: 5 },
+  // ── Aston Martin ────────────────────────────────────────────────────
+  { name: "2025 Aston Martin Vanquish", brand: "Aston Martin", model: "Vanquish", version: "V12 Coupé", year: 2025,
+    body: "COUPE", segment: "SPORT", layout: "V12T", fuel: "PETROL", transmission: "AUTOMATIC", gears: 8,
+    drivetrain: "RWD", engine: 5.2, cylinders: 12, hp: 835, kw: 614, nm: 1000, acc: 3.3, top: 345,
+    doors: 2, seats: 2 },
+
+  { name: "2025 Aston Martin DB12", brand: "Aston Martin", model: "DB12", version: "Coupé", year: 2025,
+    body: "COUPE", segment: "LUXURY", layout: "V8T", fuel: "PETROL", transmission: "AUTOMATIC", gears: 8,
+    drivetrain: "RWD", engine: 4.0, cylinders: 8, hp: 680, kw: 500, nm: 800, acc: 3.6, top: 325,
+    cons: 12.2, co2: 276, doors: 2, seats: 4 },
+
+  { name: "2025 Aston Martin DBX707", brand: "Aston Martin", model: "DBX", version: "707", year: 2025,
+    body: "SUV", segment: "LUXURY", layout: "V8T", fuel: "PETROL", transmission: "AUTOMATIC", gears: 9,
+    drivetrain: "AWD", engine: 4.0, cylinders: 8, hp: 707, kw: 520, nm: 900, acc: 3.3, top: 310,
+    cons: 14.2, co2: 323, doors: 5, seats: 5 },
+
+  // ── Bentley ─────────────────────────────────────────────────────────
+  // The Speed models all run the Ultra Performance Hybrid: a V8 and an
+  // electric motor in the gearbox, charged from a wall box like any plug-in.
+  { name: "2025 Bentley Continental GT Speed", brand: "Bentley", model: "Continental GT", version: "Speed", year: 2025,
+    body: "COUPE", segment: "LUXURY", layout: "V8T", fuel: "PLUGIN_HYBRID", transmission: "DUAL_CLUTCH", gears: 8,
+    drivetrain: "AWD", engine: 4.0, cylinders: 8, hp: 782, kw: 575, nm: 1000, acc: 3.2, top: 335,
+    doors: 2, seats: 4, phev: true, battery: 25.9, range: 81, charge: "11 kW AC" },
+
+  { name: "2025 Bentley Flying Spur Speed", brand: "Bentley", model: "Flying Spur", version: "Speed", year: 2025,
+    body: "SEDAN", segment: "LUXURY", layout: "V8T", fuel: "PLUGIN_HYBRID", transmission: "DUAL_CLUTCH", gears: 8,
+    drivetrain: "AWD", engine: 4.0, cylinders: 8, hp: 782, kw: 575, nm: 1000, acc: 3.5, top: 285,
+    doors: 4, seats: 4, phev: true, battery: 25.9, range: 76, charge: "11 kW AC" },
+
+  { name: "2025 Bentley Bentayga Speed", brand: "Bentley", model: "Bentayga", version: "Speed", year: 2025,
+    body: "SUV", segment: "LUXURY", layout: "V8T", fuel: "PETROL", transmission: "AUTOMATIC", gears: 8,
+    drivetrain: "AWD", engine: 4.0, cylinders: 8, hp: 650, kw: 478, nm: 850, acc: 3.4, top: 310,
+    doors: 5, seats: 5 },
+
+  // ── McLaren ─────────────────────────────────────────────────────────
+  { name: "2025 McLaren 750S", brand: "McLaren", model: "750S", version: "Coupé", year: 2025,
+    body: "COUPE", segment: "SPORT", layout: "V8T", fuel: "PETROL", transmission: "DUAL_CLUTCH", gears: 7,
+    drivetrain: "RWD", engine: 4.0, cylinders: 8, hp: 750, kw: 552, nm: 800, acc: 2.8, top: 332,
+    doors: 2, seats: 2 },
+
+  { name: "2025 McLaren Artura Spider", brand: "McLaren", model: "Artura", version: "Spider", year: 2025,
+    body: "CABRIOLET", segment: "SPORT", layout: "V6T", fuel: "PLUGIN_HYBRID", transmission: "DUAL_CLUTCH", gears: 8,
+    drivetrain: "RWD", engine: 3.0, cylinders: 6, hp: 700, kw: 515, nm: 720, acc: 3.0, top: 330,
+    doors: 2, seats: 2, phev: true, battery: 7.4, range: 33 },
+
+  // ── Maserati ────────────────────────────────────────────────────────
+  { name: "2025 Maserati MC20 Cielo", brand: "Maserati", model: "MC20", version: "Cielo", year: 2025,
+    body: "CABRIOLET", segment: "SPORT", layout: "V6T", fuel: "PETROL", transmission: "DUAL_CLUTCH", gears: 8,
+    drivetrain: "RWD", engine: 3.0, cylinders: 6, hp: 630, kw: 463, nm: 730, acc: 3.0, top: 320,
+    doors: 2, seats: 2 },
+
+  { name: "2025 Maserati GranTurismo Trofeo", brand: "Maserati", model: "GranTurismo", version: "Trofeo", year: 2025,
+    body: "COUPE", segment: "LUXURY", layout: "V6T", fuel: "PETROL", transmission: "AUTOMATIC", gears: 8,
+    drivetrain: "AWD", engine: 3.0, cylinders: 6, hp: 550, kw: 405, nm: 650, acc: 3.5, top: 320,
+    doors: 2, seats: 4 },
+
+  // ── Porsche, beyond the 911 ─────────────────────────────────────────
+  { name: "2025 Porsche Taycan Turbo GT", brand: "Porsche", model: "Taycan", version: "Turbo GT", year: 2025,
+    body: "SEDAN", segment: "ELECTRIC", layout: "EV", fuel: "ELECTRIC", transmission: "AUTOMATIC", gears: 2,
+    drivetrain: "AWD", hp: 1108, kw: 815, nm: 1340, acc: 2.2, top: 305,
+    doors: 4, seats: 4, battery: 97, range: 555, charge: "320 kW DC" },
+
+  { name: "2025 Porsche Panamera Turbo S E-Hybrid", brand: "Porsche", model: "Panamera", version: "Turbo S E-Hybrid", year: 2025,
+    body: "SEDAN", segment: "LUXURY", layout: "V8T", fuel: "PLUGIN_HYBRID", transmission: "DUAL_CLUTCH", gears: 8,
+    drivetrain: "AWD", engine: 4.0, cylinders: 8, hp: 782, kw: 575, nm: 1000, acc: 3.2, top: 325,
+    doors: 4, seats: 4, phev: true, battery: 25.9, range: 91, charge: "11 kW AC" },
+
+  { name: "2025 Porsche Cayenne Turbo E-Hybrid", brand: "Porsche", model: "Cayenne", version: "Turbo E-Hybrid", year: 2025,
+    body: "SUV", segment: "LUXURY", layout: "V8T", fuel: "PLUGIN_HYBRID", transmission: "AUTOMATIC", gears: 8,
+    drivetrain: "AWD", engine: 4.0, cylinders: 8, hp: 739, kw: 544, nm: 950, acc: 3.7, top: 295,
+    doors: 5, seats: 5, phev: true, battery: 25.9, range: 74, charge: "11 kW AC" },
+
+  { name: "2025 Porsche Macan Turbo", brand: "Porsche", model: "Macan", version: "Turbo", year: 2025,
+    body: "SUV", segment: "ELECTRIC", layout: "EV", fuel: "ELECTRIC", transmission: "AUTOMATIC",
+    drivetrain: "AWD", hp: 639, kw: 470, nm: 1130, acc: 3.3, top: 260,
+    doors: 5, seats: 5, battery: 100, range: 591, charge: "270 kW DC" },
+
+  // ── Mercedes-Benz, the two ends of the range ────────────────────────
+  { name: "2025 Mercedes-AMG GT 63", brand: "Mercedes-Benz", model: "AMG GT 63", version: "4MATIC+ Coupé", year: 2025,
+    body: "COUPE", segment: "SPORT", layout: "V8T", fuel: "PETROL", transmission: "DUAL_CLUTCH", gears: 9,
+    drivetrain: "AWD", engine: 4.0, cylinders: 8, hp: 585, kw: 430, nm: 800, acc: 3.2, top: 315,
+    doors: 2, seats: 4 },
+
+  { name: "2025 Mercedes-Maybach S 680", brand: "Mercedes-Benz", model: "S 680", version: "Maybach 4MATIC", year: 2025,
+    body: "SEDAN", segment: "LUXURY", layout: "V12T", fuel: "PETROL", transmission: "AUTOMATIC", gears: 9,
+    drivetrain: "AWD", engine: 6.0, cylinders: 12, hp: 612, kw: 450, nm: 900, acc: 4.5, top: 250,
+    doors: 4, seats: 4 },
+
+  // ── BMW, above the M cars ───────────────────────────────────────────
+  { name: "2025 BMW XM Label", brand: "BMW", model: "XM", version: "Label", year: 2025,
+    body: "SUV", segment: "LUXURY", layout: "V8T", fuel: "PLUGIN_HYBRID", transmission: "AUTOMATIC", gears: 8,
+    drivetrain: "AWD", engine: 4.4, cylinders: 8, hp: 748, kw: 550, nm: 1000, acc: 3.8, top: 290,
+    doors: 5, seats: 5, phev: true, battery: 25.7, range: 74, charge: "7.4 kW AC" },
+
+  { name: "2025 BMW i7 M70 xDrive", brand: "BMW", model: "i7", version: "M70 xDrive", year: 2025,
+    body: "SEDAN", segment: "ELECTRIC", layout: "EV", fuel: "ELECTRIC", transmission: "AUTOMATIC",
+    drivetrain: "AWD", hp: 660, kw: 485, nm: 1100, acc: 3.7, top: 250,
+    doors: 4, seats: 5, battery: 101.7, range: 560, charge: "195 kW DC" },
+
+  // ── Audi ────────────────────────────────────────────────────────────
+  { name: "2025 Audi RS e-tron GT performance", brand: "Audi", model: "RS e-tron GT", version: "performance", year: 2025,
+    body: "SEDAN", segment: "ELECTRIC", layout: "EV", fuel: "ELECTRIC", transmission: "AUTOMATIC", gears: 2,
+    drivetrain: "AWD", hp: 925, kw: 680, nm: 1027, acc: 2.5, top: 250,
+    doors: 4, seats: 4, battery: 105, range: 598, charge: "320 kW DC" },
+
+  // ── Ferrari ─────────────────────────────────────────────────────────
+  { name: "2025 Ferrari 296 Speciale", brand: "Ferrari", model: "296", version: "Speciale", year: 2025,
+    body: "COUPE", segment: "SPORT", layout: "V6T", fuel: "PLUGIN_HYBRID", transmission: "DUAL_CLUTCH", gears: 8,
+    drivetrain: "RWD", engine: 3.0, cylinders: 6, hp: 880, kw: 647, nm: 740, acc: 2.8, top: 330,
+    doors: 2, seats: 2, phev: true, battery: 7.45, range: 25 },
+
+  // ── Rolls-Royce ─────────────────────────────────────────────────────
+  { name: "2025 Rolls-Royce Cullinan Series II Black Badge", brand: "Rolls-Royce", model: "Cullinan", version: "Series II Black Badge", year: 2025,
+    body: "SUV", segment: "LUXURY", layout: "V12T", fuel: "PETROL", transmission: "AUTOMATIC", gears: 8,
+    drivetrain: "AWD", engine: 6.75, cylinders: 12, hp: 600, kw: 441, nm: 900, acc: 4.9, top: 250,
+    doors: 5, seats: 5 },
+
+  { name: "2025 Rolls-Royce Spectre", brand: "Rolls-Royce", model: "Spectre", version: null, year: 2025,
+    body: "COUPE", segment: "ELECTRIC", layout: "EV", fuel: "ELECTRIC", transmission: "AUTOMATIC",
+    drivetrain: "AWD", hp: 585, kw: 430, nm: 900, acc: 4.5, top: 250,
+    doors: 2, seats: 4, battery: 102, range: 520, charge: "195 kW DC" },
 ];
 
 
@@ -340,6 +467,19 @@ const PRICE = {
   "2026 Mercedes-AMG G 63": 212000, "2026 Mercedes-AMG S 63 E Performance": 228000,
   "2026 Mercedes-AMG C 63 S E Performance": 118000, "2023 Mercedes-AMG E 63 S": 95000,
   "2026 Mercedes-AMG A 45 S": 73000,
+  "2025 Aston Martin Vanquish": 400000, "2025 Aston Martin DB12": 260000,
+  "2025 Aston Martin DBX707": 250000,
+  "2025 Bentley Continental GT Speed": 300000, "2025 Bentley Flying Spur Speed": 300000,
+  "2025 Bentley Bentayga Speed": 280000,
+  "2025 McLaren 750S": 330000, "2025 McLaren Artura Spider": 300000,
+  "2025 Maserati MC20 Cielo": 280000, "2025 Maserati GranTurismo Trofeo": 200000,
+  "2025 Porsche Taycan Turbo GT": 240000, "2025 Porsche Panamera Turbo S E-Hybrid": 230000,
+  "2025 Porsche Cayenne Turbo E-Hybrid": 190000, "2025 Porsche Macan Turbo": 120000,
+  "2025 Mercedes-AMG GT 63": 210000, "2025 Mercedes-Maybach S 680": 280000,
+  "2025 BMW XM Label": 210000, "2025 BMW i7 M70 xDrive": 190000,
+  "2025 Audi RS e-tron GT performance": 170000,
+  "2025 Ferrari 296 Speciale": 460000,
+  "2025 Rolls-Royce Cullinan Series II Black Badge": 480000, "2025 Rolls-Royce Spectre": 480000,
 };
 
 /** A colour each marque is actually associated with, inside for contrast. */
@@ -351,6 +491,11 @@ const COLOURS = {
   "Land Rover": ["green", "beige"],
   "Mercedes-Benz": ["silver", "black"],
   Porsche: ["white", "black"],
+  "Aston Martin": ["green", "black"],
+  Bentley: ["blue", "beige"],
+  McLaren: ["orange", "black"],
+  Maserati: ["blue", "red"],
+  "Rolls-Royce": ["black", "beige"],
 };
 
 /* ── Equipment by kind of car ──────────────────────────────────────────── */
@@ -390,11 +535,20 @@ const decimal = (value, loc) =>
 function description(car, loc) {
   const t = T[loc];
   const title = `${car.brand} ${car.model}${car.version ? " " + car.version : ""}`;
+
+  // An electric car has no displacement to quote and no gearbox worth
+  // naming, so its opening sentence is built from what it does have.
+  const opening = car.layout === "EV"
+    ? `${title} — ${t.layout.EV}, ${car.hp} ${t.hp} (${car.kw} kW), ${car.nm} Nm, ${t.drive[car.drivetrain]}.`
+    : `${title} — ${t.layout[car.layout]} ${decimal(car.engine.toFixed(1), loc)} l, ${car.hp} ${t.hp} (${car.kw} kW), ${car.nm} Nm, ${t.drive[car.drivetrain]}, ${t.gearbox[car.transmission]}.`;
+
   const lines = [
-    `${title} — ${t.layout[car.layout]} ${decimal(car.engine.toFixed(1), loc)} l, ${car.hp} ${t.hp} (${car.kw} kW), ${car.nm} Nm, ${t.drive[car.drivetrain]}, ${t.gearbox[car.transmission]}.`,
+    opening,
     `${t.to100} ${decimal(car.acc.toFixed(1), loc)} ${t.sec}, ${t.top} ${car.top} km/h.`,
   ];
-  if (car.phev) lines.push(t.phev);
+  if (car.layout === "EV" && car.battery && car.range) {
+    lines.push(t.ev.replace("{b}", decimal(car.battery, loc)).replace("{r}", String(car.range)));
+  } else if (car.phev) lines.push(t.phev);
   else if (car.thybrid) lines.push(t.thybrid);
   else if (car.mhev) lines.push(t.mhev);
   lines.push(t.closing);
@@ -418,16 +572,26 @@ function payloadFor(car) {
   const p = {
     brand: car.brand, model: car.model, version: car.version, year: String(car.year),
     bodyType: car.body, condition: car.condition ?? "NEW", segment: car.segment,
-    fuel: car.fuel, transmission: car.transmission, gears: String(car.gears),
-    drivetrain: car.drivetrain, engineSize: String(car.engine), cylinders: String(car.cylinders),
+    fuel: car.fuel, transmission: car.transmission,
+    drivetrain: car.drivetrain,
     powerHp: String(car.hp), powerKw: String(car.kw), torqueNm: String(car.nm),
     acceleration: String(car.acc), topSpeed: String(car.top),
-    consumptionCombined: String(car.cons), co2: String(car.co2),
-    emissionClass: "EURO6D", energyLabel: car.phev ? "B" : "G",
+    energyLabel: car.fuel === "ELECTRIC" ? "A" : car.phev ? "B" : "G",
     doors: String(car.doors), seats: String(car.seats),
     status: "AVAILABLE", vatDeductible: "on",
     equipment: equipmentFor(car),
   };
+
+  // Written only when the car has one. A figure a maker does not publish —
+  // the litres of an electric car, the fuel consumption of a model whose
+  // WLTP sheet is not out — is left empty for the advisor to fill from the
+  // car's own papers, rather than guessed here.
+  if (car.gears) p.gears = String(car.gears);
+  if (car.engine) p.engineSize = String(car.engine);
+  if (car.cylinders) p.cylinders = String(car.cylinders);
+  if (car.cons) p.consumptionCombined = String(car.cons);
+  if (car.co2 !== undefined) p.co2 = String(car.co2);
+  if (car.fuel !== "ELECTRIC") p.emissionClass = "EURO6D";
   // ── Body & interior ──
   const [outside, inside] = COLOURS[car.brand] ?? ["grey", "black"];
   p.colorExterior = outside;

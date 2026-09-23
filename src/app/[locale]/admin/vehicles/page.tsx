@@ -10,7 +10,7 @@ import { setVehicleStatus, togglePublished, deleteVehicle } from "@/app/actions/
 import { StatusDot } from "@/components/status-vignette";
 import {
   IconPlus, IconImage, IconEdit, IconTrash, IconEye, IconEyeOff, IconCar,
-  IconSearch, IconStar, IconArrowRight,
+  IconSearch, IconStar, IconArrowRight, IconPin,
 } from "@/components/icons";
 import { cn } from "@/lib/utils";
 
@@ -115,13 +115,22 @@ export default async function AdminVehiclesPage({
         </div>
         <div className="flex flex-wrap items-center gap-2">
           {can(user.role, "vehicle.update.any") ? (
-            <Link
-              href={localePath(locale, "/admin/vehicles/showcase")}
-              className="btn btn-solid cursor-pointer"
-            >
-              <IconStar size={17} />
-              {t.admin.homePage}
-            </Link>
+            <>
+              <Link
+                href={localePath(locale, "/admin/vehicles/showcase")}
+                className="btn btn-solid cursor-pointer"
+              >
+                <IconStar size={17} />
+                {t.admin.homePage}
+              </Link>
+              <Link
+                href={localePath(locale, "/admin/vehicles/order")}
+                className="btn btn-solid cursor-pointer"
+              >
+                <IconPin size={17} />
+                {t.admin.catalogOrder}
+              </Link>
+            </>
           ) : null}
           {can(user.role, "vehicle.create") ? (
             <Link href={localePath(locale, "/admin/vehicles/new")} className="btn btn-primary cursor-pointer">

@@ -117,6 +117,7 @@ export function ImageUploader({
      floating ghost to keep in sync with anything. */
   const [dragging, setDragging] = useState<number | null>(null);
   const dragRef = useRef<number | null>(null);
+  const releaseRef = useRef<(() => void) | null>(null);
 
   /** Which tile sits under this point, ignoring the one being carried. */
   function tileAt(x: number, y: number): number | null {
@@ -137,15 +138,11 @@ export function ImageUploader({
     event.preventDefault();
     dragRef.current = index;
     setDragging(index);
-  }
 
-  useEffect(() => {
-    if (dragging === null) return;
-
-    const onMove = (event: PointerEvent) => {
+    const onMove = (moved: PointerEvent) => {
       const from = dragRef.current;
       if (from === null) return;
-      const to = tileAt(event.clientX, event.clientY);
+      const to = tileAt(moved.clientX, moved.clientY);
       if (to === null || to === from) return;
       setImages((prev) => {
         const next = [...prev];
@@ -160,20 +157,27 @@ export function ImageUploader({
     const stop = () => {
       dragRef.current = null;
       setDragging(null);
-    };
-
-    // On the window, not the tile: the tile is made transparent to the
-    // pointer while it is carried, so what is underneath can be found — and
-    // a capture on it would stop delivering.
-    window.addEventListener("pointermove", onMove);
-    window.addEventListener("pointerup", stop);
-    window.addEventListener("pointercancel", stop);
-    return () => {
       window.removeEventListener("pointermove", onMove);
       window.removeEventListener("pointerup", stop);
       window.removeEventListener("pointercancel", stop);
+      releaseRef.current = null;
     };
-  }, [dragging]);
+
+    // Attached here rather than from an effect, and on the window rather than
+    // on the tile. Here, because an effect runs after the paint: a tap quick
+    // enough to finish first would leave nothing listening for its release,
+    // and the photos would then follow a pointer with no button held. On the
+    // window, because the tile is made transparent to the pointer while it is
+    // carried, so that what is underneath can be found — and a capture on it
+    // would stop delivering.
+    window.addEventListener("pointermove", onMove);
+    window.addEventListener("pointerup", stop);
+    window.addEventListener("pointercancel", stop);
+    releaseRef.current = stop;
+  }
+
+  // A tile let go while the page is being left takes its listeners with it.
+  useEffect(() => () => releaseRef.current?.(), []);
 
   function remove(index: number) {
     setImages((prev) => prev.filter((_, i) => i !== index));
