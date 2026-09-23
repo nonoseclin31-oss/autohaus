@@ -521,6 +521,21 @@ const zh: Dictionary = {
     uploadBadType: "不支持该格式 — 请转换为 JPG 或 PNG",
     uploadTooBig: "文件过大 — 每张照片最多 8 MB",
     uploadFailed: "上传失败，请重试",
+    // The crop tool on each uploaded photo. Every listing image is shown
+    // in one shape on the site, so a portrait photo has to be framed
+    // rather than squeezed.
+    crop: "裁剪",
+    cropTitle: "裁剪照片",
+    cropHelp: "拖动照片选择保留的画面，缩放以裁去多余部分。网站上所有照片均按此比例显示。",
+    cropSiteRatio: "网站格式",
+    cropSquare: "正方形",
+    cropZoom: "缩放",
+    cropReset: "重新居中",
+    cropApply: "应用裁剪",
+    cropWorking: "正在裁剪…",
+    cropFailed: "裁剪未能保存，请重试。",
+    cropLoading: "正在打开照片…",
+    cropMove: "使用方向键移动照片",
     setCover: "设为封面",
     coverBadge: "封面",
     removeImage: "删除照片",

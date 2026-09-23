@@ -3,7 +3,11 @@
 import { useRef, useState } from "react";
 import Image from "next/image";
 import { getDictionary, type Locale } from "@/i18n";
-import { IconUpload, IconTrash, IconStar, IconSpinner, IconAlert, IconChevronLeft, IconChevronRight } from "../icons";
+import {
+  IconUpload, IconTrash, IconStar, IconSpinner, IconAlert, IconChevronLeft,
+  IconChevronRight, IconCrop,
+} from "../icons";
+import { ImageCropper } from "./image-cropper";
 import { shrinkAll } from "@/lib/image-resize";
 import { cn } from "@/lib/utils";
 
@@ -28,7 +32,37 @@ export function ImageUploader({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [dragOver, setDragOver] = useState(false);
+  // Which photo is open in the crop tool, by position in the list.
+  const [cropping, setCropping] = useState<number | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  /** Sends one file and returns where it landed, or null if it was refused. */
+  async function send(file: File): Promise<string | null> {
+    const body = new FormData();
+    body.append("files", file);
+    const response = await fetch("/api/upload", { method: "POST", body });
+    if (!response.ok) return null;
+    const result = (await response.json()) as { uploaded: { url: string }[] };
+    return result.uploaded[0]?.url ?? null;
+  }
+
+  /**
+   * Puts a cropped photo in place of the one it was made from.
+   *
+   * The original object is left in the bucket rather than deleted: the form
+   * has not been saved yet, so the listing on the site is still pointing at
+   * it, and a crop that is abandoned by cancelling the form must not have
+   * taken the live photo with it.
+   */
+  async function replaceAt(index: number, file: File) {
+    const url = await send(file);
+    if (!url) {
+      setError(t.admin.cropFailed);
+      return;
+    }
+    setImages((prev) => prev.map((image, i) => (i === index ? { ...image, url } : image)));
+    setCropping(null);
+  }
 
   async function upload(files: FileList | File[]) {
     const list = Array.from(files);
@@ -186,6 +220,13 @@ export function ImageUploader({
                 </div>
                 <div className="flex gap-0.5">
                   <button
+                    type="button" onClick={() => setCropping(index)}
+                    aria-label={`${t.admin.crop} — ${index + 1}`} title={t.admin.crop}
+                    className="cursor-pointer rounded-sm p-1.5 text-subtle transition-colors duration-200 hover:text-red"
+                  >
+                    <IconCrop size={14} />
+                  </button>
+                  <button
                     type="button" onClick={() => makeCover(index)} disabled={index === 0}
                     aria-label={t.admin.setCover} title={t.admin.setCover}
                     className="cursor-pointer rounded-sm p-1.5 text-subtle transition-colors duration-200 hover:text-gold disabled:cursor-not-allowed disabled:opacity-30"
@@ -204,6 +245,15 @@ export function ImageUploader({
             </li>
           ))}
         </ul>
+      ) : null}
+
+      {cropping !== null && images[cropping] ? (
+        <ImageCropper
+          locale={locale}
+          url={images[cropping].url}
+          onCancel={() => setCropping(null)}
+          onCropped={(file) => replaceAt(cropping, file)}
+        />
       ) : null}
     </div>
   );

@@ -388,3 +388,11 @@ export const IconHelmet = (p: IconProps) => (
     <path d="M3.8 12.2h9.4a2 2 0 0 0 1.9-1.4l1.2-3.8" />
   </Svg>
 );
+
+/* Crop marks — the two overlapping corners every photo tool uses. */
+export const IconCrop = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M6.5 2.5v15h15" />
+    <path d="M2.5 6.5h15v15" />
+  </Svg>
+);

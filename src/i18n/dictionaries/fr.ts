@@ -521,6 +521,21 @@ const fr: Dictionary = {
     uploadBadType: "Format non pris en charge — convertissez-la en JPG ou PNG",
     uploadTooBig: "Trop lourde — 8 Mo maximum par photo",
     uploadFailed: "L'envoi a échoué, réessayez",
+    // The crop tool on each uploaded photo. Every listing image is shown
+    // in one shape on the site, so a portrait photo has to be framed
+    // rather than squeezed.
+    crop: "Recadrer",
+    cropTitle: "Recadrer la photo",
+    cropHelp: "Faites glisser la photo pour choisir ce qui reste dans le cadre, et zoomez pour couper le reste. Le site affiche toutes les photos dans ce format.",
+    cropSiteRatio: "Format du site",
+    cropSquare: "Carré",
+    cropZoom: "Zoom",
+    cropReset: "Recentrer",
+    cropApply: "Appliquer le recadrage",
+    cropWorking: "Recadrage…",
+    cropFailed: "Le recadrage n'a pas pu être enregistré. Réessayez.",
+    cropLoading: "Ouverture de la photo…",
+    cropMove: "Déplacez la photo avec les flèches du clavier",
     setCover: "Définir comme couverture",
     coverBadge: "Couverture",
     removeImage: "Supprimer la photo",

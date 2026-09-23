@@ -521,6 +521,21 @@ const de: Dictionary = {
     uploadBadType: "Format nicht unterstützt — bitte in JPG oder PNG umwandeln",
     uploadTooBig: "Zu groß — maximal 8 MB pro Foto",
     uploadFailed: "Upload fehlgeschlagen, bitte erneut versuchen",
+    // The crop tool on each uploaded photo. Every listing image is shown
+    // in one shape on the site, so a portrait photo has to be framed
+    // rather than squeezed.
+    crop: "Zuschneiden",
+    cropTitle: "Foto zuschneiden",
+    cropHelp: "Ziehen Sie das Foto, um den Bildausschnitt zu wählen, und zoomen Sie, um den Rest abzuschneiden. Die Website zeigt jedes Foto in diesem Format.",
+    cropSiteRatio: "Website-Format",
+    cropSquare: "Quadratisch",
+    cropZoom: "Zoom",
+    cropReset: "Zentrieren",
+    cropApply: "Zuschnitt übernehmen",
+    cropWorking: "Wird zugeschnitten…",
+    cropFailed: "Der Zuschnitt konnte nicht gespeichert werden. Bitte erneut versuchen.",
+    cropLoading: "Foto wird geöffnet…",
+    cropMove: "Foto mit den Pfeiltasten verschieben",
     setCover: "Als Titelbild festlegen",
     coverBadge: "Titelbild",
     removeImage: "Foto entfernen",

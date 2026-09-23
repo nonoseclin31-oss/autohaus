@@ -521,6 +521,21 @@ const en = {
     uploadBadType: "Format not supported — convert it to JPG or PNG",
     uploadTooBig: "Too large — 8 MB maximum per photo",
     uploadFailed: "Upload failed, please try again",
+    // The crop tool on each uploaded photo. Every listing image is shown
+    // in one shape on the site, so a portrait photo has to be framed
+    // rather than squeezed.
+    crop: "Crop",
+    cropTitle: "Crop the photo",
+    cropHelp: "Drag the photo to choose what stays in frame, and zoom to cut what is left over. The site shows every photo in this shape.",
+    cropSiteRatio: "Site format",
+    cropSquare: "Square",
+    cropZoom: "Zoom",
+    cropReset: "Re-centre",
+    cropApply: "Apply the crop",
+    cropWorking: "Cropping…",
+    cropFailed: "The crop could not be saved. Try again.",
+    cropLoading: "Opening the photo…",
+    cropMove: "Move the photo with the arrow keys",
     setCover: "Set as cover",
     coverBadge: "Cover",
     removeImage: "Remove photo",

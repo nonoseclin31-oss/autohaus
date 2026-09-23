@@ -521,6 +521,21 @@ const ar: Dictionary = {
     uploadBadType: "صيغة غير مدعومة — حوّلها إلى JPG أو PNG",
     uploadTooBig: "حجمها كبير — 8 ميغابايت كحد أقصى لكل صورة",
     uploadFailed: "فشل الرفع، يرجى المحاولة مرة أخرى",
+    // The crop tool on each uploaded photo. Every listing image is shown
+    // in one shape on the site, so a portrait photo has to be framed
+    // rather than squeezed.
+    crop: "اقتصاص",
+    cropTitle: "اقتصاص الصورة",
+    cropHelp: "اسحب الصورة لاختيار ما يبقى داخل الإطار، واستخدم التكبير لقص الباقي. يعرض الموقع كل الصور بهذه النسبة.",
+    cropSiteRatio: "تنسيق الموقع",
+    cropSquare: "مربع",
+    cropZoom: "تكبير",
+    cropReset: "إعادة التوسيط",
+    cropApply: "تطبيق الاقتصاص",
+    cropWorking: "جارٍ الاقتصاص…",
+    cropFailed: "تعذّر حفظ الاقتصاص. أعد المحاولة.",
+    cropLoading: "جارٍ فتح الصورة…",
+    cropMove: "حرّك الصورة بمفاتيح الأسهم",
     setCover: "تعيين كصورة غلاف",
     coverBadge: "الغلاف",
     removeImage: "حذف الصورة",
