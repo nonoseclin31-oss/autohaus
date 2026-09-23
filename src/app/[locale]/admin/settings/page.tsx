@@ -1,9 +1,11 @@
 import { redirect } from "next/navigation";
-import { getDictionary, resolveLocale, localePath } from "@/i18n";
+import { getDictionary, resolveLocale, localePath, LOCALES, type Locale } from "@/i18n";
 import { getCurrentUser } from "@/lib/auth";
 import { can } from "@/lib/rbac";
 import { getCompany, getCompanyOverrides } from "@/lib/company";
 import { CompanySettingsForm } from "@/components/admin/company-settings-form";
+import { AboutTextsForm } from "@/components/admin/about-texts-form";
+import { getSiteSettings } from "@/lib/site-settings";
 
 export const dynamic = "force-dynamic";
 
@@ -16,7 +18,19 @@ export default async function SettingsPage({ params }: { params: Promise<{ local
   if (!user) redirect(localePath(locale, "/login"));
   if (!can(user.role, "settings.manage")) redirect(localePath(locale, "/admin"));
 
-  const [company, overrides] = await Promise.all([getCompany(), getCompanyOverrides()]);
+  const [company, overrides, site] = await Promise.all([getCompany(), getCompanyOverrides(), getSiteSettings()]);
+
+  // Each language's About paragraphs as the page shows them today, and as
+  // the site ships them — the second is what "restore" puts back.
+  const originals = Object.fromEntries(
+    LOCALES.map((loc) => [loc, { body1: getDictionary(loc).about.body1, body2: getDictionary(loc).about.body2 }]),
+  ) as Record<Locale, { body1: string; body2: string }>;
+  const current = Object.fromEntries(
+    LOCALES.map((loc) => [loc, {
+      body1: site.about[loc]?.body1 ?? originals[loc].body1,
+      body2: site.about[loc]?.body2 ?? originals[loc].body2,
+    }]),
+  ) as Record<Locale, { body1: string; body2: string }>;
 
   return (
     <div className="space-y-6">
@@ -27,6 +41,7 @@ export default async function SettingsPage({ params }: { params: Promise<{ local
 
       <CompanySettingsForm
         locale={locale}
+        headerPhone={site.headerPhone}
         values={{
           email: overrides.email ?? company.email,
           phone: overrides.phone ?? company.phone,
@@ -40,6 +55,8 @@ export default async function SettingsPage({ params }: { params: Promise<{ local
           vatId: overrides.vatId ?? company.vatId,
         }}
       />
+
+      <AboutTextsForm locale={locale} current={current} originals={originals} />
     </div>
   );
 }

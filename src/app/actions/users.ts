@@ -60,6 +60,7 @@ export async function saveUser(
 
   try {
     if (id) {
+      const before = await prisma.user.findUnique({ where: { id }, select: { active: true } });
       await prisma.user.update({
         where: { id },
         data: {
@@ -72,6 +73,14 @@ export async function saveUser(
             : {}),
         },
       });
+      // Switched off from this dialog rather than the row toggle: the open
+      // enquiries waiting on them go back to the team all the same.
+      if (before?.active && !data.active) {
+        await prisma.lead.updateMany({
+          where: { assignedToId: id, status: { in: ["NEW", "CONTACTED", "QUALIFIED"] } },
+          data: { assignedToId: null },
+        });
+      }
       await logActivity(actor!.id, "user.updated", "User", id, `${name} — ${role}`);
       if (password) {
         await logActivity(actor!.id, "user.password.reset", "User", id, name);
@@ -149,8 +158,20 @@ export async function toggleUserActive(formData: FormData): Promise<void> {
   }
 
   await prisma.user.update({ where: { id }, data: { active: !target.active } });
+
+  // Someone switched off can no longer answer the enquiries waiting on them.
+  // Open ones go back to "unassigned", where the rest of the team sees them,
+  // instead of sitting in the queue of a person who is not there.
+  if (target.active) {
+    await prisma.lead.updateMany({
+      where: { assignedToId: id, status: { in: ["NEW", "CONTACTED", "QUALIFIED"] } },
+      data: { assignedToId: null },
+    });
+  }
+
   await logActivity(actor!.id, target.active ? "user.deactivated" : "user.activated", "User", id);
   revalidatePath(`/${locale}/admin/users`);
+  revalidatePath(`/${locale}/admin/leads`);
 }
 
 /* ─────────────────── The team on the About page ─────────────────── */

@@ -5,7 +5,8 @@ import { createPortal } from "react-dom";
 import Link from "next/link";
 import { getDictionary, localePath, type Locale } from "@/i18n";
 import { deleteVehicleTemplate } from "@/app/actions/vehicles";
-import { IconLayers, IconSearch, IconTrash, IconX, IconCheck } from "@/components/icons";
+import { IconLayers, IconSearch, IconX, IconCheck } from "@/components/icons";
+import { ConfirmSubmit } from "./confirm-submit";
 import { cn } from "@/lib/utils";
 
 export type PickableTemplate = {
@@ -134,13 +135,7 @@ export function TemplatePicker({
                     <form action={deleteVehicleTemplate}>
                       <input type="hidden" name="id" value={template.id} />
                       <input type="hidden" name="locale" value={locale} />
-                      <button
-                        type="submit"
-                        aria-label={`${t.common.delete} — ${template.name}`}
-                        className="cursor-pointer rounded-sm p-1.5 text-subtle transition-colors duration-200 hover:bg-red/10 hover:text-red"
-                      >
-                        <IconTrash size={15} />
-                      </button>
+                      <ConfirmSubmit compact label={`${t.common.delete} — ${template.name}`} confirm={t.admin.confirmDelete} />
                     </form>
                   ) : null}
                 </div>

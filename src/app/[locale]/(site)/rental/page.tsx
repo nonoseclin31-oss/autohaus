@@ -59,7 +59,7 @@ export default async function RentalPage({
 
   // The simulator quotes any car on sale, not only the ones listed below:
   // both formulas are offered across the showroom.
-  const quotable = await getQuotableVehicles(locale);
+  const quotable = await getQuotableVehicles();
 
   return (
     <>

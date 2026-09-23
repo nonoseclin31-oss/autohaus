@@ -1284,3 +1284,12 @@
   .gate-enter, .gate-leave, .gate-horizon, .gate-word { animation: none; }
   .gate-leave { display: none; }
 }
+
+/* The back office's phone tab bar covers the foot of the screen. Anything
+   scrolled into view — a field reached with Tab, an error, a jump link —
+   stops above it rather than behind it. */
+@media (max-width: 1023.98px) {
+  html:has([data-admin-shell]) {
+    scroll-padding-bottom: calc(4rem + env(safe-area-inset-bottom) + 0.75rem);
+  }
+}

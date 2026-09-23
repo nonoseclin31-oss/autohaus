@@ -5,7 +5,6 @@ import { LeadForm } from "@/components/lead-form";
 import { IconPin, IconPhone, IconMail, IconClock } from "@/components/icons";
 import { getCompany } from "@/lib/company";
 import { ConsentMap } from "@/components/consent-map";
-import { COMPANY } from "@/lib/utils";
 
 export async function generateMetadata({
   params,

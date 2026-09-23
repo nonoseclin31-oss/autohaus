@@ -7,6 +7,7 @@ import { Reveal } from "@/components/reveal";
 import { IconShield, IconWrench, IconFlag, IconArrowRight } from "@/components/icons";
 import { getCompany } from "@/lib/company";
 import { getPublicTeam, type TeamMember } from "@/lib/team";
+import { getSiteSettings } from "@/lib/site-settings";
 
 // The team at the foot of the page is arranged in the back office, and each
 // age moves on a birthday — neither can be baked in at build time.
@@ -27,7 +28,13 @@ export async function generateMetadata({
 export default async function AboutPage({ params }: { params: Promise<{ locale: string }> }) {
   const locale = resolveLocale((await params).locale);
   const t = getDictionary(locale);
-  const [company, team] = await Promise.all([getCompany(), getPublicTeam(locale)]);
+  const [company, team, site] = await Promise.all([getCompany(), getPublicTeam(locale), getSiteSettings()]);
+  // The two paragraphs presenting the company can be rewritten in the back
+  // office, per language; a language nobody rewrote keeps the original.
+  const intro = {
+    body1: site.about[locale]?.body1 ?? t.about.body1,
+    body2: site.about[locale]?.body2 ?? t.about.body2,
+  };
 
   const values = [
     { Icon: IconShield, title: t.about.v1Title, body: t.about.v1Body },
@@ -53,8 +60,8 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
 
       <section className="mx-auto grid max-w-7xl gap-12 px-4 py-16 sm:px-6 lg:grid-cols-2 lg:px-8">
         <Reveal className="space-y-5">
-          <p className="text-lg leading-relaxed text-muted">{t.about.body1}</p>
-          <p className="text-lg leading-relaxed text-muted">{t.about.body2}</p>
+          <p className="whitespace-pre-line text-lg leading-relaxed text-muted">{intro.body1}</p>
+          <p className="whitespace-pre-line text-lg leading-relaxed text-muted">{intro.body2}</p>
           <Link href={localePath(locale, "/vehicles")} className="btn btn-primary mt-3 cursor-pointer">
             {t.cta.browseStock}
             <IconArrowRight size={17} />

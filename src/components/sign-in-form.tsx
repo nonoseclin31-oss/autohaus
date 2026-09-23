@@ -22,7 +22,13 @@ export function SignInForm({ locale }: { locale: Locale }) {
   const [reveal, setReveal] = useState(false);
 
   const message =
-    state.error === "inactive" ? t.auth.inactive : state.error ? t.auth.invalid : null;
+    state.error === "inactive"
+      ? t.auth.inactive
+      : state.error === "locked"
+        ? t.auth.locked
+        : state.error
+          ? t.auth.invalid
+          : null;
 
   return (
     <form action={action} className="space-y-5">

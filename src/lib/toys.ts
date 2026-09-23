@@ -232,14 +232,23 @@ export async function getSimilarToys(
 }
 
 export async function getToyBySlug(slug: string) {
-  return prisma.toy.findUnique({
+  const row = await prisma.toy.findUnique({
     where: { slug },
     include: {
       images: { orderBy: [{ isCover: "desc" }, { position: "asc" }] },
       translations: true,
-      owner: { select: { id: true, name: true, jobTitle: true, phone: true, email: true, avatarUrl: true } },
+      owner: { select: { id: true, name: true, jobTitle: true, phone: true, email: true, avatarUrl: true, active: true } },
     },
   });
+  if (!row) return null;
+  // An advisor whose account has been switched off has left, or is away:
+  // their name, number and address come off every public page at once, and
+  // the page falls back to the showroom's own contact details.
+  const { owner, ...rest } = row;
+  return {
+    ...rest,
+    owner: owner?.active ? { id: owner.id, name: owner.name, jobTitle: owner.jobTitle, phone: owner.phone, email: owner.email, avatarUrl: owner.avatarUrl } : null,
+  };
 }
 
 export async function getToyById(id: string) {

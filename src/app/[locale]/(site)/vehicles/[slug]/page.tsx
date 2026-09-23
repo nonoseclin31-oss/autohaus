@@ -24,7 +24,7 @@ import {
   EMISSION_CLASSES, SEGMENTS, COLORS, EQUIPMENT, EQUIPMENT_GROUPS, equipmentLabel,
   label, type Locale as TaxLocale,
 } from "@/lib/taxonomy";
-import { parseJsonArray, COMPANY, cn } from "@/lib/utils";
+import { parseJsonArray, cn } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 

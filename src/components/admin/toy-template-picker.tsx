@@ -6,7 +6,8 @@ import Link from "next/link";
 import { getDictionary, localePath, type Locale } from "@/i18n";
 import { deleteToyTemplate } from "@/app/actions/toys";
 import { label, TOY_KINDS, type Locale as TaxLocale } from "@/lib/taxonomy";
-import { IconLayers, IconSearch, IconTrash, IconX, IconCheck } from "@/components/icons";
+import { IconLayers, IconSearch, IconX, IconCheck } from "@/components/icons";
+import { ConfirmSubmit } from "./confirm-submit";
 import { cn } from "@/lib/utils";
 
 export type PickableToyTemplate = {
@@ -142,13 +143,7 @@ export function ToyTemplatePicker({
                     <form action={deleteToyTemplate}>
                       <input type="hidden" name="id" value={template.id} />
                       <input type="hidden" name="locale" value={locale} />
-                      <button
-                        type="submit"
-                        aria-label={`${t.common.delete} — ${template.name}`}
-                        className="cursor-pointer rounded-sm p-1.5 text-subtle transition-colors duration-200 hover:bg-red/10 hover:text-red"
-                      >
-                        <IconTrash size={15} />
-                      </button>
+                      <ConfirmSubmit compact label={`${t.common.delete} — ${template.name}`} confirm={t.admin.confirmDelete} />
                     </form>
                   ) : null}
                 </div>

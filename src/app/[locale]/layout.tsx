@@ -97,7 +97,7 @@ export default async function LocaleLayout({
           href="#main"
           className="sr-only focus:not-sr-only focus:fixed focus:start-4 focus:top-4 focus:z-[80] focus:rounded-sm focus:bg-red focus:px-4 focus:py-2 focus:font-semibold focus:text-white"
         >
-          Skip to content
+          {getDictionary(locale).common.skipToContent}
         </a>
         {children}
       </body>

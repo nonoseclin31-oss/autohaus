@@ -286,7 +286,7 @@ export async function getRentalVehicles(locale: Locale, take = 12, sort?: string
  * The finance overrides travel with them so the simulator quotes a car on its
  * own terms when it has any.
  */
-export async function getQuotableVehicles(locale: Locale) {
+export async function getQuotableVehicles() {
   const rows = await prisma.vehicle.findMany({
     where: {
       published: true,
@@ -332,14 +332,23 @@ export async function getSimilarVehicles(
 }
 
 export async function getVehicleBySlug(slug: string) {
-  return prisma.vehicle.findUnique({
+  const row = await prisma.vehicle.findUnique({
     where: { slug },
     include: {
       images: { orderBy: [{ isCover: "desc" }, { position: "asc" }] },
       translations: true,
-      owner: { select: { id: true, name: true, jobTitle: true, phone: true, email: true, avatarUrl: true } },
+      owner: { select: { id: true, name: true, jobTitle: true, phone: true, email: true, avatarUrl: true, active: true } },
     },
   });
+  if (!row) return null;
+  // An advisor whose account has been switched off has left, or is away:
+  // their name, number and address come off every public page at once, and
+  // the page falls back to the showroom's own contact details.
+  const { owner, ...rest } = row;
+  return {
+    ...rest,
+    owner: owner?.active ? { id: owner.id, name: owner.name, jobTitle: owner.jobTitle, phone: owner.phone, email: owner.email, avatarUrl: owner.avatarUrl } : null,
+  };
 }
 
 export async function getVehicleById(id: string) {

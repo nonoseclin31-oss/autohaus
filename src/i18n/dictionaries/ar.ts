@@ -19,6 +19,8 @@ const ar: Dictionary = {
     listingSuffix: "مفحوصة ومعتمدة وجاهزة للطريق. التوصيل إلى أنحاء العالم.",
   },
   nav: {
+    mainNav: "التنقل الرئيسي",
+    closeMenu: "إغلاق القائمة",
     home: "الرئيسية",
     vehicles: "السيارات",
     rental: "التأجير طويل الأمد",
@@ -45,6 +47,8 @@ const ar: Dictionary = {
     getOffer: "احصل على عرضي",
   },
   common: {
+    skipToContent: "انتقل إلى المحتوى",
+    pagination: "التنقل بين الصفحات",
     search: "بحث",
     filters: "عوامل التصفية",
     reset: "إعادة ضبط",
@@ -95,8 +99,8 @@ const ar: Dictionary = {
     heroSubtitle:
       "سيارات فاخرة ورياضية مختارة بعناية وفق المعايير الألمانية. اشترِ السيارة أو احصل عليها بتأجير طويل الأمد شامل كل الخدمات.",
     statVehicles: "سيارة متوفرة",
-    statYears: "سنوات من الخبرة",
-    statClients: "عميل تم تسليمه",
+    statBrands: "علامة تجارية في المخزون",
+    statChecks: "نقطة فحص",
     statDelivery: "توصيل عالمي",
     // Shown as the figure above the label, where the other three are
     // numbers — so it has to stay short enough to sit at that size.
@@ -311,6 +315,7 @@ const ar: Dictionary = {
     a5: "الشركات وأصحاب المهن الحرة والأفراد المقيمون في الاتحاد الأوروبي، مع مراعاة الموافقة الائتمانية المعتادة.",
   },
   forms: {
+    tooMany: "لقد أرسلت إلينا عدة طلبات بالفعل. سيتواصل معك فريقنا في أقرب وقت.",
     firstName: "الاسم الأول",
     lastName: "اسم العائلة",
     email: "البريد الإلكتروني",
@@ -383,6 +388,7 @@ const ar: Dictionary = {
     cookies: "إعدادات ملفات تعريف الارتباط",
   },
   auth: {
+    locked: "محاولات كثيرة جدًا. حفاظًا على الأمان، تم إيقاف تسجيل الدخول لمدة 15 دقيقة.",
     signIn: "تسجيل الدخول",
     signInSubtitle: "دخول الموظفين إلى نظام إدارة أوتوهاوس موشن.",
     email: "البريد الإلكتروني",
@@ -397,6 +403,12 @@ const ar: Dictionary = {
     forbidden: "لا تملك صلاحية الوصول إلى هذا القسم.",
   },
   admin: {
+    // The tab bar at the foot of the back office on a phone.
+    dockHome: "الرئيسية",
+    dockLeads: "الطلبات",
+    dockMore: "المزيد",
+    confirmDelete: "تأكيد الحذف",
+    newLeadsBadge: "{n} جديد",
     backOffice: "نظام الإدارة",
     dashboard: "لوحة التحكم",
     vehicles: "السيارات",
@@ -420,6 +432,16 @@ const ar: Dictionary = {
     settingsRegisterNumber: "رقم السجل",
     settingsManagingDirector: "المدير العام",
     settingsVatId: "رقم التعريف الضريبي",
+    settingsHeaderPhone: "إظهار هذا الرقم في رأس الموقع",
+    settingsHeaderPhoneHelp: "عند إلغاء التحديد يختفي الرقم من رأس الموقع ومن قائمة الهاتف، ويبقى في التذييل وصفحة الاتصال.",
+    aboutTextsTitle: "صفحة من نحن — تقديم الشركة",
+    aboutTextsHelp: "الفقرتان اللتان تقدّمان الشركة في أعلى صفحة من نحن. لا يتغير باقي الصفحة.",
+    aboutTextsFirst: "الفقرة الأولى",
+    aboutTextsSecond: "الفقرة الثانية",
+    aboutTextsRestore: "استعادة النص الأصلي",
+    aboutTextsEdited: "معدّل",
+    aboutTextsTranslationsHelp: "تظهر كل لغة كما كُتبت تمامًا. إذا غيّرت معنى النص، فحدّث اللغات الأخرى أيضًا.",
+    aboutTextsSaved: "تم تحديث صفحة من نحن",
     profile: "ملفي الشخصي",
     viewSite: "عرض الموقع",
     welcome: "مرحباً بعودتك",

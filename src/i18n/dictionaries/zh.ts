@@ -19,6 +19,8 @@ const zh: Dictionary = {
     listingSuffix: "已检测认证，可立即上路。配送至全球。",
   },
   nav: {
+    mainNav: "主导航",
+    closeMenu: "关闭菜单",
     home: "首页",
     vehicles: "车辆",
     rental: "长期租赁",
@@ -45,6 +47,8 @@ const zh: Dictionary = {
     getOffer: "获取我的方案",
   },
   common: {
+    skipToContent: "跳至正文",
+    pagination: "分页",
     search: "搜索",
     filters: "筛选",
     reset: "重置",
@@ -95,8 +99,8 @@ const zh: Dictionary = {
     heroSubtitle:
       "精挑细选的高端与性能车辆，按德国标准全面检测。可直接购买，也可选择全包式长期租赁。",
     statVehicles: "现车库存",
-    statYears: "年行业经验",
-    statClients: "已交付客户",
+    statBrands: "在售品牌",
+    statChecks: "项检测",
     statDelivery: "全球配送",
     // Shown as the figure above the label, where the other three are
     // numbers — so it has to stay short enough to sit at that size.
@@ -311,6 +315,7 @@ const zh: Dictionary = {
     a5: "在欧盟境内的企业、自雇人士及个人客户均可申请，需通过常规资信审核。",
   },
   forms: {
+    tooMany: "您已提交多次咨询，我们的团队会尽快回复您。",
     firstName: "名",
     lastName: "姓",
     email: "电子邮箱",
@@ -383,6 +388,7 @@ const zh: Dictionary = {
     cookies: "Cookie 设置",
   },
   auth: {
+    locked: "尝试次数过多。为保障安全，登录已暂停 15 分钟。",
     signIn: "登录",
     signInSubtitle: "Autohaus Motion 员工后台入口。",
     email: "电子邮箱",
@@ -397,6 +403,12 @@ const zh: Dictionary = {
     forbidden: "您没有访问该区域的权限。",
   },
   admin: {
+    // The tab bar at the foot of the back office on a phone.
+    dockHome: "工作台",
+    dockLeads: "咨询",
+    dockMore: "更多",
+    confirmDelete: "确认删除",
+    newLeadsBadge: "{n} 条新咨询",
     backOffice: "后台",
     dashboard: "工作台",
     vehicles: "车辆管理",
@@ -420,6 +432,16 @@ const zh: Dictionary = {
     settingsRegisterNumber: "登记号",
     settingsManagingDirector: "总经理",
     settingsVatId: "增值税识别号",
+    settingsHeaderPhone: "在网站页眉中显示此号码",
+    settingsHeaderPhoneHelp: "取消勾选后，号码将从页眉和手机菜单中移除，但仍保留在页脚和联系页面。",
+    aboutTextsTitle: "“关于我们”页面 — 公司介绍",
+    aboutTextsHelp: "“关于我们”页面顶部介绍公司的两个段落。页面其余部分不受影响。",
+    aboutTextsFirst: "第一段",
+    aboutTextsSecond: "第二段",
+    aboutTextsRestore: "恢复原始文本",
+    aboutTextsEdited: "已修改",
+    aboutTextsTranslationsHelp: "每种语言都按您填写的内容原样显示。如果修改了内容含义，请同时更新其他语言。",
+    aboutTextsSaved: "“关于我们”页面已更新",
     profile: "我的资料",
     viewSite: "查看网站",
     welcome: "欢迎回来",

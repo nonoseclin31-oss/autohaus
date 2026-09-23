@@ -62,13 +62,24 @@ export default async function AdminAboutTeamPage({
           <IconInfo size={16} className="mt-0.5 shrink-0" />
           {t.admin.teamConsent}
         </p>
-        <Link
-          href={localePath(locale, "/about")}
-          className="mt-3 inline-flex cursor-pointer items-center gap-1.5 text-sm font-semibold text-red transition-colors duration-200 hover:underline"
-        >
-          {t.admin.viewSite}
-          <IconArrowRight size={15} />
-        </Link>
+        <div className="mt-3 flex flex-wrap gap-x-6 gap-y-1">
+          <Link
+            href={localePath(locale, "/about")}
+            className="inline-flex min-h-11 cursor-pointer items-center gap-1.5 text-sm font-semibold text-red transition-colors duration-200 hover:underline"
+          >
+            {t.admin.viewSite}
+            <IconArrowRight size={15} />
+          </Link>
+          {/* The company paragraphs of the same page live with the company
+              details; this is where someone arranging the page looks first. */}
+          <Link
+            href={`${localePath(locale, "/admin/settings")}#about-texts`}
+            className="inline-flex min-h-11 cursor-pointer items-center gap-1.5 text-sm font-semibold text-muted transition-colors duration-200 hover:text-fg"
+          >
+            {t.admin.aboutTextsTitle}
+            <IconArrowRight size={15} />
+          </Link>
+        </div>
       </div>
 
       <AboutTeam locale={locale} people={people} shown={shown} />

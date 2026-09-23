@@ -61,9 +61,21 @@ export function LeadForm({
     );
   }
 
+  // After an error the form is redrawn with what the visitor had typed:
+  // React empties a form once its action has run, error or not.
+  const kept = state.status === "error" ? state.values : undefined;
+
   return (
-    <form action={action} className="space-y-4">
+    <form key={state.attempt ?? "fresh"} action={action} className="relative space-y-4">
       <input type="hidden" name="type" value={type} />
+      {/* A field no person sees or reaches: clipped to nothing where it stands
+          (moving it off-screen would push the page sideways in Arabic), out of
+          the tab order, hidden from screen readers and from autofill. Only a
+          script fills it. */}
+      <div aria-hidden="true" className="sr-only">
+        <label htmlFor="lf-website">Website</label>
+        <input id="lf-website" name="website" type="text" tabIndex={-1} autoComplete="off" defaultValue="" />
+      </div>
       <input type="hidden" name="locale" value={locale} />
       {vehicleId ? <input type="hidden" name="vehicleId" value={vehicleId} /> : null}
       {toyId ? <input type="hidden" name="toyId" value={toyId} /> : null}
@@ -96,7 +108,7 @@ export function LeadForm({
           className="flex items-start gap-2 rounded-sm border border-red/40 bg-red/10 px-3 py-2.5 text-sm text-fg"
         >
           <IconAlert size={16} className="mt-0.5 shrink-0 text-red" />
-          {t.forms.errorTitle}
+          {state.message === "rate" ? t.forms.tooMany : t.forms.errorTitle}
         </p>
       ) : null}
 
@@ -105,13 +117,13 @@ export function LeadForm({
           <label htmlFor="lf-first" className="label">
             {t.forms.firstName} <span className="text-red">*</span>
           </label>
-          <input id="lf-first" name="firstName" required maxLength={80} autoComplete="given-name" className="input" />
+          <input id="lf-first" name="firstName" defaultValue={kept?.firstName} required maxLength={80} autoComplete="given-name" className="input" />
         </div>
         <div>
           <label htmlFor="lf-last" className="label">
             {t.forms.lastName} <span className="text-red">*</span>
           </label>
-          <input id="lf-last" name="lastName" required maxLength={80} autoComplete="family-name" className="input" />
+          <input id="lf-last" name="lastName" defaultValue={kept?.lastName} required maxLength={80} autoComplete="family-name" className="input" />
         </div>
       </div>
 
@@ -120,13 +132,13 @@ export function LeadForm({
           <label htmlFor="lf-email" className="label">
             {t.forms.email} <span className="text-red">*</span>
           </label>
-          <input id="lf-email" name="email" type="email" required maxLength={160} autoComplete="email" className="input" />
+          <input id="lf-email" name="email" defaultValue={kept?.email} type="email" required maxLength={160} autoComplete="email" className="input" />
         </div>
         <div>
           <label htmlFor="lf-phone" className="label">
             {t.forms.phone} <span className="text-subtle normal-case">({t.common.optional})</span>
           </label>
-          <input id="lf-phone" name="phone" type="tel" maxLength={40} autoComplete="tel" className="input" />
+          <input id="lf-phone" name="phone" defaultValue={kept?.phone} type="tel" maxLength={40} autoComplete="tel" className="input" />
         </div>
       </div>
 
@@ -135,7 +147,7 @@ export function LeadForm({
           <label htmlFor="lf-company" className="label">
             {t.forms.company} <span className="text-subtle normal-case">({t.common.optional})</span>
           </label>
-          <input id="lf-company" name="company" maxLength={120} autoComplete="organization" className="input" />
+          <input id="lf-company" name="company" defaultValue={kept?.company} maxLength={120} autoComplete="organization" className="input" />
         </div>
       ) : null}
 
@@ -144,6 +156,7 @@ export function LeadForm({
         <textarea
           id="lf-message"
           name="message"
+          defaultValue={kept?.message}
           maxLength={4000}
           rows={compact ? 3 : 5}
           placeholder={t.forms.messagePlaceholder}

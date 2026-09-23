@@ -284,10 +284,16 @@ model Lead {
   assignedToId String?
   assignedTo   User?   @relation("LeadAssignee", fields: [assignedToId], references: [id], onDelete: SetNull)
 
+  /// A keyed hash of the connection the enquiry came from — never the
+  /// address itself. Only there to notice one source sending dozens of
+  /// enquiries in a few minutes, which is a script and not a customer.
+  sourceHash String?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([status, createdAt])
+  @@index([sourceHash, createdAt])
 }
 
 model ActivityLog {

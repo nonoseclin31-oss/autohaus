@@ -17,6 +17,8 @@ const en = {
     listingSuffix: "Inspected, certified and ready to drive. Worldwide delivery.",
   },
   nav: {
+    mainNav: "Main navigation",
+    closeMenu: "Close menu",
     home: "Home",
     vehicles: "Vehicles",
     rental: "Long-term rental",
@@ -43,6 +45,8 @@ const en = {
     getOffer: "Get my offer",
   },
   common: {
+    skipToContent: "Skip to content",
+    pagination: "Pagination",
     search: "Search",
     filters: "Filters",
     reset: "Reset",
@@ -93,8 +97,8 @@ const en = {
     heroSubtitle:
       "Hand-picked premium and performance vehicles, inspected to German standards. Buy outright or drive with an all-inclusive long-term rental.",
     statVehicles: "Vehicles in stock",
-    statYears: "Years of expertise",
-    statClients: "Clients delivered",
+    statBrands: "Brands in stock",
+    statChecks: "Inspection points",
     statDelivery: "Worldwide delivery",
     // Shown as the figure above the label, where the other three are
     // numbers — so it has to stay short enough to sit at that size.
@@ -309,6 +313,7 @@ const en = {
     a5: "Companies, self-employed professionals and private drivers resident in the EU, subject to standard credit approval.",
   },
   forms: {
+    tooMany: "You have already sent several requests. Our team will get back to you shortly.",
     firstName: "First name",
     lastName: "Last name",
     email: "Email",
@@ -381,6 +386,7 @@ const en = {
     cookies: "Cookie settings",
   },
   auth: {
+    locked: "Too many attempts. For your security, sign-in is paused for 15 minutes.",
     signIn: "Sign in",
     signInSubtitle: "Staff access to the Autohaus Motion back office.",
     email: "Email address",
@@ -395,6 +401,12 @@ const en = {
     forbidden: "You do not have permission to access this area.",
   },
   admin: {
+    // The tab bar at the foot of the back office on a phone.
+    dockHome: "Overview",
+    dockLeads: "Leads",
+    dockMore: "More",
+    confirmDelete: "Confirm deletion",
+    newLeadsBadge: "{n} new",
     backOffice: "Back office",
     dashboard: "Dashboard",
     vehicles: "Vehicles",
@@ -418,6 +430,16 @@ const en = {
     settingsRegisterNumber: "Register number",
     settingsManagingDirector: "Managing director",
     settingsVatId: "VAT identification number",
+    settingsHeaderPhone: "Show this number in the site header",
+    settingsHeaderPhoneHelp: "Unticked, the number leaves the header and the mobile menu. It stays in the footer and on the contact page.",
+    aboutTextsTitle: "About page — company presentation",
+    aboutTextsHelp: "The two paragraphs that present the company at the top of the About page. The rest of the page is not affected.",
+    aboutTextsFirst: "First paragraph",
+    aboutTextsSecond: "Second paragraph",
+    aboutTextsRestore: "Restore the original text",
+    aboutTextsEdited: "Edited",
+    aboutTextsTranslationsHelp: "Each language is shown exactly as written. If you change what the text says, update the other languages too.",
+    aboutTextsSaved: "About page updated",
     profile: "My profile",
     viewSite: "View site",
     welcome: "Welcome back",

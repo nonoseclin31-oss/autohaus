@@ -1,6 +1,6 @@
-import { BrandLoader } from "@/components/brand-loader";
+import { UniverseLoader } from "@/components/universe-loader";
 
 /** Inside the admin shell, so the sidebar stays put while a page loads. */
 export default function Loading() {
-  return <BrandLoader className="min-h-[70vh] rounded-[4px]" />;
+  return <UniverseLoader className="min-h-[70vh] rounded-[4px]" />;
 }

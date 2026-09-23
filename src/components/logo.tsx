@@ -28,7 +28,6 @@ export function Logo({
   variant = "wordmark",
   size = "md",
   heightClass,
-  priority: _priority = false,
   className,
   alt = "Autohaus Motion",
 }: {

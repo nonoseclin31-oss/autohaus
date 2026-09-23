@@ -297,7 +297,7 @@ export function CatalogOrder({
         )}
       </section>
 
-      <div className="sticky bottom-0 z-20 -mx-4 flex items-center justify-end gap-3 border-t border-line bg-canvas/90 px-4 py-3 backdrop-blur-xl sm:-mx-6 sm:px-6">
+      <div className="sticky bottom-[var(--admin-dock,0px)] z-20 -mx-4 flex items-center justify-end gap-3 border-t border-line bg-canvas/90 px-4 py-3 backdrop-blur-xl sm:-mx-6 sm:px-6">
         {state.status === "saved" ? (
           <span className="me-auto flex items-center gap-1.5 text-sm font-medium text-ok">
             <IconCheck size={15} />

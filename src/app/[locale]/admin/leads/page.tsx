@@ -6,7 +6,8 @@ import { can } from "@/lib/rbac";
 import { prisma } from "@/lib/prisma";
 import { label, LEAD_TYPES, LEAD_STATUS, optionsFor, type Locale as TaxLocale } from "@/lib/taxonomy";
 import { updateLead, deleteLead } from "@/app/actions/leads";
-import { IconInbox, IconMail, IconPhone, IconTrash, IconCar, IconCheck, IconCompass } from "@/components/icons";
+import { IconInbox, IconMail, IconPhone, IconCar, IconCheck, IconCompass } from "@/components/icons";
+import { ConfirmSubmit } from "@/components/admin/confirm-submit";
 import { cn } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
@@ -260,14 +261,12 @@ export default async function AdminLeadsPage({
 
                     <div className="flex justify-end gap-2">
                       {can(user.role, "lead.delete") ? (
-                        <button
-                          type="submit"
+                        <ConfirmSubmit
+                          label={t.common.delete}
+                          confirm={t.admin.confirmDelete}
                           formAction={deleteLead}
-                          className="btn btn-danger btn-sm cursor-pointer"
-                        >
-                          <IconTrash size={14} />
-                          {t.common.delete}
-                        </button>
+                          className="me-auto"
+                        />
                       ) : null}
                       <button type="submit" className="btn btn-primary btn-sm cursor-pointer">
                         <IconCheck size={14} />

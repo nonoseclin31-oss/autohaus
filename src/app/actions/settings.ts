@@ -5,8 +5,12 @@ import { prisma } from "@/lib/prisma";
 import { getCurrentUser, logActivity } from "@/lib/auth";
 import { can } from "@/lib/rbac";
 import { EDITABLE_KEYS, settingKey, type EditableKey } from "@/lib/company";
-import { toStr } from "@/lib/utils";
-import { resolveLocale } from "@/i18n";
+import {
+  ABOUT_TEXTS, ABOUT_TEXT_MAX, HEADER_PHONE_KEY, aboutTextKey,
+} from "@/lib/site-settings";
+import { LOCALES } from "@/lib/taxonomy";
+import { toBool, toStr } from "@/lib/utils";
+import { getDictionary, resolveLocale } from "@/i18n";
 
 export type SettingsState = {
   status: "idle" | "error" | "success";
@@ -59,16 +63,24 @@ export async function saveCompanySettings(
     return { status: "error", message: "validation", fieldErrors };
   }
 
+  // A checkbox sends nothing when it is unticked, so absence means "hide".
+  const headerPhone = toBool(formData.get("headerPhone")) ? "1" : "0";
+
   try {
-    await Promise.all(
-      EDITABLE_KEYS.map((key) =>
+    await Promise.all([
+      ...EDITABLE_KEYS.map((key) =>
         prisma.setting.upsert({
           where: { key: settingKey(key) },
           create: { key: settingKey(key), value: values[key] ?? "" },
           update: { value: values[key] ?? "" },
         }),
       ),
-    );
+      prisma.setting.upsert({
+        where: { key: HEADER_PHONE_KEY },
+        create: { key: HEADER_PHONE_KEY, value: headerPhone },
+        update: { value: headerPhone },
+      }),
+    ]);
     await logActivity(user!.id, "settings.updated", "Setting", null, `${values.city} · ${values.phone}`);
   } catch {
     return { status: "error", message: "server" };
@@ -77,6 +89,63 @@ export async function saveCompanySettings(
   // The details sit in the header, the footer, the contact page, the legal
   // pages and the structured data, so everything public has to be rebuilt.
   revalidatePath("/", "layout");
+  revalidatePath(`/${locale}/admin/settings`);
+  return { status: "success" };
+}
+
+/* ─────────────── The About page's presentation paragraphs ─────────────── */
+
+export type AboutTextsState = {
+  status: "idle" | "error" | "success";
+  message?: "forbidden" | "too-long" | "server";
+};
+
+/**
+ * The two paragraphs that present the company on the About page, in each
+ * language. Administrators only — the same permission as the company details.
+ *
+ * Only a text that differs from the original is stored. A field emptied, or
+ * put back to the original wording, removes the stored copy, so the page
+ * returns to the text the site ships with — and picks up any later
+ * correction of it — rather than freezing an old copy of the default.
+ */
+export async function saveAboutTexts(
+  _prev: AboutTextsState,
+  formData: FormData,
+): Promise<AboutTextsState> {
+  const user = await getCurrentUser();
+  if (!user || !can(user.role, "settings.manage")) return { status: "error", message: "forbidden" };
+
+  const locale = resolveLocale(toStr(formData.get("locale")));
+  const writes: { key: string; value: string | null }[] = [];
+
+  for (const loc of LOCALES) {
+    const original = getDictionary(loc).about;
+    for (const text of ABOUT_TEXTS) {
+      const raw = formData.get(`${text}:${loc}`);
+      if (raw === null) continue;
+      // Paragraph breaks are kept; runs of spaces and stray blank lines are not.
+      const value = String(raw).replace(/\r\n?/g, "\n").replace(/[ \t]+/g, " ").replace(/\n{3,}/g, "\n\n").trim();
+      if (value.length > ABOUT_TEXT_MAX) return { status: "error", message: "too-long" };
+      writes.push({ key: aboutTextKey(text, loc), value: value && value !== original[text].trim() ? value : null });
+    }
+  }
+
+  try {
+    await Promise.all(
+      writes.map(({ key, value }) =>
+        value === null
+          ? prisma.setting.deleteMany({ where: { key } })
+          : prisma.setting.upsert({ where: { key }, create: { key, value }, update: { value } }),
+      ),
+    );
+    const changed = writes.filter((w) => w.value !== null).length;
+    await logActivity(user.id, "settings.updated", "Setting", null, `About page: ${changed} rewritten paragraph(s)`);
+  } catch {
+    return { status: "error", message: "server" };
+  }
+
+  for (const loc of LOCALES) revalidatePath(`/${loc}/about`);
   revalidatePath(`/${locale}/admin/settings`);
   return { status: "success" };
 }

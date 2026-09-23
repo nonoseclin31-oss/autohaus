@@ -3,7 +3,11 @@ import { getDictionary, resolveLocale, localePath, formatDate } from "@/i18n";
 import { getCurrentUser } from "@/lib/auth";
 import { can } from "@/lib/rbac";
 import { prisma } from "@/lib/prisma";
-import { IconActivity, IconUser } from "@/components/icons";
+import {
+  IconActivity, IconUser, IconCar, IconCompass, IconInbox, IconKey, IconSettings, IconLayers,
+} from "@/components/icons";
+import { activityFamily, activityLabel, showSummary } from "@/lib/activity-labels";
+import { cn } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
@@ -34,39 +38,44 @@ export default async function AdminActivityPage({ params }: { params: Promise<{ 
 
       {entries.length ? (
         <ol className="overflow-hidden rounded-sm border border-line bg-surface">
-          {entries.map((entry) => (
-            <li
-              key={entry.id}
-              className="flex items-start gap-3 border-b border-line px-4 py-3 last:border-b-0"
-            >
-              <span className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full bg-surface-2 text-subtle">
-                <IconUser size={14} />
-              </span>
-
-              <div className="min-w-0 flex-1">
-                <p className="text-sm">
-                  <strong className="font-semibold text-fg">{entry.user?.name ?? "—"}</strong>{" "}
-                  <code className="rounded-sm bg-surface-2 px-1.5 py-0.5 font-mono text-xs text-muted">
-                    {entry.action}
-                  </code>
-                  {entry.summary ? <span className="ms-1.5 text-muted">{entry.summary}</span> : null}
-                </p>
-                <p className="mt-0.5 text-xs text-subtle">
-                  {entry.entity}
-                  {entry.entityId ? ` · ${entry.entityId.slice(0, 10)}` : ""}
-                </p>
-              </div>
-
-              <time
-                className="shrink-0 text-xs text-subtle tabular-nums"
-                dateTime={entry.createdAt.toISOString()}
+          {entries.map((entry) => {
+            const family = activityFamily(entry.action, entry.entity);
+            const Icon = FAMILY_ICON[family];
+            return (
+              <li
+                key={entry.id}
+                className="flex items-start gap-3 border-b border-line px-4 py-3 last:border-b-0"
               >
-                {formatDate(entry.createdAt, locale, {
-                  day: "2-digit", month: "2-digit", year: "2-digit", hour: "2-digit", minute: "2-digit",
-                })}
-              </time>
-            </li>
-          ))}
+                <span
+                  className={cn(
+                    "mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full",
+                    entry.action === "auth.failed" ? "bg-red/12 text-red" : family === "toy" ? "bg-gold-wash text-bronze" : "bg-surface-2 text-subtle",
+                  )}
+                >
+                  <Icon size={14} />
+                </span>
+
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm">
+                    <strong className="font-semibold text-fg">{activityLabel(entry.action, entry.entity, locale)}</strong>
+                    {showSummary(entry.action, entry.summary) ? (
+                      <span className="ms-1.5 break-words text-muted">· {entry.summary}</span>
+                    ) : null}
+                  </p>
+                  <p className="mt-0.5 text-xs text-subtle">{entry.user?.name ?? "—"}</p>
+                </div>
+
+                <time
+                  className="shrink-0 text-xs text-subtle tabular-nums"
+                  dateTime={entry.createdAt.toISOString()}
+                >
+                  {formatDate(entry.createdAt, locale, {
+                    day: "2-digit", month: "2-digit", year: "2-digit", hour: "2-digit", minute: "2-digit",
+                  })}
+                </time>
+              </li>
+            );
+          })}
         </ol>
       ) : (
         <div className="flex flex-col items-center gap-3 rounded-sm border border-line bg-surface px-6 py-20 text-center">
@@ -77,3 +86,14 @@ export default async function AdminActivityPage({ params }: { params: Promise<{ 
     </div>
   );
 }
+
+/** An icon per kind of entry, so the journal can be scanned before it is read. */
+const FAMILY_ICON = {
+  vehicle: IconCar,
+  toy: IconCompass,
+  lead: IconInbox,
+  user: IconUser,
+  auth: IconKey,
+  settings: IconSettings,
+  page: IconLayers,
+} as const;

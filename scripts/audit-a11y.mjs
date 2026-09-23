@@ -120,6 +120,9 @@ for (const locale of LOCALES) {
           if (r.width <= 1 && r.height <= 1) continue;
           const style = getComputedStyle(el);
           if (style.visibility === "hidden" || style.display === "none") continue;
+          // A disabled control cannot take focus at all, so it has no focus
+          // ring to show — it is not a keyboard stop, and not a finding.
+          if (el.disabled || el.getAttribute("aria-disabled") === "true") continue;
           const hit = hitArea(el);
           if ((hit.width < min || hit.height < min) && !spacedOut(el, interactive)) {
             small.push({

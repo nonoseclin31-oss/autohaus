@@ -10,6 +10,7 @@ import { slugify, generateReference, toInt, toFloat, toStr, toBool, toDate, pars
 import { resolveLocale } from "@/i18n";
 import { TOY_HERO_RANK, TOYS_GRID_SIZE } from "@/lib/toys";
 import { toyPayloadFromForm } from "@/lib/toy-templates";
+import { isStoredImageUrl } from "@/lib/storage";
 
 export type ToyFormState = {
   status: "idle" | "error" | "success";
@@ -206,7 +207,15 @@ export async function saveToy(
   const ownerInput = toStr(formData.get("ownerId"));
   const ownerId = can(user.role, "vehicle.update.any") ? ownerInput : isUpdate ? undefined : user.id;
 
-  const images = parseJsonArray<ImagePayload>(toStr(formData.get("images")));
+  // Photos are our own uploads. A URL from anywhere else is not published as
+  // if it were ours — but one already on this listing is always kept, so a
+  // save can never make a listing lose the photos it has.
+  const kept = isUpdate
+    ? new Set((await prisma.toyImage.findMany({ where: { toyId: id! }, select: { url: true } })).map((row) => row.url))
+    : new Set<string>();
+  const images = parseJsonArray<ImagePayload>(toStr(formData.get("images"))).filter(
+    (image) => typeof image?.url === "string" && (kept.has(image.url) || isStoredImageUrl(image.url)),
+  );
 
   try {
     let toyId: string;

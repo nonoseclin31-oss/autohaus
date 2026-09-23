@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { createSession, getCurrentUser, hashPassword, verifyPassword, logActivity } from "@/lib/auth";
 import { toStr } from "@/lib/utils";
 import { resolveLocale, isLocale } from "@/i18n";
+import { isStoredImageUrl } from "@/lib/storage";
 
 /**
  * Self-service profile editing. Available to every signed-in staff member
@@ -36,7 +37,10 @@ export async function updateProfile(
   const email = toStr(formData.get("email"))?.toLowerCase();
   const phone = toStr(formData.get("phone"));
   const jobTitle = toStr(formData.get("jobTitle"));
-  const avatarUrl = toStr(formData.get("avatarUrl"));
+  // Only a photo that went through our own upload: a pasted link to another
+  // site would be shown on the public team page as if it were ours.
+  const avatarInput = toStr(formData.get("avatarUrl"));
+  const avatarUrl = avatarInput && isStoredImageUrl(avatarInput) ? avatarInput : null;
   const localeInput = toStr(formData.get("preferredLocale"));
   const uiLocale = resolveLocale(toStr(formData.get("locale")));
 

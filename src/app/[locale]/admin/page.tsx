@@ -10,6 +10,7 @@ import {
   IconEuro, IconEye, IconPlus, IconArrowRight, IconActivity,
 } from "@/components/icons";
 import { cn } from "@/lib/utils";
+import { activityLabel, showSummary } from "@/lib/activity-labels";
 
 export const dynamic = "force-dynamic";
 
@@ -228,9 +229,9 @@ export default async function AdminDashboard({ params }: { params: Promise<{ loc
             {recentActivity.map((entry) => (
               <li key={entry.id} className="flex items-baseline justify-between gap-3 px-5 py-2.5 text-sm">
                 <span className="min-w-0">
-                  <strong className="font-semibold text-fg">{entry.user?.name ?? "—"}</strong>{" "}
-                  <span className="text-muted">{entry.action}</span>{" "}
-                  {entry.summary ? <span className="text-subtle">— {entry.summary}</span> : null}
+                  <strong className="font-semibold text-fg">{activityLabel(entry.action, entry.entity, locale)}</strong>{" "}
+                  {showSummary(entry.action, entry.summary) ? <span className="text-subtle">· {entry.summary}</span> : null}
+                  <span className="block text-xs text-subtle">{entry.user?.name ?? "—"}</span>
                 </span>
                 <time className="shrink-0 text-xs text-subtle tabular-nums" dateTime={entry.createdAt.toISOString()}>
                   {formatDate(entry.createdAt, locale, { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" })}

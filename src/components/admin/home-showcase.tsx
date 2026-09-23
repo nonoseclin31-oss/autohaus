@@ -159,7 +159,7 @@ export function HomeShowcase({
                       onClick={() => move(index, -1)}
                       disabled={index === 0}
                       aria-label={`${t.admin.homeMoveUp} — ${t.admin.homeSlot} ${index + 1}`}
-                      className="flex size-9 cursor-pointer items-center justify-center rounded-sm border border-line text-muted transition-colors duration-200 hover:border-fg hover:text-fg disabled:cursor-not-allowed disabled:opacity-35"
+                      className="flex size-11 md:size-9 cursor-pointer items-center justify-center rounded-sm border border-line text-muted transition-colors duration-200 hover:border-fg hover:text-fg disabled:cursor-not-allowed disabled:opacity-35"
                     >
                       <IconChevronDown size={15} className="rotate-180" />
                     </button>
@@ -168,7 +168,7 @@ export function HomeShowcase({
                       onClick={() => move(index, 1)}
                       disabled={index === slots.length - 1}
                       aria-label={`${t.admin.homeMoveDown} — ${t.admin.homeSlot} ${index + 1}`}
-                      className="flex size-9 cursor-pointer items-center justify-center rounded-sm border border-line text-muted transition-colors duration-200 hover:border-fg hover:text-fg disabled:cursor-not-allowed disabled:opacity-35"
+                      className="flex size-11 md:size-9 cursor-pointer items-center justify-center rounded-sm border border-line text-muted transition-colors duration-200 hover:border-fg hover:text-fg disabled:cursor-not-allowed disabled:opacity-35"
                     >
                       <IconChevronDown size={15} />
                     </button>
@@ -226,7 +226,7 @@ export function HomeShowcase({
 
       <div
         className={cn(
-          "sticky bottom-0 z-20 -mx-4 flex items-center gap-3 border-t border-line bg-canvas/90 px-4 py-3 backdrop-blur-xl sm:-mx-6 sm:px-6",
+          "sticky bottom-[var(--admin-dock,0px)] z-20 -mx-4 flex items-center gap-3 border-t border-line bg-canvas/90 px-4 py-3 backdrop-blur-xl sm:-mx-6 sm:px-6",
           "justify-end",
         )}
       >

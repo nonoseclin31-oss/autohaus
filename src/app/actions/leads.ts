@@ -5,6 +5,8 @@ import { prisma } from "@/lib/prisma";
 import { logActivity, getCurrentUser } from "@/lib/auth";
 import { can } from "@/lib/rbac";
 import { revalidatePath } from "next/cache";
+import { resolveLocale } from "@/i18n";
+import { clientFingerprint, leadFlood } from "@/lib/throttle";
 
 const leadSchema = z.object({
   type: z.enum(["SALE", "RENTAL", "CONTACT", "TRADE_IN"]).default("CONTACT"),
@@ -28,7 +30,25 @@ const leadSchema = z.object({
   forBusiness: z.boolean().default(false),
 });
 
-export type LeadFormState = { status: "idle" | "success" | "error"; message?: string };
+export type LeadFormState = {
+  status: "idle" | "success" | "error";
+  message?: string;
+  /**
+   * What was typed, sent back with an error. React clears a form after its
+   * action runs, whatever the outcome; without this a visitor who mistyped
+   * an e-mail address would lose their whole message.
+   */
+  values?: Record<string, string>;
+  /** Changes on every failed attempt, so the form redraws with the values. */
+  attempt?: number;
+};
+
+/** The visible fields the form hands back after an error. */
+const ECHOED = ["firstName", "lastName", "email", "phone", "company", "message"] as const;
+
+function echo(formData: FormData): Record<string, string> {
+  return Object.fromEntries(ECHOED.map((key) => [key, String(formData.get(key) ?? "").slice(0, 4000)]));
+}
 
 function optional(value: FormDataEntryValue | null): string | null {
   const s = value === null ? "" : String(value).trim();
@@ -47,6 +67,11 @@ export async function submitLead(
   _prev: LeadFormState,
   formData: FormData,
 ): Promise<LeadFormState> {
+  // A field no person sees or fills. Anything typed in it came from a
+  // script; it is told the enquiry went through and nothing is stored, so it
+  // has no reason to try another way.
+  if (String(formData.get("website") ?? "").trim()) return { status: "success" };
+
   const parsed = leadSchema.safeParse({
     type: optional(formData.get("type")) ?? "CONTACT",
     firstName: String(formData.get("firstName") ?? ""),
@@ -68,12 +93,46 @@ export async function submitLead(
   });
 
   if (!parsed.success) {
-    return { status: "error", message: parsed.error.issues[0]?.message ?? "invalid" };
+    return {
+      status: "error",
+      message: parsed.error.issues[0]?.message ?? "invalid",
+      values: echo(formData),
+      attempt: Date.now(),
+    };
   }
 
   const data = parsed.data;
 
+  // One connection sending enquiry after enquiry is a script, not a buyer.
+  const fingerprint = await clientFingerprint();
+  if (await leadFlood(fingerprint)) {
+    return { status: "error", message: "rate", values: echo(formData), attempt: Date.now() };
+  }
+
   try {
+    // The same person sending the same message twice — a double tap, a
+    // resend after a slow connection — is one enquiry, not two.
+    const duplicate = await prisma.lead.findFirst({
+      where: {
+        email: data.email.toLowerCase(),
+        message: data.message ?? null,
+        vehicleId: data.vehicleId ?? null,
+        toyId: data.toyId ?? null,
+        createdAt: { gte: new Date(Date.now() - 10 * 60 * 1000) },
+      },
+      select: { id: true },
+    });
+    if (duplicate) return { status: "success" };
+
+    // The listing is named by the page, but the page is only a page: an id
+    // that does not exist (or no longer does) is dropped rather than failing
+    // the whole enquiry on a missing reference. An enquiry is about one
+    // catalogue or the other, never both.
+    const [vehicle, toy] = await Promise.all([
+      data.vehicleId ? prisma.vehicle.findUnique({ where: { id: data.vehicleId }, select: { id: true } }) : null,
+      data.toyId && !data.vehicleId ? prisma.toy.findUnique({ where: { id: data.toyId }, select: { id: true } }) : null,
+    ]);
+
     // Round-robin the lead onto an active sales advisor so nothing is orphaned.
     const advisor = await prisma.user.findFirst({
       where: { active: true, role: { in: ["SALES", "MANAGER"] } },
@@ -90,9 +149,9 @@ export async function submitLead(
         phone: data.phone,
         company: data.company,
         message: data.message,
-        locale: data.locale,
-        vehicleId: data.vehicleId,
-        toyId: data.toyId,
+        locale: resolveLocale(data.locale),
+        vehicleId: vehicle?.id ?? null,
+        toyId: toy?.id ?? null,
         rentalDuration: data.rentalDuration,
         rentalMileage: data.rentalMileage,
         // Only LLD and LOA exist; anything else is a stale or forged field.
@@ -102,13 +161,14 @@ export async function submitLead(
         purchaseOption: data.purchaseOption,
         forBusiness: data.forBusiness,
         assignedToId: advisor?.id ?? null,
+        sourceHash: fingerprint,
       },
     });
 
     await logActivity(null, "lead.created", "Lead", lead.id, `${data.firstName} ${data.lastName} — ${data.type}`);
     return { status: "success" };
   } catch {
-    return { status: "error", message: "server" };
+    return { status: "error", message: "server", values: echo(formData), attempt: Date.now() };
   }
 }
 

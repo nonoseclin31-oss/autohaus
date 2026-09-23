@@ -122,7 +122,7 @@ export default async function VehiclesPage({
               </div>
 
               {pageCount > 1 ? (
-                <nav className="mt-10 flex items-center justify-center gap-2" aria-label="Pagination">
+                <nav className="mt-10 flex items-center justify-center gap-2" aria-label={t.common.pagination}>
                   <Link
                     href={queryString(Math.max(1, page - 1))}
                     aria-disabled={page === 1}

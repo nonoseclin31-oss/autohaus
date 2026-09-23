@@ -5,7 +5,6 @@ import { getDictionary, resolveLocale } from "@/i18n";
 import { IconAlert } from "@/components/icons";
 import { getCompany } from "@/lib/company";
 import { imprintSections, privacySections, termsSections } from "@/lib/legal";
-import { COMPANY } from "@/lib/utils";
 
 const DOCS = ["imprint", "privacy", "terms"] as const;
 type Doc = (typeof DOCS)[number];

@@ -12,6 +12,7 @@ import {
 import { resolveLocale } from "@/i18n";
 import { payloadFromForm } from "@/lib/vehicle-templates";
 import { CATALOG_PIN_LIMIT, HERO_RANK, HOME_GRID_SIZE } from "@/lib/vehicles";
+import { isStoredImageUrl } from "@/lib/storage";
 
 export type VehicleFormState = {
   status: "idle" | "error" | "success";
@@ -227,6 +228,8 @@ export async function saveVehicle(
     featured: toBool(formData.get("featured")),
     location: toStr(formData.get("location")),
     soldAt: status === "SOLD" ? new Date() : null,
+    // A sold car gives up its pinned place at the top of the catalogue.
+    ...(status === "SOLD" ? { catalogRank: null } : {}),
   };
 
   // The date the catalogue's newest-first order reads. Stamped when a listing
@@ -242,7 +245,15 @@ export async function saveVehicle(
   const ownerId = can(user.role, "vehicle.update.any") ? ownerInput : isUpdate ? undefined : user.id;
 
   // ── Images ───────────────────────────────────────────────
-  const images = parseJsonArray<ImagePayload>(toStr(formData.get("images")));
+  // Photos are our own uploads. A URL from anywhere else is not published as
+  // if it were ours — but one already on this listing is always kept, so a
+  // save can never make a listing lose the photos it has.
+  const kept = isUpdate
+    ? new Set((await prisma.vehicleImage.findMany({ where: { vehicleId: id! }, select: { url: true } })).map((row) => row.url))
+    : new Set<string>();
+  const images = parseJsonArray<ImagePayload>(toStr(formData.get("images"))).filter(
+    (image) => typeof image?.url === "string" && (kept.has(image.url) || isStoredImageUrl(image.url)),
+  );
 
   try {
     let vehicleId: string;
@@ -335,7 +346,12 @@ export async function setVehicleStatus(formData: FormData): Promise<void> {
 
   await prisma.vehicle.update({
     where: { id },
-    data: { status, soldAt: status === "SOLD" ? new Date() : null },
+    data: {
+      status,
+      soldAt: status === "SOLD" ? new Date() : null,
+      // A sold car gives up its pinned place at the top of the catalogue.
+      ...(status === "SOLD" ? { catalogRank: null } : {}),
+    },
   });
 
   await logActivity(user.id, `vehicle.status.${status.toLowerCase()}`, "Vehicle", id, `${vehicle.brand} ${vehicle.model}`);

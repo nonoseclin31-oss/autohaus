@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth";
 import { can } from "@/lib/rbac";
-import { putObject, ALLOWED_IMAGE_TYPES, MAX_UPLOAD_BYTES } from "@/lib/storage";
+import { putObject, looksLikeImage, ALLOWED_IMAGE_TYPES, MAX_UPLOAD_BYTES } from "@/lib/storage";
 
 export async function POST(request: Request) {
   const user = await getCurrentUser();
@@ -33,6 +33,10 @@ export async function POST(request: Request) {
     }
     if (file.size > MAX_UPLOAD_BYTES) {
       rejected.push({ name: file.name, reason: "size" });
+      continue;
+    }
+    if (!(await looksLikeImage(file))) {
+      rejected.push({ name: file.name, reason: "type" });
       continue;
     }
 

@@ -15,8 +15,11 @@ import { IconCheck, IconSpinner, IconAlert, IconInfo } from "@/components/icons"
 export function CompanySettingsForm({
   locale,
   values,
+  headerPhone,
 }: {
   locale: Locale;
+  /** Whether the phone number currently shows in the site header. */
+  headerPhone: boolean;
   values: Record<
     | "email" | "phone" | "street" | "postalCode" | "city" | "country"
     | "registerCourt" | "registerNumber" | "managingDirector" | "vatId",
@@ -64,6 +67,19 @@ export function CompanySettingsForm({
               maxLength={40} required className="input" />
           </Field>
         </div>
+
+        <label className="flex min-h-11 cursor-pointer items-start gap-3 rounded-sm border border-line bg-surface-2 p-3 transition-colors duration-200 hover:border-line-strong">
+          <input
+            type="checkbox"
+            name="headerPhone"
+            defaultChecked={headerPhone}
+            className="mt-0.5 size-5 shrink-0 cursor-pointer accent-[var(--color-red)]"
+          />
+          <span className="min-w-0">
+            <span className="block text-sm font-medium text-fg">{t.admin.settingsHeaderPhone}</span>
+            <span className="field-help mt-0.5 block">{t.admin.settingsHeaderPhoneHelp}</span>
+          </span>
+        </label>
       </section>
 
       <section className="space-y-4 rounded-sm border border-line bg-surface p-5">

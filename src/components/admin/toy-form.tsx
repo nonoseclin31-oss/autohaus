@@ -203,7 +203,7 @@ function SaveBar({
   return (
     <div
       ref={bar}
-      className="sticky bottom-0 z-20 -mx-4 mt-8 flex items-center gap-2 border-t border-line bg-canvas/90 px-4 py-3 backdrop-blur-xl sm:-mx-6 sm:px-6 md:gap-3"
+      className="sticky bottom-[var(--admin-dock,0px)] z-20 -mx-4 mt-8 flex items-center gap-2 border-t border-line bg-canvas/90 px-4 py-3 backdrop-blur-xl sm:-mx-6 sm:px-6 md:gap-3"
     >
       <div
         ref={sheet}

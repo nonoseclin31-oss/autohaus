@@ -3,6 +3,7 @@
 import { usePathname } from "next/navigation";
 import { BrandLoader } from "./brand-loader";
 import { ToysLoader } from "./toys-loader";
+import { getDictionary, resolveLocale } from "@/i18n";
 
 /** Whether a path is inside Big Toys: /fr/big-toys, /fr/big-toys/…, any locale. */
 export function isToysPath(pathname: string): boolean {
@@ -20,7 +21,11 @@ export function isToysPath(pathname: string): boolean {
  * marine loader. Read at the moment it is shown, the address is always the
  * destination's.
  */
-export function UniverseLoader({ fullscreen = false }: { fullscreen?: boolean }) {
+export function UniverseLoader({ fullscreen = false, className }: { fullscreen?: boolean; className?: string }) {
   const pathname = usePathname() ?? "";
-  return isToysPath(pathname) ? <ToysLoader fullscreen={fullscreen} /> : <BrandLoader fullscreen={fullscreen} />;
+  if (isToysPath(pathname)) return <ToysLoader fullscreen={fullscreen} />;
+  // Loading screens receive no route parameters; the language is the first
+  // segment of the address, so a screen reader hears "Chargement…" in French.
+  const label = getDictionary(resolveLocale(pathname.split("/")[1])).common.loading;
+  return <BrandLoader fullscreen={fullscreen} label={label} className={className} />;
 }

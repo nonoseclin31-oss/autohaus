@@ -19,6 +19,8 @@ const es: Dictionary = {
     listingSuffix: "Revisado, certificado y listo para rodar. Entrega en todo el mundo.",
   },
   nav: {
+    mainNav: "Navegación principal",
+    closeMenu: "Cerrar el menú",
     home: "Inicio",
     vehicles: "Vehículos",
     rental: "Alquiler a largo plazo",
@@ -45,6 +47,8 @@ const es: Dictionary = {
     getOffer: "Obtener mi oferta",
   },
   common: {
+    skipToContent: "Ir al contenido",
+    pagination: "Paginación",
     search: "Buscar",
     filters: "Filtros",
     reset: "Restablecer",
@@ -95,8 +99,8 @@ const es: Dictionary = {
     heroSubtitle:
       "Vehículos premium y deportivos seleccionados uno a uno, revisados según estándares alemanes. En compra o en alquiler a largo plazo todo incluido.",
     statVehicles: "Vehículos en stock",
-    statYears: "Años de experiencia",
-    statClients: "Clientes entregados",
+    statBrands: "Marcas en stock",
+    statChecks: "Puntos de control",
     statDelivery: "Entrega mundial",
     // Shown as the figure above the label, where the other three are
     // numbers — so it has to stay short enough to sit at that size.
@@ -311,6 +315,7 @@ const es: Dictionary = {
     a5: "Empresas, autónomos y particulares residentes en la UE, sujeto a la aprobación financiera habitual.",
   },
   forms: {
+    tooMany: "Ya nos ha enviado varias solicitudes. Nuestro equipo le responderá lo antes posible.",
     firstName: "Nombre",
     lastName: "Apellidos",
     email: "Correo electrónico",
@@ -383,6 +388,7 @@ const es: Dictionary = {
     cookies: "Configuración de cookies",
   },
   auth: {
+    locked: "Demasiados intentos. Por seguridad, el inicio de sesión queda suspendido durante 15 minutos.",
     signIn: "Iniciar sesión",
     signInSubtitle: "Acceso del personal al back office de Autohaus Motion.",
     email: "Correo electrónico",
@@ -397,6 +403,12 @@ const es: Dictionary = {
     forbidden: "No tienes permiso para acceder a esta zona.",
   },
   admin: {
+    // The tab bar at the foot of the back office on a phone.
+    dockHome: "Panel",
+    dockLeads: "Solicitudes",
+    dockMore: "Más",
+    confirmDelete: "Confirmar eliminación",
+    newLeadsBadge: "{n} nuevas",
     backOffice: "Back office",
     dashboard: "Panel",
     vehicles: "Vehículos",
@@ -420,6 +432,16 @@ const es: Dictionary = {
     settingsRegisterNumber: "Número de registro",
     settingsManagingDirector: "Administrador",
     settingsVatId: "Número de IVA intracomunitario",
+    settingsHeaderPhone: "Mostrar este número en la cabecera del sitio",
+    settingsHeaderPhoneHelp: "Sin marcar, el número desaparece de la cabecera y del menú móvil. Se mantiene en el pie de página y en la página de contacto.",
+    aboutTextsTitle: "Página Quiénes somos — presentación de la empresa",
+    aboutTextsHelp: "Los dos párrafos que presentan la empresa al principio de la página Quiénes somos. El resto de la página no cambia.",
+    aboutTextsFirst: "Primer párrafo",
+    aboutTextsSecond: "Segundo párrafo",
+    aboutTextsRestore: "Restablecer el texto original",
+    aboutTextsEdited: "Modificado",
+    aboutTextsTranslationsHelp: "Cada idioma se muestra tal como está escrito. Si cambia el sentido del texto, actualice también los demás idiomas.",
+    aboutTextsSaved: "Página Quiénes somos actualizada",
     profile: "Mi perfil",
     viewSite: "Ver el sitio",
     welcome: "Bienvenido de nuevo",

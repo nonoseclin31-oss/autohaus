@@ -14,7 +14,6 @@ import {
 } from "@/components/icons";
 import { BODY_TYPES, label, type Locale as TaxLocale } from "@/lib/taxonomy";
 import { getCompany } from "@/lib/company";
-import { COMPANY } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
@@ -24,9 +23,14 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   const t = getDictionary(locale);
   const company = await getCompany();
 
-  const [showcase, stockCount, brands] = await Promise.all([
+  const [showcase, stockCount, brandsInStock, brands] = await Promise.all([
     getHomeShowcase(locale),
     prisma.vehicle.count({ where: { published: true, status: { not: "SOLD" } } }),
+    prisma.vehicle.findMany({
+      where: { published: true, status: { not: "SOLD" } },
+      select: { brand: true },
+      distinct: ["brand"],
+    }),
     prisma.vehicle.findMany({
       where: { published: true },
       select: { brand: true },
@@ -154,17 +158,23 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
             style={{ animationDelay: "240ms" }}
           >
             {[
+              // Only figures that are true on the day they are read: two
+              // counted from the stock itself, the inspection standard the
+              // About page describes, and where the cars are delivered. A
+              // round "years" or "clients" number nobody can check reads as
+              // decoration at best, and as a claim to be answered for at
+              // worst.
               { value: formatNumber(stockCount, locale), label: t.home.statVehicles },
-              { value: "18", label: t.home.statYears },
-              { value: "2 400+", label: t.home.statClients },
+              { value: formatNumber(brandsInStock.length, locale), label: t.home.statBrands },
+              { value: formatNumber(150, locale), label: t.home.statChecks },
               { value: t.home.statDeliveryValue, label: t.home.statDelivery },
             ].map((stat) => (
               <div key={stat.label} className="border-b border-line px-1 py-6 sm:px-2 lg:border-b-0">
                 <dt className="sr-only">{stat.label}</dt>
                 <dd>
-                  {/* bdi + dir=ltr: in Arabic the bidi algorithm moves the
-                      trailing "+" of "2 400+" to the front, rendering it as
-                      "+400 2". Numbers read left-to-right in every locale. */}
+                  {/* bdi + dir=ltr: in Arabic the bidi algorithm would move
+                      a trailing sign or unit to the front of a figure.
+                      Numbers read left-to-right in every locale. */}
                   <bdi dir="ltr" className="display block text-4xl tabular-nums sm:text-5xl">
                     {stat.value}
                   </bdi>

@@ -9,9 +9,10 @@ import { label, VEHICLE_STATUS, type Locale as TaxLocale } from "@/lib/taxonomy"
 import { setVehicleStatus, togglePublished, deleteVehicle } from "@/app/actions/vehicles";
 import { StatusDot } from "@/components/status-vignette";
 import {
-  IconPlus, IconImage, IconEdit, IconTrash, IconEye, IconEyeOff, IconCar,
+  IconPlus, IconImage, IconEdit, IconEye, IconEyeOff, IconCar,
   IconSearch, IconStar, IconArrowRight, IconPin,
 } from "@/components/icons";
+import { ConfirmSubmit } from "@/components/admin/confirm-submit";
 import { cn } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
@@ -104,6 +105,112 @@ export default async function AdminVehiclesPage({
     return `${localePath(locale, "/admin/vehicles")}${qs ? `?${qs}` : ""}`;
   }
 
+  type Row = (typeof vehicles)[number];
+
+  /**
+   * Available / sale in progress / sold, one press each. The same buttons in
+   * the table and on the phone cards — full labels in both, where they used
+   * to be cut at twelve characters ("En cours de ").
+   */
+  function statusButtons(vehicle: Row, editable: boolean, variant: "row" | "card") {
+    if (!can(user!.role, "vehicle.status") || !editable) return null;
+    const options = [
+      { value: "AVAILABLE", title: t.admin.markAvailable, tone: "ok" },
+      { value: "RESERVED", title: t.admin.markReserved, tone: "red" },
+      { value: "SOLD", title: t.admin.markSold, tone: "red" },
+    ];
+    return (
+      <div className={variant === "card" ? "grid grid-cols-3 gap-1.5 border-t border-line px-3 py-2.5" : "mt-1.5 flex flex-wrap gap-1"}>
+        {options.map((option) => {
+          const current = vehicle.status === option.value;
+          return (
+            <form key={option.value} action={setVehicleStatus} className="contents">
+              <input type="hidden" name="id" value={vehicle.id} />
+              <input type="hidden" name="locale" value={locale} />
+              <input type="hidden" name="status" value={option.value} />
+              <button
+                type="submit"
+                title={option.title}
+                aria-label={option.title}
+                aria-pressed={current}
+                disabled={current}
+                className={cn(
+                  "cursor-pointer rounded-sm border font-bold uppercase tracking-wider transition-colors duration-200 disabled:cursor-default",
+                  variant === "card"
+                    ? "min-h-11 px-1 text-[10px] leading-tight"
+                    : "px-2 py-1 text-[10px]",
+                  current
+                    ? option.tone === "ok" ? "border-ok bg-ok text-white" : "border-red bg-red text-white"
+                    : option.tone === "ok"
+                      ? "border-ok/40 bg-ok-wash text-ok hover:bg-ok/15"
+                      : "border-red/40 text-red hover:bg-red/15",
+                )}
+              >
+                {label(VEHICLE_STATUS, option.value, tax)}
+              </button>
+            </form>
+          );
+        })}
+      </div>
+    );
+  }
+
+  /** Publish, open on the site, edit, delete — in that order everywhere. */
+  function rowActions(vehicle: Row, editable: boolean) {
+    const iconButton =
+      "inline-flex min-h-11 min-w-11 cursor-pointer items-center justify-center rounded-sm transition-colors duration-200 md:min-h-9 md:min-w-9";
+    return (
+      <>
+        {can(user!.role, "vehicle.publish") && editable ? (
+          <form action={togglePublished}>
+            <input type="hidden" name="id" value={vehicle.id} />
+            <input type="hidden" name="locale" value={locale} />
+            <button
+              type="submit"
+              title={vehicle.published ? t.admin.published : t.admin.draft}
+              aria-label={vehicle.published ? t.admin.published : t.admin.draft}
+              aria-pressed={vehicle.published}
+              className={cn(iconButton, vehicle.published ? "text-ok hover:bg-ok/12" : "text-subtle hover:text-fg")}
+            >
+              {vehicle.published ? <IconEye size={17} /> : <IconEyeOff size={17} />}
+            </button>
+          </form>
+        ) : null}
+
+        {vehicle.published ? (
+          <Link
+            href={localePath(locale, `/vehicles/${vehicle.slug}`)}
+            target="_blank"
+            title={t.cta.viewDetails}
+            aria-label={t.cta.viewDetails}
+            className={cn(iconButton, "text-subtle hover:text-fg")}
+          >
+            <IconArrowRight size={17} />
+          </Link>
+        ) : null}
+
+        {editable ? (
+          <Link
+            href={localePath(locale, `/admin/vehicles/${vehicle.id}`)}
+            title={t.common.edit}
+            aria-label={t.common.edit}
+            className={cn(iconButton, "text-muted hover:bg-surface-3 hover:text-fg")}
+          >
+            <IconEdit size={17} />
+          </Link>
+        ) : null}
+
+        {canDeleteVehicle(user) ? (
+          <form action={deleteVehicle}>
+            <input type="hidden" name="id" value={vehicle.id} />
+            <input type="hidden" name="locale" value={locale} />
+            <ConfirmSubmit compact label={t.common.delete} confirm={t.admin.confirmDelete} />
+          </form>
+        ) : null}
+      </>
+    );
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
@@ -113,19 +220,22 @@ export default async function AdminVehiclesPage({
             {total} {t.vehicles.vehiclesFound}
           </p>
         </div>
-        <div className="flex flex-wrap items-center gap-2">
+        {/* On a phone: "add" first and full width, the arrangement screens
+            side by side under it — instead of three full-width rows pushing
+            the list below the fold. */}
+        <div className="grid w-full grid-cols-2 gap-2 sm:flex sm:w-auto sm:flex-wrap sm:items-center">
           {can(user.role, "vehicle.update.any") ? (
             <>
               <Link
                 href={localePath(locale, "/admin/vehicles/showcase")}
-                className="btn btn-solid cursor-pointer"
+                className="btn btn-solid min-w-0 cursor-pointer px-3 sm:px-[1.35rem]"
               >
                 <IconStar size={17} />
                 {t.admin.homePage}
               </Link>
               <Link
                 href={localePath(locale, "/admin/vehicles/order")}
-                className="btn btn-solid cursor-pointer"
+                className="btn btn-solid min-w-0 cursor-pointer px-3 sm:px-[1.35rem]"
               >
                 <IconPin size={17} />
                 {t.admin.catalogOrder}
@@ -133,7 +243,7 @@ export default async function AdminVehiclesPage({
             </>
           ) : null}
           {can(user.role, "vehicle.create") ? (
-            <Link href={localePath(locale, "/admin/vehicles/new")} className="btn btn-primary cursor-pointer">
+            <Link href={localePath(locale, "/admin/vehicles/new")} className="btn btn-primary order-first col-span-2 cursor-pointer sm:order-none">
               <IconPlus size={17} />
               {t.admin.addVehicle}
             </Link>
@@ -143,7 +253,7 @@ export default async function AdminVehiclesPage({
 
       {/* Search + filters */}
       <div className="space-y-3 rounded-sm border border-line bg-surface p-4">
-        <form method="get" className="flex flex-wrap gap-2">
+        <form method="get" className="flex gap-2">
           {statusFilter ? <input type="hidden" name="status" value={statusFilter} /> : null}
           {mine ? <input type="hidden" name="mine" value="1" /> : null}
           <div className="relative min-w-0 flex-1">
@@ -153,7 +263,10 @@ export default async function AdminVehiclesPage({
               className="input ps-9" aria-label={t.common.search}
             />
           </div>
-          <button type="submit" className="btn btn-solid cursor-pointer">{t.common.search}</button>
+          <button type="submit" className="btn btn-solid w-11 shrink-0 cursor-pointer px-0 sm:w-auto sm:px-[1.35rem]" aria-label={t.common.search}>
+            <IconSearch size={17} className="sm:hidden" />
+            <span className="hidden sm:inline">{t.common.search}</span>
+          </button>
         </form>
 
         <div className="flex flex-wrap items-center gap-1.5">
@@ -188,11 +301,60 @@ export default async function AdminVehiclesPage({
         </div>
       </div>
 
-      {/* Table */}
+      {/* The list: cards up to a wide screen, where the table has room for
+          its six columns without scrolling sideways. */}
       {vehicles.length ? (
-        <div className="overflow-hidden rounded-sm border border-line bg-surface">
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[56rem] text-sm">
+        <>
+          <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:hidden">
+            {vehicles.map((vehicle) => {
+              const editable = canEditVehicle(user, vehicle);
+              return (
+                <li key={vehicle.id}>
+                  <article className="flex h-full flex-col overflow-hidden rounded-sm border border-line bg-surface">
+                    <Link
+                      href={editable ? localePath(locale, `/admin/vehicles/${vehicle.id}`) : localePath(locale, `/vehicles/${vehicle.slug}`)}
+                      className="flex cursor-pointer gap-3 p-3 transition-colors duration-150 hover:bg-surface-2"
+                    >
+                      <Thumb url={vehicle.images[0]?.url} />
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate font-semibold text-fg">{vehicle.brand} {vehicle.model}</p>
+                        <p className="truncate text-xs text-subtle tabular-nums">
+                          {vehicle.year} · {formatNumber(vehicle.mileage, locale)} {t.common.km} · {vehicle.powerHp} {t.common.hp}
+                        </p>
+                        <p className="mt-1.5 text-base font-semibold tabular-nums">
+                          {formatCurrency(vehicle.price, locale)}
+                          {vehicle.rentalAvailable && vehicle.rentalMonthly ? (
+                            <span className="ms-2 text-xs font-medium text-bronze">
+                              {formatCurrency(vehicle.rentalMonthly, locale)}{t.common.perMonth}
+                            </span>
+                          ) : null}
+                        </p>
+                        <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1">
+                          <StatusDot status={vehicle.status} locale={tax} />
+                          {!vehicle.published ? <span className="chip">{t.admin.draft}</span> : null}
+                          {vehicle.featured ? (
+                            <IconStar size={13} className="text-bronze" aria-label={t.admin.featuredState} />
+                          ) : null}
+                        </div>
+                      </div>
+                    </Link>
+
+                    {statusButtons(vehicle, editable, "card")}
+
+                    <div className="mt-auto flex items-center gap-1 border-t border-line px-2 py-1.5">
+                      {rowActions(vehicle, editable)}
+                      <p className="ms-auto truncate ps-2 text-end font-mono text-[11px] text-subtle">
+                        {vehicle.reference}
+                      </p>
+                    </div>
+                  </article>
+                </li>
+              );
+            })}
+          </ul>
+
+          <div className="hidden overflow-hidden rounded-sm border border-line bg-surface xl:block">
+            <table className="w-full text-sm">
               <caption className="sr-only">{t.admin.vehicles}</caption>
               <thead>
                 <tr className="border-b border-line bg-surface-2 text-start">
@@ -265,38 +427,9 @@ export default async function AdminVehiclesPage({
                         ) : null}
                       </td>
 
-                      {/* Status + red vignette quick actions */}
                       <td className="px-4 py-3">
                         <StatusDot status={vehicle.status} locale={tax} />
-                        {can(user.role, "vehicle.status") && editable ? (
-                          <div className="mt-1.5 flex flex-wrap gap-1">
-                            {[
-                              { value: "AVAILABLE", short: "●", title: t.admin.markAvailable, tone: "ok" },
-                              { value: "RESERVED", short: "◐", title: t.admin.markReserved, tone: "red" },
-                              { value: "SOLD", short: "✕", title: t.admin.markSold, tone: "red" },
-                            ].map((option) => (
-                              <form key={option.value} action={setVehicleStatus}>
-                                <input type="hidden" name="id" value={vehicle.id} />
-                                <input type="hidden" name="locale" value={locale} />
-                                <input type="hidden" name="status" value={option.value} />
-                                <button
-                                  type="submit"
-                                  title={option.title}
-                                  aria-label={option.title}
-                                  disabled={vehicle.status === option.value}
-                                  className={cn(
-                                    "cursor-pointer rounded-sm border px-2 py-1 text-[10px] font-bold uppercase tracking-wider transition-colors duration-200 disabled:cursor-default disabled:opacity-40",
-                                    option.tone === "ok"
-                                      ? "border-ok/40 bg-ok-wash text-ok hover:bg-ok/15"
-                                      : "border-red/40 text-red hover:bg-red/15",
-                                  )}
-                                >
-                                  {label(VEHICLE_STATUS, option.value, tax).slice(0, 12)}
-                                </button>
-                              </form>
-                            ))}
-                          </div>
-                        ) : null}
+                        {statusButtons(vehicle, editable, "row")}
                       </td>
 
                       <td className="px-4 py-3">
@@ -305,63 +438,7 @@ export default async function AdminVehiclesPage({
                       </td>
 
                       <td className="px-4 py-3">
-                        <div className="flex items-center justify-end gap-1">
-                          {can(user.role, "vehicle.publish") && editable ? (
-                            <form action={togglePublished}>
-                              <input type="hidden" name="id" value={vehicle.id} />
-                              <input type="hidden" name="locale" value={locale} />
-                              <button
-                                type="submit"
-                                title={vehicle.published ? t.admin.published : t.admin.draft}
-                                aria-label={vehicle.published ? t.admin.published : t.admin.draft}
-                                className={cn(
-                                  "cursor-pointer rounded-sm p-2 transition-colors duration-200",
-                                  vehicle.published ? "text-ok hover:bg-ok/12" : "text-subtle hover:text-fg",
-                                )}
-                              >
-                                {vehicle.published ? <IconEye size={16} /> : <IconEyeOff size={16} />}
-                              </button>
-                            </form>
-                          ) : null}
-
-                          {vehicle.published ? (
-                            <Link
-                              href={localePath(locale, `/vehicles/${vehicle.slug}`)}
-                              target="_blank"
-                              title={t.cta.viewDetails}
-                              aria-label={t.cta.viewDetails}
-                              className="cursor-pointer rounded-sm p-2 text-subtle transition-colors duration-200 hover:text-fg"
-                            >
-                              <IconArrowRight size={16} />
-                            </Link>
-                          ) : null}
-
-                          {editable ? (
-                            <Link
-                              href={localePath(locale, `/admin/vehicles/${vehicle.id}`)}
-                              title={t.common.edit}
-                              aria-label={t.common.edit}
-                              className="cursor-pointer rounded-sm p-2 text-muted transition-colors duration-200 hover:bg-surface-3 hover:text-fg"
-                            >
-                              <IconEdit size={16} />
-                            </Link>
-                          ) : null}
-
-                          {canDeleteVehicle(user) ? (
-                            <form action={deleteVehicle}>
-                              <input type="hidden" name="id" value={vehicle.id} />
-                              <input type="hidden" name="locale" value={locale} />
-                              <button
-                                type="submit"
-                                title={t.common.delete}
-                                aria-label={t.common.delete}
-                                className="cursor-pointer rounded-sm p-2 text-subtle transition-colors duration-200 hover:bg-red/12 hover:text-red"
-                              >
-                                <IconTrash size={16} />
-                              </button>
-                            </form>
-                          ) : null}
-                        </div>
+                        <div className="flex items-center justify-end gap-1">{rowActions(vehicle, editable)}</div>
                       </td>
                     </tr>
                   );
@@ -371,9 +448,10 @@ export default async function AdminVehiclesPage({
           </div>
 
           {pageCount > 1 ? (
-            <nav className="flex items-center justify-between gap-3 border-t border-line px-4 py-3" aria-label="Pagination">
+            <nav className="flex items-center justify-between gap-3 rounded-sm border border-line bg-surface px-4 py-3" aria-label={t.common.pagination}>
               <Link
                 href={hrefWith({ page: String(Math.max(1, page - 1)) })}
+                aria-disabled={page === 1}
                 className={cn("btn btn-ghost btn-sm cursor-pointer", page === 1 && "pointer-events-none opacity-40")}
               >
                 {t.common.previous}
@@ -383,13 +461,14 @@ export default async function AdminVehiclesPage({
               </span>
               <Link
                 href={hrefWith({ page: String(Math.min(pageCount, page + 1)) })}
+                aria-disabled={page === pageCount}
                 className={cn("btn btn-ghost btn-sm cursor-pointer", page === pageCount && "pointer-events-none opacity-40")}
               >
                 {t.common.next}
               </Link>
             </nav>
           ) : null}
-        </div>
+        </>
       ) : (
         <div className="flex flex-col items-center gap-3 rounded-sm border border-line bg-surface px-6 py-20 text-center">
           <IconCar size={44} className="text-subtle" />
@@ -401,6 +480,21 @@ export default async function AdminVehiclesPage({
             </Link>
           ) : null}
         </div>
+      )}
+    </div>
+  );
+}
+
+/** The cover photo on a phone card, or a placeholder when there is none. */
+function Thumb({ url }: { url: string | undefined }) {
+  return (
+    <div className="relative aspect-[4/3] w-24 shrink-0 overflow-hidden rounded-sm bg-surface-3">
+      {url ? (
+        <Image src={url} alt="" fill sizes="96px" className="object-cover" />
+      ) : (
+        <span className="flex h-full items-center justify-center text-subtle">
+          <IconImage size={18} />
+        </span>
       )}
     </div>
   );

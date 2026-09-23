@@ -24,9 +24,10 @@ export function SiteHeader({
   shortName,
 }: {
   locale: Locale;
-  nav: { items: NavItem[]; login: string; admin: string; menu: string; crossing: string };
+  nav: { items: NavItem[]; login: string; admin: string; menu: string; crossing: string; main: string; close: string };
   languageLabel: string;
-  phone: string;
+  /** Null when the back office has taken the number out of the header. */
+  phone: string | null;
   shortName: string;
 }) {
   const [open, setOpen] = useState(false);
@@ -83,7 +84,7 @@ export function SiteHeader({
             <Logo heightClass="h-[22px] sm:h-7 lg:h-8" priority />
           </Link>
 
-          <nav className="hidden items-center gap-1 lg:flex" aria-label="Main">
+          <nav className="hidden items-center gap-1 lg:flex" aria-label={nav.main}>
             {nav.items.map((item) => (
               <Link
                 key={item.href}
@@ -112,13 +113,15 @@ export function SiteHeader({
           </nav>
 
           <div className="flex items-center gap-2">
-            <a
-              href={`tel:${phone.replace(/\s/g, "")}`}
-              className="hidden cursor-pointer items-center gap-2 whitespace-nowrap rounded-sm px-2.5 py-2 text-sm font-semibold text-muted transition-colors duration-200 hover:text-fg 2xl:inline-flex"
-            >
-              <IconPhone size={16} />
-              <span className="tabular-nums">{phone}</span>
-            </a>
+            {phone ? (
+              <a
+                href={`tel:${phone.replace(/\s/g, "")}`}
+                className="hidden cursor-pointer items-center gap-2 whitespace-nowrap rounded-sm px-2.5 py-2 text-sm font-semibold text-muted transition-colors duration-200 hover:text-fg 2xl:inline-flex"
+              >
+                <IconPhone size={16} />
+                <span className="tabular-nums">{phone}</span>
+              </a>
+            ) : null}
 
             <ThemeToggle locale={locale} />
             <LanguageSwitcher locale={locale} label={languageLabel} />
@@ -150,7 +153,7 @@ export function SiteHeader({
         <div className="fixed inset-0 z-50 lg:hidden">
           <button
             type="button"
-            aria-label="Close menu"
+            aria-label={nav.close}
             onClick={() => setOpen(false)}
             className="absolute inset-0 cursor-pointer bg-ink/35 backdrop-blur-sm animate-fade"
           />
@@ -160,14 +163,14 @@ export function SiteHeader({
               <button
                 type="button"
                 onClick={() => setOpen(false)}
-                aria-label="Close menu"
+                aria-label={nav.close}
                 className="cursor-pointer rounded-sm p-2 text-muted transition-colors duration-200 hover:text-fg"
               >
                 <IconX size={20} />
               </button>
             </div>
 
-            <nav className="flex-1 overflow-y-auto px-3 py-4" aria-label="Mobile">
+            <nav className="flex-1 overflow-y-auto px-3 py-4" aria-label={nav.menu}>
               {nav.items.map((item) => (
                 <Link
                   key={item.href}
@@ -188,10 +191,12 @@ export function SiteHeader({
             </nav>
 
             <div className="space-y-3 border-t border-line px-5 py-5">
-              <a href={`tel:${phone.replace(/\s/g, "")}`} className="btn btn-solid w-full cursor-pointer">
-                <IconPhone size={16} />
-                {phone}
-              </a>
+              {phone ? (
+                <a href={`tel:${phone.replace(/\s/g, "")}`} className="btn btn-solid w-full cursor-pointer">
+                  <IconPhone size={16} />
+                  {phone}
+                </a>
+              ) : null}
               <Link href={localePath(locale, "/login")} className="btn btn-primary w-full cursor-pointer">
                 <IconUser size={16} />
                 {nav.login}
