@@ -521,6 +521,9 @@ const ar: Dictionary = {
     uploadBadType: "صيغة غير مدعومة — حوّلها إلى JPG أو PNG",
     uploadTooBig: "حجمها كبير — 8 ميغابايت كحد أقصى لكل صورة",
     uploadFailed: "فشل الرفع، يرجى المحاولة مرة أخرى",
+    // Reordering the photo grid by dragging.
+    reorder: "اسحب لإعادة الترتيب",
+    reorderHelp: "اسحب صورة فوق أخرى لتغيير الترتيب. الأولى هي صورة الغلاف.",
     // The crop tool on each uploaded photo. Every listing image is shown
     // in one shape on the site, so a portrait photo has to be framed
     // rather than squeezed.

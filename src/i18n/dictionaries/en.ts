@@ -521,6 +521,9 @@ const en = {
     uploadBadType: "Format not supported — convert it to JPG or PNG",
     uploadTooBig: "Too large — 8 MB maximum per photo",
     uploadFailed: "Upload failed, please try again",
+    // Reordering the photo grid by dragging.
+    reorder: "Drag to reorder",
+    reorderHelp: "Drag a photo onto another to change the order. The first one is the cover.",
     // The crop tool on each uploaded photo. Every listing image is shown
     // in one shape on the site, so a portrait photo has to be framed
     // rather than squeezed.

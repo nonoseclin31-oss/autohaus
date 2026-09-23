@@ -396,3 +396,15 @@ export const IconCrop = (p: IconProps) => (
     <path d="M2.5 6.5h15v15" />
   </Svg>
 );
+
+/* A drag grip — the two columns of dots every reorderable list uses. */
+export const IconGrip = (p: IconProps) => (
+  <Svg {...p}>
+    <circle cx="9" cy="6" r="1.4" fill="currentColor" stroke="none" />
+    <circle cx="15" cy="6" r="1.4" fill="currentColor" stroke="none" />
+    <circle cx="9" cy="12" r="1.4" fill="currentColor" stroke="none" />
+    <circle cx="15" cy="12" r="1.4" fill="currentColor" stroke="none" />
+    <circle cx="9" cy="18" r="1.4" fill="currentColor" stroke="none" />
+    <circle cx="15" cy="18" r="1.4" fill="currentColor" stroke="none" />
+  </Svg>
+);

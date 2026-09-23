@@ -1,11 +1,11 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { getDictionary, type Locale } from "@/i18n";
 import {
   IconUpload, IconTrash, IconStar, IconSpinner, IconAlert, IconChevronLeft,
-  IconChevronRight, IconCrop,
+  IconChevronRight, IconCrop, IconGrip,
 } from "../icons";
 import { ImageCropper } from "./image-cropper";
 import { shrinkAll } from "@/lib/image-resize";
@@ -107,6 +107,74 @@ export function ImageUploader({
     }
   }
 
+  /* ── Reordering by dragging ────────────────────────────────
+     The order of this list is the order on the site, and the first photo is
+     the cover, so rearranging it is the common edit — not an afterthought
+     behind two arrow buttons.
+
+     Pointer events rather than HTML5 drag-and-drop, which does not exist on
+     touch at all. The list reorders live under the finger, so there is no
+     floating ghost to keep in sync with anything. */
+  const [dragging, setDragging] = useState<number | null>(null);
+  const dragRef = useRef<number | null>(null);
+
+  /** Which tile sits under this point, ignoring the one being carried. */
+  function tileAt(x: number, y: number): number | null {
+    const el = document.elementFromPoint(x, y)?.closest<HTMLElement>("[data-photo]");
+    if (!el) return null;
+    const index = Number(el.dataset.photo);
+    return Number.isInteger(index) ? index : null;
+  }
+
+  function startDrag(event: React.PointerEvent, index: number) {
+    // A finger on the photo itself has to keep scrolling the page — there is
+    // a grid of these and the form runs well past the fold. Touch picks a
+    // photo up by its grip; a mouse can grab it anywhere.
+    const fromGrip = !!(event.target as Element).closest("[data-grip]");
+    if (event.pointerType === "touch" && !fromGrip) return;
+    if (event.button !== 0 && event.pointerType === "mouse") return;
+
+    event.preventDefault();
+    dragRef.current = index;
+    setDragging(index);
+  }
+
+  useEffect(() => {
+    if (dragging === null) return;
+
+    const onMove = (event: PointerEvent) => {
+      const from = dragRef.current;
+      if (from === null) return;
+      const to = tileAt(event.clientX, event.clientY);
+      if (to === null || to === from) return;
+      setImages((prev) => {
+        const next = [...prev];
+        const [carried] = next.splice(from, 1);
+        next.splice(to, 0, carried);
+        return next;
+      });
+      dragRef.current = to;
+      setDragging(to);
+    };
+
+    const stop = () => {
+      dragRef.current = null;
+      setDragging(null);
+    };
+
+    // On the window, not the tile: the tile is made transparent to the
+    // pointer while it is carried, so what is underneath can be found — and
+    // a capture on it would stop delivering.
+    window.addEventListener("pointermove", onMove);
+    window.addEventListener("pointerup", stop);
+    window.addEventListener("pointercancel", stop);
+    return () => {
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", stop);
+      window.removeEventListener("pointercancel", stop);
+    };
+  }, [dragging]);
+
   function remove(index: number) {
     setImages((prev) => prev.filter((_, i) => i !== index));
   }
@@ -182,21 +250,50 @@ export function ImageUploader({
 
       {/* Thumbnails */}
       {images.length ? (
-        <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+        <>
+          <p className="field-help">{t.admin.reorderHelp}</p>
+          <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
           {images.map((image, index) => (
             <li
-              key={`${image.url}-${index}`}
+              // Keyed by the photo rather than its position: a key that moved
+              // with the index would make React rebuild every tile on each
+              // step of a drag, throwing away the drag itself.
+              key={image.url}
+              data-photo={index}
               className={cn(
-                "group relative overflow-hidden rounded-sm border bg-surface-2",
+                "group relative overflow-hidden rounded-sm border bg-surface-2 transition-shadow duration-200",
                 index === 0 ? "border-red" : "border-line",
+                dragging === index &&
+                  // Transparent to the pointer so the tile underneath can be
+                  // found, and visibly lifted so it is clear what is moving.
+                  "pointer-events-none relative z-10 border-red opacity-90 shadow-[var(--shadow-lg)] ring-2 ring-red",
               )}
             >
-              <div className="relative aspect-[4/3]">
-                <Image src={image.url} alt="" fill sizes="200px" className="object-cover" />
+              <div
+                onPointerDown={(event) => startDrag(event, index)}
+                className={cn(
+                  "relative aspect-[4/3]",
+                  dragging === null ? "cursor-grab" : "cursor-grabbing",
+                )}
+              >
+                <Image src={image.url} alt="" fill sizes="200px" className="object-cover" draggable={false} />
+
+                {/* The touch handle. 44px, always visible — there is no hover
+                    on a phone to reveal it with. */}
+                <span
+                  data-grip
+                  role="button"
+                  tabIndex={-1}
+                  aria-label={t.admin.reorder}
+                  title={t.admin.reorder}
+                  className="absolute end-1 top-1 flex size-11 cursor-grab touch-none items-center justify-center rounded-sm bg-canvas/80 text-muted backdrop-blur-sm transition-colors duration-200 hover:text-fg active:cursor-grabbing"
+                >
+                  <IconGrip size={16} />
+                </span>
               </div>
 
               {index === 0 ? (
-                <span className="absolute start-1.5 top-1.5 rounded-sm bg-red px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white">
+                <span className="pointer-events-none absolute start-1.5 top-1.5 rounded-sm bg-red px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white">
                   {t.admin.coverBadge}
                 </span>
               ) : null}
@@ -244,7 +341,8 @@ export function ImageUploader({
               </div>
             </li>
           ))}
-        </ul>
+          </ul>
+        </>
       ) : null}
 
       {cropping !== null && images[cropping] ? (

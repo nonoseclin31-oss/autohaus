@@ -521,6 +521,9 @@ const zh: Dictionary = {
     uploadBadType: "不支持该格式 — 请转换为 JPG 或 PNG",
     uploadTooBig: "文件过大 — 每张照片最多 8 MB",
     uploadFailed: "上传失败，请重试",
+    // Reordering the photo grid by dragging.
+    reorder: "拖动以重新排序",
+    reorderHelp: "将一张照片拖到另一张上即可调整顺序。第一张为封面。",
     // The crop tool on each uploaded photo. Every listing image is shown
     // in one shape on the site, so a portrait photo has to be framed
     // rather than squeezed.

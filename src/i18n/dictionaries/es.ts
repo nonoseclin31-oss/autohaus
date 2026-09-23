@@ -521,6 +521,9 @@ const es: Dictionary = {
     uploadBadType: "Formato no admitido — conviértela a JPG o PNG",
     uploadTooBig: "Demasiado pesada — 8 MB como máximo por foto",
     uploadFailed: "Error al subir, inténtalo de nuevo",
+    // Reordering the photo grid by dragging.
+    reorder: "Arrastrar para reordenar",
+    reorderHelp: "Arrastre una foto sobre otra para cambiar el orden. La primera es la portada.",
     // The crop tool on each uploaded photo. Every listing image is shown
     // in one shape on the site, so a portrait photo has to be framed
     // rather than squeezed.

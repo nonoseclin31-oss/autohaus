@@ -521,6 +521,9 @@ const de: Dictionary = {
     uploadBadType: "Format nicht unterstützt — bitte in JPG oder PNG umwandeln",
     uploadTooBig: "Zu groß — maximal 8 MB pro Foto",
     uploadFailed: "Upload fehlgeschlagen, bitte erneut versuchen",
+    // Reordering the photo grid by dragging.
+    reorder: "Zum Umsortieren ziehen",
+    reorderHelp: "Ziehen Sie ein Foto auf ein anderes, um die Reihenfolge zu ändern. Das erste ist das Titelbild.",
     // The crop tool on each uploaded photo. Every listing image is shown
     // in one shape on the site, so a portrait photo has to be framed
     // rather than squeezed.

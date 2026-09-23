@@ -21,6 +21,8 @@ import { fileURLToPath } from "node:url";
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const BRAND = path.join(ROOT, "public/brand");
 const APP = path.join(ROOT, "src/app");
+/** The supplied artwork, tagline corrected — the highest-fidelity copy there is. */
+const SOURCE = path.join(BRAND, "logo-source.png");
 
 /* The dealership's ink and its two accents, straight from globals.css. */
 const INK = { r: 0x12, g: 0x10, b: 0x0f };
@@ -53,39 +55,52 @@ function wash(width, height) {
 /** The German rule the site closes its header with. */
 function flagRule(width, height) {
   return Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}">
-    <rect x="0" y="0" width="${width / 3}" height="${height}" fill="#e7e3df"/>
+    <rect x="0" y="0" width="${width / 3}" height="${height}" fill="#1c1917"/>
     <rect x="${width / 3}" y="0" width="${width / 3}" height="${height}" fill="${RED}"/>
     <rect x="${(width * 2) / 3}" y="0" width="${width / 3}" height="${height}" fill="${GOLD}"/>
   </svg>`);
 }
 
+/**
+ * Where the supplied artwork's ink actually sits in the 1500x1500 original —
+ * the full lockup, wordmark and circuit together. Measured, not guessed.
+ */
+const LOCKUP = { left: 91, top: 514, width: 1307, height: 542 };
+
 async function buildOpenGraph() {
   const W = 1200, H = 630, RULE = 6;
 
-  // The light-on-dark lockup, because "AUTO" is near-black in the original
-  // and would disappear into the card.
-  const logo = await sharp(path.join(BRAND, "logo-full-dark.png"))
-    .resize({ width: 840, fit: "inside" })
+  // Cut from the supplied artwork itself rather than from public/brand's
+  // derived assets. Those are palette-reduced to 64 colours to keep a header
+  // logo light — right for a 32px mark on every page, wrong for the one
+  // picture of this company that a messaging app will ever show. The source
+  // holds some three thousand colours; the derivative holds two hundred, and
+  // it is the thin circuit outline and the small tagline that pay for it.
+  const lockup = await sharp(SOURCE)
+    .extract(LOCKUP)
+    .resize({ width: 960, fit: "inside", kernel: sharp.kernel.lanczos3 })
     .toBuffer();
-  const { height: logoH } = await sharp(logo).metadata();
+  const { width: lw, height: lh } = await sharp(lockup).metadata();
 
   const card = await sharp({
-    create: { width: W, height: H, channels: 4, background: { ...INK, alpha: 1 } },
+    create: { width: W, height: H, channels: 4, background: { r: 255, g: 255, b: 255, alpha: 1 } },
   })
     .composite([
-      { input: wash(W, H), top: 0, left: 0 },
       // Optically centred: the rule at the foot pulls the eye down, so the
       // lockup sits a touch above the true middle.
-      { input: logo, top: Math.round((H - RULE - logoH) / 2) - 12, left: Math.round((W - 840) / 2) },
+      { input: lockup, top: Math.round((H - RULE - lh) / 2) - 10, left: Math.round((W - lw) / 2) },
       { input: flagRule(W, RULE), top: H - RULE, left: 0 },
     ])
+    // No palette: this file is fetched once by a link preview, never by a
+    // visitor loading a page, so its weight buys nothing and its fidelity
+    // is the whole point.
     .png({ compressionLevel: 9 })
     .toBuffer();
 
   await sharp(card).toFile(path.join(APP, "opengraph-image.png"));
   await sharp(card).toFile(path.join(APP, "twitter-image.png"));
-  console.log(`  · opengraph-image.png  ${W}×${H}  ${(card.length / 1024).toFixed(0)} kB`);
-  console.log(`  · twitter-image.png    ${W}×${H}  (same card)`);
+  console.log(`  · opengraph-image.png  ${W}x${H}  ${(card.length / 1024).toFixed(0)} kB  (lockup ${lw}x${lh})`);
+  console.log(`  · twitter-image.png    ${W}x${H}  (same card)`);
 }
 
 /**
