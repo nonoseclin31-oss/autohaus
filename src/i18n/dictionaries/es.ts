@@ -2,21 +2,29 @@ import type { Dictionary } from "./en";
 
 const es: Dictionary = {
   meta: {
-    title: "Coches premium y alquiler a largo plazo | Autohaus Motion",
+    // The home page's title and snippet. The title is used as it is; every
+    // other page's title gets " · Autohaus Motion" added by the layout.
+    title: "Coches premium y deportivos de Alemania | Autohaus Motion",
     description:
-      "Concesionario alemán con sede en Fráncfort. Vehículos premium y deportivos seleccionados a la venta, además de soluciones de alquiler a largo plazo a medida.",
-    // Search snippets. Kept apart from the page copy: a subtitle reads
-    // well on screen but is too short to fill a result.
-    vehicles: "Nuestro stock de coches premium y deportivos, todos revisados, certificados y listos para rodar. Entrega en todo el mundo desde nuestro showroom en la región de Fráncfort.",
-    rental: "Alquiler a largo plazo con una cuota mensual fija que cubre el vehículo, el mantenimiento, la garantía y la asistencia. De 24 a 60 meses.",
-    about: "Autohaus Motion GmbH, concesionario alemán en la región de Fráncfort. Coches premium y deportivos, en venta y alquiler a largo plazo.",
+      "Coches premium y deportivos revisados y certificados, en venta o en alquiler a largo plazo. Showroom en la región de Fráncfort, entrega en todo el mundo.",
+    // Each page's title in a search result, and its snippet. Kept apart from
+    // the page copy: a heading reads well on screen but rarely names what
+    // someone types into a search engine.
+    vehiclesTitle: "Coches premium y deportivos en venta",
+    vehicles: "Nuestro stock de coches premium y deportivos, todos revisados, certificados y listos para rodar. Entrega en todo el mundo desde la región de Fráncfort.",
+    rentalTitle: "Alquiler a largo plazo de coches premium",
+    rental: "Alquiler a largo plazo con una cuota mensual fija que cubre el vehículo, el mantenimiento, la garantía y la asistencia en carretera. De 24 a 60 meses.",
+    aboutTitle: "Quiénes somos: historia y equipo",
+    about: "Autohaus Motion GmbH, concesionario alemán en la región de Fráncfort. Coches premium y deportivos buscados en Europa y más allá, entregados en todo el mundo.",
+    contactTitle: "Contacto — showroom en la región de Fráncfort",
     contact: "Hable con nuestro equipo sobre un coche, un alquiler a largo plazo o su vehículo actual. Showroom en la región de Fráncfort. Entrega en todo el mundo.",
-    // Short enough that the title template does not push it past what a
-    // result shows; the page keeps its longer heading on screen.
-    aboutTitle: "Quiénes somos — nuestra historia y nuestro equipo",
+    // A listing's title in a result: "{name}" is the make, model and year.
+    forSale: "{name} en venta",
     // Closes a listing snippet built from the facts when the listing has no
-    // written description of its own.
+    // written description in this language.
     listingSuffix: "Revisado, certificado y listo para rodar. Entrega en todo el mundo.",
+    // The page shown for an address that leads nowhere.
+    notFound: "Esta página ha salido del pit lane. Puede que se haya movido o que el vehículo ya no esté a la venta.",
   },
   nav: {
     mainNav: "Navegación principal",
@@ -706,8 +714,8 @@ const es: Dictionary = {
   // The Big Toys universe: motorcycles, quads, jet skis and boats.
   toys: {
     label: "Big Toys",
-    metaTitle: "Big Toys — motos, quads, motos acuáticas y embarcaciones",
-    metaDescription: "La colección de ocio de Autohaus Motion: motos, quads, motos acuáticas y embarcaciones, elegidas con el mismo criterio que los coches y entregadas en todo el mundo.",
+    metaTitle: "Big Toys — motos, quads, motos de agua y barcos",
+    metaDescription: "La colección de ocio de Autohaus Motion: motos, quads, motos de agua y barcos, elegidos con el mismo criterio que los coches y entregados en todo el mundo.",
     eyebrow: "Otra forma de moverse",
     tagline: "Dos ruedas, cuatro ruedas o ninguna.",
     intro: "El mismo abastecimiento, la misma inspección, los mismos papeles — para las máquinas que se sacan un domingo y no para ir a la oficina. Cada pieza se elige de una en una y se revisa antes de publicarse.",

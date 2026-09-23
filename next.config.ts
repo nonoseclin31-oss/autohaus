@@ -47,6 +47,20 @@ const nextConfig: NextConfig = {
     ];
   },
 
+  // Titles, descriptions, canonical and language links go in the <head> of
+  // the first response, for every visitor. Next otherwise streams them into
+  // the page body for anything it takes to be a browser — Googlebot and the
+  // AI crawlers included — and Google ignores a canonical or an hreflang link
+  // that is not in the head. On this site they are ready at once (the texts
+  // are in the code, a listing is one cached query), so nothing waits longer.
+  htmlLimitedBots: /.*/,
+
+  // An address that matches no route gets the site's own 404 page, in the
+  // visitor's language, with a real 404 status (app/global-not-found.tsx).
+  // The site has one root layout per language, so without this Next falls
+  // back to its bare English page.
+  experimental: { globalNotFound: true },
+
   eslint: { ignoreDuringBuilds: false },
   typescript: { ignoreBuildErrors: false },
 };

@@ -2,21 +2,29 @@ import type { Dictionary } from "./en";
 
 const fr: Dictionary = {
   meta: {
-    title: "Véhicules premium & location longue durée | Autohaus Motion",
+    // The home page's title and snippet. The title is used as it is; every
+    // other page's title gets " · Autohaus Motion" added by the layout.
+    title: "Voitures premium & sportives d'Allemagne | Autohaus Motion",
     description:
-      "Concessionnaire allemand basé à Francfort. Véhicules premium et sportifs sélectionnés à la vente, ainsi que des solutions de location longue durée sur mesure.",
-    // Search snippets. Kept apart from the page copy: a subtitle reads
-    // well on screen but is too short to fill a result.
-    vehicles: "Parcourez notre stock de véhicules premium et sportifs, tous contrôlés, certifiés et prêts à rouler. Livraison dans le monde entier depuis notre showroom de la région de Francfort.",
+      "Voitures premium et sportives contrôlées et certifiées, à vendre ou en location longue durée. Showroom en région de Francfort, livraison dans le monde entier.",
+    // Each page's title in a search result, and its snippet. Kept apart from
+    // the page copy: a heading reads well on screen but rarely names what
+    // someone types into a search engine.
+    vehiclesTitle: "Voitures premium & sportives à vendre",
+    vehicles: "Notre stock de voitures premium et sportives, toutes contrôlées, certifiées et prêtes à rouler. Livraison dans le monde entier depuis la région de Francfort.",
+    rentalTitle: "Location longue durée de voitures premium",
     rental: "La location longue durée avec un loyer mensuel fixe couvrant le véhicule, l'entretien, la garantie et l'assistance. De 24 à 60 mois, sans surprise.",
-    about: "Autohaus Motion GmbH, concession allemande de la région de Francfort. Véhicules premium et sportifs recherchés en Europe et au-delà, livrés dans le monde entier.",
+    aboutTitle: "À propos — notre histoire et notre équipe",
+    about: "Autohaus Motion GmbH, concession allemande de la région de Francfort : voitures premium et sportives recherchées en Europe et au-delà, livrées partout.",
+    contactTitle: "Contact — showroom en région de Francfort",
     contact: "Parlez à notre équipe d'un véhicule, d'une location longue durée ou d'une reprise. Showroom dans la région de Francfort, livraison dans le monde entier.",
-    // Short enough that the title template does not push it past what a
-    // result shows; the page keeps its longer heading on screen.
-    aboutTitle: "Notre histoire et notre équipe",
+    // A listing's title in a result: "{name}" is the make, model and year.
+    forSale: "{name} à vendre",
     // Closes a listing snippet built from the facts when the listing has no
-    // written description of its own.
+    // written description in this language.
     listingSuffix: "Contrôlée, certifiée et prête à rouler. Livraison dans le monde entier.",
+    // The page shown for an address that leads nowhere.
+    notFound: "Cette page a quitté la voie des stands. Elle a peut-être été déplacée, ou le véhicule n'est plus en vente.",
   },
   nav: {
     mainNav: "Navigation principale",

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { pageAlternates } from "@/lib/seo";
+import { listingPath, pagedTitle, pageMetadata, breadcrumbSchema } from "@/lib/seo";
+import { JsonLd } from "@/components/json-ld";
 import { getDictionary, resolveLocale, localePath } from "@/i18n";
 import { listVehicles, getAvailableBrands, type VehicleFilters as Filters } from "@/lib/vehicles";
 import { VehicleCard } from "@/components/vehicle-card";
@@ -12,14 +13,20 @@ export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   params,
+  searchParams,
 }: {
   params: Promise<{ locale: string }>;
+  searchParams: SearchParams;
 }): Promise<Metadata> {
-  const { locale } = await params;
+  const locale = resolveLocale((await params).locale);
   const t = getDictionary(locale);
-  return { title: t.vehicles.title, description: t.meta.vehicles,
-    alternates: pageAlternates(locale, "/vehicles"),
-  };
+  const sp = await searchParams;
+  return pageMetadata({
+    locale,
+    path: listingPath("/vehicles", sp),
+    title: pagedTitle(t.meta.vehiclesTitle, sp, t.common.page),
+    description: t.meta.vehicles,
+  });
 }
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
@@ -83,6 +90,12 @@ export default async function VehiclesPage({
 
   return (
     <>
+      <JsonLd
+        data={breadcrumbSchema(locale, [
+          { name: t.nav.home, path: "" },
+          { name: t.nav.vehicles, path: "/vehicles" },
+        ])}
+      />
       <header className="studio border-b border-line">
         <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
           <p className="eyebrow mb-3">

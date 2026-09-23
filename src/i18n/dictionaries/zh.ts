@@ -2,21 +2,29 @@ import type { Dictionary } from "./en";
 
 const zh: Dictionary = {
   meta: {
-    title: "高端车销售与长期租赁 | Autohaus Motion",
+    // The home page's title and snippet. The title is used as it is; every
+    // other page's title gets " · Autohaus Motion" added by the layout.
+    title: "德国高端车与性能车 · 全球交付 | Autohaus Motion",
     description:
-      "总部位于法兰克福的德国车行。精选高端与性能车辆现车销售，并提供量身定制的长期租赁方案。",
-    // Search snippets. Kept apart from the page copy: a subtitle reads
-    // well on screen but is too short to fill a result.
-    vehicles: "浏览我们的高端与性能车库存，每一辆均经过检测、认证并可立即上路。自法兰克福地区展厅发货，配送至全球。",
-    rental: "长期租赁，每月固定租金涵盖车辆、保养、质保与道路救援。租期 24 至 60 个月，费用透明无意外。",
-    about: "Autohaus Motion GmbH，位于德国法兰克福地区的汽车经销商。在欧洲及更远处为您寻车，配送至全球。",
-    contact: "就购车、长期租赁或置换与我们联系。展厅位于法兰克福地区，配送至全球。",
-    // Short enough that the title template does not push it past what a
-    // result shows; the page keeps its longer heading on screen.
+      "Autohaus Motion 是位于德国法兰克福地区的汽车经销商：精选经过检测与认证的高端车和性能车，提供现车销售与长期租赁，并可配送至全球各地。",
+    // Each page's title in a search result, and its snippet. Kept apart from
+    // the page copy: a heading reads well on screen but rarely names what
+    // someone types into a search engine.
+    vehiclesTitle: "在售高端车与性能车",
+    vehicles: "浏览我们在德国的高端车与性能车库存，每一辆均经过全面检测与认证，可立即上路。自法兰克福地区展厅发货，配送至全球各地。",
+    rentalTitle: "高端车长期租赁",
+    rental: "高端车长期租赁：每月固定租金涵盖车辆、保养、质保与道路救援，租期 24 至 60 个月，费用透明，没有任何意外支出。",
     aboutTitle: "关于我们 — 我们的故事与团队",
+    about: "Autohaus Motion GmbH 是位于德国法兰克福地区的汽车经销商，在欧洲及更远的地方为您寻找高端车与性能车，并配送至全球各地。",
+    contactTitle: "联系我们 · 法兰克福地区展厅",
+    contact: "购车、长期租赁或旧车置换，欢迎随时与我们的团队联系。展厅位于德国法兰克福地区，可预约看车，车辆可配送至全球各地。",
+    // A listing's title in a result: "{name}" is the make, model and year.
+    forSale: "{name} 出售",
     // Closes a listing snippet built from the facts when the listing has no
-    // written description of its own.
+    // written description in this language.
     listingSuffix: "已检测认证，可立即上路。配送至全球。",
+    // The page shown for an address that leads nowhere.
+    notFound: "此页面已驶离维修区。它可能已被移动，或该车辆已不再出售。",
   },
   nav: {
     mainNav: "主导航",
@@ -707,7 +715,7 @@ const zh: Dictionary = {
   toys: {
     label: "Big Toys",
     metaTitle: "Big Toys — 摩托车、四轮越野车、水上摩托与游艇",
-    metaDescription: "Autohaus Motion 的休闲系列：摩托车、四轮越野车、水上摩托与游艇，以与汽车相同的标准甄选，全球交付。",
+    metaDescription: "Autohaus Motion 休闲系列：摩托车、四轮越野车、水上摩托与游艇，以与汽车相同的严格标准甄选，经过检测认证，可配送至全球各地。",
     eyebrow: "另一种出行方式",
     tagline: "两个轮子，四个轮子，或者根本没有轮子。",
     intro: "同样的寻源渠道、同样的检测、同样的手续——只不过这些机器属于周日，而不是通勤。每一件都是单独甄选，上架前逐一检查。",

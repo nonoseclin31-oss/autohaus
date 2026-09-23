@@ -2,21 +2,29 @@ import type { Dictionary } from "./en";
 
 const ar: Dictionary = {
   meta: {
-    title: "سيارات فاخرة وتأجير طويل الأمد | Autohaus Motion",
+    // The home page's title and snippet. The title is used as it is; every
+    // other page's title gets " · Autohaus Motion" added by the layout.
+    title: "سيارات فاخرة ورياضية من ألمانيا | Autohaus Motion",
     description:
-      "وكالة سيارات ألمانية مقرها فرانكفورت. سيارات فاخرة ورياضية مختارة للبيع، بالإضافة إلى حلول تأجير طويل الأمد مصممة حسب احتياجك.",
-    // Search snippets. Kept apart from the page copy: a subtitle reads
-    // well on screen but is too short to fill a result.
+      "سيارات فاخرة ورياضية مفحوصة ومعتمدة للبيع أو للتأجير طويل الأمد. صالة عرض في منطقة فرانكفورت بألمانيا، مع التوصيل إلى جميع أنحاء العالم.",
+    // Each page's title in a search result, and its snippet. Kept apart from
+    // the page copy: a heading reads well on screen but rarely names what
+    // someone types into a search engine.
+    vehiclesTitle: "سيارات فاخرة ورياضية للبيع",
     vehicles: "تصفح مخزوننا من السيارات الفاخرة والرياضية، كل واحدة مفحوصة ومعتمدة وجاهزة للطريق. التوصيل إلى جميع أنحاء العالم من صالة عرضنا في منطقة فرانكفورت.",
-    rental: "تأجير طويل الأمد بقسط شهري ثابت يشمل السيارة والصيانة والضمان والمساعدة على الطريق. من 24 إلى 60 شهرًا، دون مفاجآت.",
-    about: "Autohaus Motion GmbH، وكالة سيارات ألمانية في منطقة فرانكفورت. سيارات فاخرة ورياضية نبحث عنها في أوروبا وخارجها، ونوصلها إلى أنحاء العالم.",
-    contact: "تحدث إلى فريقنا بشأن سيارة أو تأجير طويل الأمد أو استبدال سيارتك. صالة العرض في منطقة فرانكفورت، والتوصيل إلى أنحاء العالم.",
-    // Short enough that the title template does not push it past what a
-    // result shows; the page keeps its longer heading on screen.
+    rentalTitle: "تأجير طويل الأمد للسيارات الفاخرة",
+    rental: "تأجير طويل الأمد للسيارات الفاخرة بقسط شهري ثابت يشمل السيارة والصيانة والضمان والمساعدة على الطريق. من 24 إلى 60 شهرًا، دون مفاجآت.",
     aboutTitle: "من نحن — قصتنا وفريقنا",
+    about: "Autohaus Motion GmbH، وكالة سيارات ألمانية في منطقة فرانكفورت. سيارات فاخرة ورياضية نبحث عنها في أوروبا وخارجها، ونوصلها إلى أنحاء العالم.",
+    contactTitle: "اتصل بنا — صالة العرض في منطقة فرانكفورت",
+    contact: "تحدث إلى فريقنا بشأن سيارة أو تأجير طويل الأمد أو استبدال سيارتك. صالة العرض في منطقة فرانكفورت، والتوصيل إلى أنحاء العالم.",
+    // A listing's title in a result: "{name}" is the make, model and year.
+    forSale: "{name} للبيع",
     // Closes a listing snippet built from the facts when the listing has no
-    // written description of its own.
+    // written description in this language.
     listingSuffix: "مفحوصة ومعتمدة وجاهزة للطريق. التوصيل إلى أنحاء العالم.",
+    // The page shown for an address that leads nowhere.
+    notFound: "غادرت هذه الصفحة حارة الصيانة. ربما نُقلت، أو لم تعد السيارة معروضة للبيع.",
   },
   nav: {
     mainNav: "التنقل الرئيسي",
@@ -706,8 +714,8 @@ const ar: Dictionary = {
   // The Big Toys universe: motorcycles, quads, jet skis and boats.
   toys: {
     label: "Big Toys",
-    metaTitle: "Big Toys — دراجات نارية ودراجات رباعية وجت سكي وقوارب",
-    metaDescription: "مجموعة الترفيه من Autohaus Motion: دراجات نارية ودراجات رباعية وجت سكي وقوارب، مختارة بالمعايير نفسها التي نختار بها السيارات، مع التسليم إلى جميع أنحاء العالم.",
+    metaTitle: "Big Toys — دراجات نارية ورباعية وجت سكي وقوارب",
+    metaDescription: "مجموعة الترفيه من Autohaus Motion: دراجات نارية ودراجات رباعية وجت سكي وقوارب، مختارة بالمعايير نفسها التي نختار بها السيارات، مع التوصيل إلى أنحاء العالم.",
     eyebrow: "طريقة أخرى للانطلاق",
     tagline: "عجلتان، أو أربع، أو بلا عجلات على الإطلاق.",
     intro: "المصادر نفسها، والفحص نفسه، والأوراق نفسها — لكن لآلات تُقتنى ليوم العطلة لا للذهاب إلى العمل. كل قطعة تُختار على حدة وتُفحص قبل عرضها.",

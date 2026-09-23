@@ -2,21 +2,29 @@ import type { Dictionary } from "./en";
 
 const de: Dictionary = {
   meta: {
-    title: "Premiumfahrzeuge & Langzeitmiete | Autohaus Motion",
+    // The home page's title and snippet. The title is used as it is; every
+    // other page's title gets " · Autohaus Motion" added by the layout.
+    title: "Premium- & Sportwagen · Region Frankfurt | Autohaus Motion",
     description:
-      "Deutsches Autohaus mit Sitz in Frankfurt. Ausgewählte Premium- und Performance-Fahrzeuge zum Verkauf sowie maßgeschneiderte Langzeitmietlösungen.",
-    // Search snippets. Kept apart from the page copy: a subtitle reads
-    // well on screen but is too short to fill a result.
-    vehicles: "Unser Bestand an Premium- und Sportfahrzeugen, jedes geprüft, zertifiziert und fahrbereit. Lieferung europaweit ab unserem Showroom in der Region Frankfurt.",
+      "Geprüfte und zertifizierte Premium- und Sportwagen zum Kauf oder in Langzeitmiete. Showroom in der Region Frankfurt, Lieferung weltweit.",
+    // Each page's title in a search result, and its snippet. Kept apart from
+    // the page copy: a heading reads well on screen but rarely names what
+    // someone types into a search engine.
+    vehiclesTitle: "Premium- und Sportwagen kaufen",
+    vehicles: "Unser Bestand an Premium- und Sportwagen, jedes Fahrzeug geprüft, zertifiziert und fahrbereit. Weltweite Lieferung ab unserem Showroom in der Region Frankfurt.",
+    rentalTitle: "Langzeitmiete für Premiumfahrzeuge",
     rental: "Langzeitmiete mit einer festen Monatsrate für Fahrzeug, Wartung, Garantie und Pannenhilfe. Von 24 bis 60 Monaten, ohne Überraschungen.",
-    about: "Autohaus Motion GmbH, deutsches Autohaus in der Region Frankfurt. Premium- und Sportfahrzeuge, europaweit und darüber hinaus beschafft, weltweit geliefert.",
-    contact: "Sprechen Sie mit uns über ein Fahrzeug, eine Langzeitmiete oder Ihre Inzahlungnahme. Showroom in der Region Frankfurt, Lieferung europaweit.",
-    // Short enough that the title template does not push it past what a
-    // result shows; the page keeps its longer heading on screen.
     aboutTitle: "Über uns — Geschichte und Team",
+    about: "Autohaus Motion GmbH, deutsches Autohaus in der Region Frankfurt. Premium- und Sportfahrzeuge, europaweit und darüber hinaus beschafft, weltweit geliefert.",
+    contactTitle: "Kontakt — Showroom in der Region Frankfurt",
+    contact: "Sprechen Sie mit uns über ein Fahrzeug, eine Langzeitmiete oder Ihre Inzahlungnahme. Showroom in der Region Frankfurt, Lieferung weltweit.",
+    // A listing's title in a result: "{name}" is the make, model and year.
+    forSale: "{name} kaufen",
     // Closes a listing snippet built from the facts when the listing has no
-    // written description of its own.
-    listingSuffix: "Geprüft, zertifiziert und fahrbereit. Lieferung europaweit.",
+    // written description in this language.
+    listingSuffix: "Geprüft, zertifiziert und fahrbereit. Lieferung weltweit.",
+    // The page shown for an address that leads nowhere.
+    notFound: "Diese Seite hat die Boxengasse verlassen. Sie wurde verschoben, oder das Fahrzeug ist nicht mehr im Angebot.",
   },
   nav: {
     mainNav: "Hauptnavigation",
@@ -707,7 +715,7 @@ const de: Dictionary = {
   toys: {
     label: "Big Toys",
     metaTitle: "Big Toys — Motorräder, Quads, Jetskis & Boote",
-    metaDescription: "Die Freizeitkollektion von Autohaus Motion: Motorräder, Quads, Jetskis und Boote, mit demselben Auge ausgewählt wie die Fahrzeuge und weltweit geliefert.",
+    metaDescription: "Die Freizeitkollektion von Autohaus Motion: Motorräder, Quads, Jetskis und Boote, mit demselben Auge ausgewählt wie unsere Fahrzeuge und weltweit geliefert.",
     eyebrow: "Eine andere Art, unterwegs zu sein",
     tagline: "Zwei Räder, vier Räder oder gar keine.",
     intro: "Dieselbe Beschaffung, dieselbe Prüfung, dieselben Papiere — für Maschinen, die man sonntags bewegt und nicht auf dem Weg ins Büro. Jedes Stück wird einzeln ausgesucht und vor der Veröffentlichung geprüft.",

@@ -1,7 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { pageAlternates } from "@/lib/seo";
+import { breadcrumbSchema, pageMetadata } from "@/lib/seo";
+import { JsonLd } from "@/components/json-ld";
 import { getDictionary, resolveLocale, localePath, formatNumber, LOCALE_META } from "@/i18n";
 import { Reveal } from "@/components/reveal";
 import { IconShield, IconWrench, IconFlag, IconArrowRight } from "@/components/icons";
@@ -18,11 +19,9 @@ export async function generateMetadata({
 }: {
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
-  const { locale } = await params;
+  const locale = resolveLocale((await params).locale);
   const t = getDictionary(locale);
-  return { title: t.meta.aboutTitle, description: t.meta.about,
-    alternates: pageAlternates(locale, "/about"),
-  };
+  return pageMetadata({ locale, path: "/about", title: t.meta.aboutTitle, description: t.meta.about });
 }
 
 export default async function AboutPage({ params }: { params: Promise<{ locale: string }> }) {
@@ -44,6 +43,12 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
 
   return (
     <>
+      <JsonLd
+        data={breadcrumbSchema(locale, [
+          { name: t.nav.home, path: "" },
+          { name: t.nav.about, path: "/about" },
+        ])}
+      />
       <section className="studio border-b border-line">
         <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8">
           <p className="eyebrow mb-4">

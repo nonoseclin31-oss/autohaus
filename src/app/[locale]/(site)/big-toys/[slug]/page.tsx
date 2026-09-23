@@ -1,8 +1,12 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { pageAlternates } from "@/lib/seo";
-import { getDictionary, resolveLocale, localePath, formatCurrency, formatNumber, formatMonthYear } from "@/i18n";
+import { breadcrumbSchema, clip, fill, listingSnippet, ownDescription, pageMetadata, toySchema } from "@/lib/seo";
+import { JsonLd } from "@/components/json-ld";
+import {
+  getDictionary, resolveLocale, localePath, formatCurrency, formatNumber, formatMonthYear,
+  type Dictionary, type Locale,
+} from "@/i18n";
 import { getToyBySlug, getSimilarToys, toyTitle, toyEquipment, toyTranslation, toyUsage } from "@/lib/toys";
 import {
   label, TOY_KINDS, TOY_CATEGORIES, TOY_ENGINES, TOY_TRANSMISSIONS, TOY_LICENCES,
@@ -30,18 +34,38 @@ export async function generateMetadata({
   const locale = resolveLocale(raw);
   const t = getDictionary(locale);
   const toy = await getToyBySlug(slug);
-  if (!toy || !toy.published) return { title: t.toys.label };
+  if (!toy || !toy.published) return { title: "404", robots: { index: false, follow: true } };
 
-  const tr = toyTranslation(toy.translations, locale as TaxLocale);
-  const title = toyTitle(toy);
+  return pageMetadata({
+    locale,
+    path: `/big-toys/${toy.slug}`,
+    title: toyListingTitle(toy, locale, t),
+    description: toySnippet(toy, locale, t),
+    image: toy.images[0]?.url,
+  });
+}
 
-  return {
-    title: `${title} — ${label(TOY_KINDS, toy.kind, locale as TaxLocale)}`,
-    description:
-      tr?.description?.slice(0, 300) ??
-      `${title}, ${toy.year}, ${toy.powerHp} ${t.common.hp}. ${t.meta.listingSuffix}`,
-    alternates: pageAlternates(locale, `/big-toys/${toy.slug}`),
-  };
+type ToyRow = NonNullable<Awaited<ReturnType<typeof getToyBySlug>>>;
+
+/** "Ducati Superleggera V4 2020 — Moto à vendre"; the "for sale" goes once it is sold. */
+function toyListingTitle(toy: ToyRow, locale: Locale, t: Dictionary) {
+  const kind = label(TOY_KINDS, toy.kind, locale as TaxLocale);
+  return `${toyTitle(toy)} ${toy.year} — ${toy.status === "SOLD" ? kind : fill(t.meta.forSale, kind)}`;
+}
+
+function toySnippet(toy: ToyRow, locale: Locale, t: Dictionary) {
+  const usage = toyUsage(toy);
+  return listingSnippet(
+    locale,
+    [
+      String(toy.year),
+      usage ? `${formatNumber(usage.value, locale)} ${usage.unit === "km" ? t.common.km : t.toys.hoursShort}` : null,
+      isAccessory(toy.kind) ? null : `${toy.powerHp} ${t.common.hp}`,
+      formatCurrency(toy.price, locale),
+    ],
+    ownDescription(toy.translations, locale),
+    t.meta.listingSuffix,
+  );
 }
 
 export default async function ToyDetailPage({
@@ -152,8 +176,20 @@ export default async function ToyDetailPage({
     }))
     .filter((entry) => entry.keys.length);
 
+  const own = ownDescription(toy.translations, locale);
+  const kindLabel = label(TOY_KINDS, toy.kind, tax);
+
   return (
     <>
+      {/* The listing with its price and figures, and where it sits. */}
+      <JsonLd data={toySchema(locale, toy, own ? clip(own, locale, 500) : toySnippet(toy, locale, t), kindLabel)} />
+      <JsonLd
+        data={breadcrumbSchema(locale, [
+          { name: t.nav.home, path: "" },
+          { name: t.nav.bigToys, path: "/big-toys" },
+          { name: title, path: `/big-toys/${toy.slug}` },
+        ])}
+      />
       {/* Breadcrumb */}
       <div className="border-b border-line bg-surface">
         <div className="mx-auto flex max-w-7xl items-center gap-2 px-4 py-3 text-sm sm:px-6 lg:px-8">

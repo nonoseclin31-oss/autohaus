@@ -5,8 +5,9 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import {
   getDictionary, resolveLocale, localePath, formatCurrency, formatNumber, formatDate, formatMonthYear,
+  type Dictionary, type Locale,
 } from "@/i18n";
-import { absoluteUrl, breadcrumbSchema, pageAlternates, vehicleSchema } from "@/lib/seo";
+import { breadcrumbSchema, clip, fill, listingSnippet, ownDescription, pageMetadata, vehicleSchema } from "@/lib/seo";
 import { JsonLd } from "@/components/json-ld";
 import { FinanceSimulator } from "@/components/finance-simulator";
 import { getVehicleBySlug, getSimilarVehicles, vehicleTitle, vehicleTranslation } from "@/lib/vehicles";
@@ -36,26 +37,43 @@ export async function generateMetadata({
   const { locale: raw, slug } = await params;
   const locale = resolveLocale(raw);
   const vehicle = await getVehicleBySlug(slug);
-  if (!vehicle) return { title: "404" };
+  if (!vehicle || !vehicle.published) return { title: "404", robots: { index: false, follow: true } };
   const t = getDictionary(locale);
 
-  const tr = vehicleTranslation(vehicle.translations, locale);
-  const title = vehicleTitle(vehicle);
-  return {
-    title,
-    // A listing with no written description still has its facts; a snippet
-    // that names the year, mileage, power and price is what a buyer scans.
-    description:
-      tr?.description?.slice(0, 160) ??
-      `${title} — ${vehicle.year}, ${formatNumber(vehicle.mileage, locale)} ${t.common.km}, ` +
-        `${vehicle.powerHp} ${t.common.hp}, ${formatCurrency(vehicle.price, locale)}. ${t.meta.listingSuffix}`.slice(0, 160),
-    alternates: pageAlternates(locale, `/vehicles/${slug}`),
-    openGraph: {
-      title,
-      url: absoluteUrl(locale, `/vehicles/${slug}`),
-      images: vehicle.images[0]?.url ? [vehicle.images[0].url] : undefined,
-    },
-  };
+  return pageMetadata({
+    locale,
+    path: `/vehicles/${vehicle.slug}`,
+    title: listingTitle(vehicle, t),
+    description: vehicleSnippet(vehicle, locale, t),
+    image: vehicle.images[0]?.url,
+  });
+}
+
+/**
+ * "Porsche 911 Carrera 4S PDK 2022 à vendre". The year is part of what people
+ * type; "for sale" is the other half, and is dropped once the car is sold.
+ */
+function listingTitle(vehicle: { brand: string; model: string; version: string | null; year: number; status: string }, t: Dictionary) {
+  const name = `${vehicleTitle(vehicle)} ${vehicle.year}`;
+  return vehicle.status === "SOLD" ? name : fill(t.meta.forSale, name);
+}
+
+function vehicleSnippet(
+  vehicle: NonNullable<Awaited<ReturnType<typeof getVehicleBySlug>>>,
+  locale: Locale,
+  t: Dictionary,
+) {
+  return listingSnippet(
+    locale,
+    [
+      String(vehicle.year),
+      `${formatNumber(vehicle.mileage, locale)} ${t.common.km}`,
+      `${vehicle.powerHp} ${t.common.hp}`,
+      formatCurrency(vehicle.price, locale),
+    ],
+    ownDescription(vehicle.translations, locale),
+    t.meta.listingSuffix,
+  );
 }
 
 type SpecRow = { label: string; value: string | null; icon?: React.ReactNode };
@@ -170,15 +188,16 @@ export default async function VehicleDetailPage({
     }))
     .filter((g) => g.items.length);
 
-  const schemaDescription =
-    tr?.description?.slice(0, 300) ??
-    `${vehicleTitle(vehicle)} — ${vehicle.year}, ${vehicle.mileage} km, ${vehicle.powerHp} hp.`;
+  // The listing's own words in this language when it has them; otherwise the
+  // same figures-first line the search result shows.
+  const own = ownDescription(vehicle.translations, locale);
+  const schemaDescription = own ? clip(own, locale, 500) : vehicleSnippet(vehicle, locale, t);
 
   return (
     <>
-      {/* The listing as a Vehicle with an Offer, so a result can carry the
-          price, year and mileage; plus where the page sits in the site. */}
-      <JsonLd data={vehicleSchema(locale, vehicle, schemaDescription)} />
+      {/* The listing as a Car and a Product with an Offer, so a result can
+          carry the price, year and mileage; plus where the page sits. */}
+      <JsonLd data={vehicleSchema(locale, vehicle, schemaDescription, label(BODY_TYPES, vehicle.bodyType, tax))} />
       <JsonLd
         data={breadcrumbSchema(locale, [
           { name: t.nav.home, path: "" },

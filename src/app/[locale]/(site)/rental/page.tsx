@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { pageAlternates } from "@/lib/seo";
+import { breadcrumbSchema, faqSchema, pageMetadata, rentalServiceSchema } from "@/lib/seo";
+import { JsonLd } from "@/components/json-ld";
 import { getDictionary, resolveLocale, localePath } from "@/i18n";
 import { getQuotableVehicles, getRentalVehicles } from "@/lib/vehicles";
 import { VehicleCard } from "@/components/vehicle-card";
@@ -18,11 +19,9 @@ export async function generateMetadata({
 }: {
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
-  const { locale } = await params;
+  const locale = resolveLocale((await params).locale);
   const t = getDictionary(locale);
-  return { title: t.rental.title, description: t.meta.rental,
-    alternates: pageAlternates(locale, "/rental"),
-  };
+  return pageMetadata({ locale, path: "/rental", title: t.meta.rentalTitle, description: t.meta.rental });
 }
 
 export default async function RentalPage({
@@ -63,6 +62,16 @@ export default async function RentalPage({
 
   return (
     <>
+      {/* The offer as a service, the questions exactly as answered below,
+          and where the page sits. */}
+      <JsonLd data={rentalServiceSchema(locale, t.meta.rentalTitle, t.meta.rental)} />
+      <JsonLd data={faqSchema(faq)} />
+      <JsonLd
+        data={breadcrumbSchema(locale, [
+          { name: t.nav.home, path: "" },
+          { name: t.nav.rental, path: "/rental" },
+        ])}
+      />
       {/* Hero */}
       <section className="studio relative overflow-hidden border-b border-line">
         <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8">

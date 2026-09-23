@@ -4,7 +4,7 @@ import { getDictionary, resolveLocale, localePath, formatNumber, formatCurrency 
 import { getHomeShowcase } from "@/lib/vehicles";
 import { prisma } from "@/lib/prisma";
 import { JsonLd } from "@/components/json-ld";
-import { dealerSchema } from "@/lib/seo";
+import { dealerSchema, websiteSchema } from "@/lib/seo";
 import { VehicleCard } from "@/components/vehicle-card";
 import { Reveal } from "@/components/reveal";
 import { QuickSearch } from "@/components/quick-search";
@@ -61,6 +61,8 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       {/* The dealership itself: name, address and phone, which is what a
           local search result is assembled from. */}
       <JsonLd data={dealerSchema(locale, t.meta.description, company)} />
+      {/* The site itself, which is where a result's site name comes from. */}
+      <JsonLd data={websiteSchema(locale, t.meta.description)} />
 
       {/* ───────────────────────── Hero ───────────────────────── */}
       <section className="studio relative overflow-hidden">

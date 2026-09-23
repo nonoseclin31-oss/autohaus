@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { pageAlternates } from "@/lib/seo";
+import { breadcrumbSchema, dealerSchema, pageMetadata } from "@/lib/seo";
+import { JsonLd } from "@/components/json-ld";
 import { getDictionary, resolveLocale } from "@/i18n";
 import { LeadForm } from "@/components/lead-form";
 import { IconPin, IconPhone, IconMail, IconClock } from "@/components/icons";
@@ -11,11 +12,9 @@ export async function generateMetadata({
 }: {
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
-  const { locale } = await params;
+  const locale = resolveLocale((await params).locale);
   const t = getDictionary(locale);
-  return { title: t.contact.title, description: t.meta.contact,
-    alternates: pageAlternates(locale, "/contact"),
-  };
+  return pageMetadata({ locale, path: "/contact", title: t.meta.contactTitle, description: t.meta.contact });
 }
 
 export default async function ContactPage({ params }: { params: Promise<{ locale: string }> }) {
@@ -25,6 +24,15 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
 
   return (
     <>
+      {/* The page that says where the showroom is and when it is open is
+          where search engines look for both. */}
+      <JsonLd data={dealerSchema(locale, t.meta.description, company)} />
+      <JsonLd
+        data={breadcrumbSchema(locale, [
+          { name: t.nav.home, path: "" },
+          { name: t.nav.contact, path: "/contact" },
+        ])}
+      />
       <section className="studio border-b border-line">
         <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-20 lg:px-8">
           <p className="eyebrow mb-4">

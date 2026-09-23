@@ -1,7 +1,8 @@
 import Link from "next/link";
 import Image from "next/image";
 import type { Metadata } from "next";
-import { pageAlternates } from "@/lib/seo";
+import { breadcrumbSchema, listingPath, pagedTitle, pageMetadata } from "@/lib/seo";
+import { JsonLd } from "@/components/json-ld";
 import { getDictionary, resolveLocale, localePath, formatCurrency, formatNumber } from "@/i18n";
 import { listToys, getToyHero, getToyBrands, getToyKindCounts, toyUsage, type ToyFilters } from "@/lib/toys";
 import { label, TOY_KINDS, CONDITIONS, isWaterToy, type Locale as TaxLocale } from "@/lib/taxonomy";
@@ -21,16 +22,20 @@ const PER_PAGE = 12;
 
 export async function generateMetadata({
   params,
+  searchParams,
 }: {
   params: Promise<{ locale: string }>;
+  searchParams: SearchParams;
 }): Promise<Metadata> {
-  const { locale } = await params;
+  const locale = resolveLocale((await params).locale);
   const t = getDictionary(locale);
-  return {
-    title: t.toys.metaTitle,
+  const sp = await searchParams;
+  return pageMetadata({
+    locale,
+    path: listingPath("/big-toys", sp),
+    title: pagedTitle(t.toys.metaTitle, sp, t.common.page),
     description: t.toys.metaDescription,
-    alternates: pageAlternates(locale, "/big-toys"),
-  };
+  });
 }
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
@@ -98,6 +103,12 @@ export default async function BigToysPage({
 
   return (
     <>
+      <JsonLd
+        data={breadcrumbSchema(locale, [
+          { name: t.nav.home, path: "" },
+          { name: t.nav.bigToys, path: "/big-toys" },
+        ])}
+      />
       {/* ── Hero ────────────────────────────────────────────── */}
       <section className="tide relative overflow-hidden border-b border-line">
         <div className="caustics pointer-events-none absolute inset-0" aria-hidden="true" />

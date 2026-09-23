@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { pageAlternates } from "@/lib/seo";
+import { pageMetadata } from "@/lib/seo";
 import { getDictionary, resolveLocale } from "@/i18n";
 import { IconAlert } from "@/components/icons";
 import { getCompany } from "@/lib/company";
@@ -17,18 +17,23 @@ function titleFor(doc: Doc, t: ReturnType<typeof getDictionary>) {
   return doc === "imprint" ? t.footer.imprint : doc === "privacy" ? t.footer.privacy : t.footer.terms;
 }
 
+/**
+ * Kept out of search results. Nobody looks for a dealership through its
+ * privacy policy, and three near-identical legal pages per language would
+ * only dilute the pages people do search for. They stay one click away in
+ * the footer, which is what the law asks of the Impressum.
+ */
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ locale: string; doc: string }>;
 }): Promise<Metadata> {
-  const { locale, doc } = await params;
+  const { locale: raw, doc } = await params;
+  const locale = resolveLocale(raw);
   const t = getDictionary(locale);
-  if (!DOCS.includes(doc as Doc)) return { title: "404" };
-  return {
-    title: titleFor(doc as Doc, t),
-    alternates: pageAlternates(locale, `/legal/${doc}`),
-  };
+  if (!DOCS.includes(doc as Doc)) return { title: "404", robots: { index: false, follow: true } };
+  const title = titleFor(doc as Doc, t);
+  return pageMetadata({ locale, path: `/legal/${doc}`, title, description: `${title} — Autohaus Motion GmbH.`, noindex: true });
 }
 
 export default async function LegalPage({

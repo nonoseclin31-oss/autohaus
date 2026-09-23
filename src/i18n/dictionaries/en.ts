@@ -1,20 +1,28 @@
 const en = {
   meta: {
-    title: "Premium cars for sale & long-term rental | Autohaus Motion",
+    // The home page's title and snippet. The title is used as it is; every
+    // other page's title gets " · Autohaus Motion" added by the layout.
+    title: "Premium & Performance Cars from Germany | Autohaus Motion",
     description:
-      "German dealership based in Frankfurt. Curated premium and performance vehicles for sale, plus tailor-made long-term rental solutions.",
-    // Search snippets. Kept apart from the page copy: a subtitle reads
-    // well on screen but is too short to fill a result.
+      "Inspected, certified premium and performance cars for sale or on long-term rental. Showroom in the Frankfurt region, delivery anywhere in the world.",
+    // Each page's title in a search result, and its snippet. Kept apart from
+    // the page copy: a heading reads well on screen but rarely names what
+    // someone types into a search engine.
+    vehiclesTitle: "Premium & performance cars for sale",
     vehicles: "Browse our stock of premium and performance cars, each inspected, certified and road-ready. Worldwide delivery from our showroom in the Frankfurt region.",
+    rentalTitle: "Long-term rental of premium cars",
     rental: "Long-term car rental with one fixed monthly payment covering the vehicle, servicing, warranty and roadside assistance. 24 to 60 months, no surprises.",
-    about: "Autohaus Motion GmbH, a German dealership in the Frankfurt region. Premium and performance cars, sourced across Europe and beyond, delivered worldwide.",
-    contact: "Talk to our team about a car, a long-term rental or a trade-in. Showroom in the Frankfurt region, delivery worldwide.",
-    // Short enough that the title template does not push it past what a
-    // result shows; the page keeps its longer heading on screen.
     aboutTitle: "About us — our story and our team",
+    about: "Autohaus Motion GmbH, a German dealership in the Frankfurt region. Premium and performance cars, sourced across Europe and beyond, delivered worldwide.",
+    contactTitle: "Contact — showroom in the Frankfurt region",
+    contact: "Talk to our team about a car, a long-term rental or a trade-in. Showroom in the Frankfurt region, Germany, with delivery anywhere in the world.",
+    // A listing's title in a result: "{name}" is the make, model and year.
+    forSale: "{name} for sale",
     // Closes a listing snippet built from the facts when the listing has no
-    // written description of its own.
+    // written description in this language.
     listingSuffix: "Inspected, certified and ready to drive. Worldwide delivery.",
+    // The page shown for an address that leads nowhere.
+    notFound: "This page has left the pit lane. It may have been moved, or the vehicle is no longer listed.",
   },
   nav: {
     mainNav: "Main navigation",
@@ -709,8 +717,8 @@ const en = {
   // The Big Toys universe: motorcycles, quads, jet skis and boats.
   toys: {
     label: "Big Toys",
-    metaTitle: "Big Toys — motorcycles, quads, jet skis & boats",
-    metaDescription: "The Autohaus Motion leisure collection: motorcycles, quads, jet skis and boats, chosen with the same eye as the cars and delivered worldwide.",
+    metaTitle: "Big Toys — motorbikes, quads, jet skis & boats",
+    metaDescription: "The Autohaus Motion leisure collection: motorbikes, quads, jet skis and boats, chosen with the same eye as our cars and delivered worldwide.",
     eyebrow: "Another way to travel",
     tagline: "Two wheels, four wheels, or no wheels at all.",
     intro: "The same sourcing, the same inspection, the same paperwork — for the machines you take out on a Sunday rather than to the office. Each piece is chosen one at a time and checked before it is listed.",

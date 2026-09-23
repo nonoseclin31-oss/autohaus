@@ -1,3 +1,4 @@
+import { cache } from "react";
 import type { Prisma } from "@prisma/client";
 import { prisma } from "./prisma";
 import { isAccessory, isWaterToy, type Locale } from "./taxonomy";
@@ -231,7 +232,12 @@ export async function getSimilarToys(
   return rows.map((row) => toListItem(row as unknown as RawListRow, locale));
 }
 
-export async function getToyBySlug(slug: string) {
+/**
+ * One listing by its address. Wrapped in `cache` because the page and its
+ * search-result tags both ask for it on every visit; this way it is one
+ * query, not two in a row before anything is sent.
+ */
+export const getToyBySlug = cache(async (slug: string) => {
   const row = await prisma.toy.findUnique({
     where: { slug },
     include: {
@@ -249,7 +255,7 @@ export async function getToyBySlug(slug: string) {
     ...rest,
     owner: owner?.active ? { id: owner.id, name: owner.name, jobTitle: owner.jobTitle, phone: owner.phone, email: owner.email, avatarUrl: owner.avatarUrl } : null,
   };
-}
+});
 
 export async function getToyById(id: string) {
   return prisma.toy.findUnique({
