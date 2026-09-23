@@ -5,13 +5,13 @@ const en = {
       "German dealership based in Frankfurt. Curated premium and performance vehicles for sale, plus tailor-made long-term rental solutions.",
     // Search snippets. Kept apart from the page copy: a subtitle reads
     // well on screen but is too short to fill a result.
-    vehicles: "Browse our stock of premium and performance cars, each inspected, certified and road-ready. Worldwide delivery from our Roetgen showroom.",
+    vehicles: "Browse our stock of premium and performance cars, each inspected, certified and road-ready. Worldwide delivery from our showroom in the Frankfurt region.",
     rental: "Long-term car rental with one fixed monthly payment covering the vehicle, servicing, warranty and roadside assistance. 24 to 60 months, no surprises.",
-    about: "Autohaus Motion GmbH, a German dealership in Roetgen near Aachen. Premium and performance cars, sourced across Europe and beyond, delivered worldwide.",
-    contact: "Talk to our team about a car, a long-term rental or a trade-in. Showroom at Bundesstraße 124, Roetgen, and delivery worldwide.",
+    about: "Autohaus Motion GmbH, a German dealership in the Frankfurt region. Premium and performance cars, sourced across Europe and beyond, delivered worldwide.",
+    contact: "Talk to our team about a car, a long-term rental or a trade-in. Showroom in the Frankfurt region, delivery worldwide.",
     // Short enough that the title template does not push it past what a
     // result shows; the page keeps its longer heading on screen.
-    aboutTitle: "About us — Roetgen, Germany",
+    aboutTitle: "About us — our story and our team",
     // Closes a listing snippet built from the facts when the listing has no
     // written description of its own.
     listingSuffix: "Inspected, certified and ready to drive. Worldwide delivery.",
@@ -123,7 +123,7 @@ const en = {
     step2Title: "Talk to an advisor",
     step2Body: "A dedicated advisor answers within one business day.",
     step3Title: "Inspect & test drive",
-    step3Body: "Come to Roetgen or request a full video walk-around.",
+    step3Body: "Visit our showroom near Frankfurt or request a full video walk-around.",
     step4Title: "Drive away",
     step4Body: "Paperwork, registration and delivery handled end to end.",
     ctaTitle: "Looking for a specific vehicle?",
@@ -327,7 +327,7 @@ const en = {
   },
   contact: {
     title: "Contact us",
-    subtitle: "Showroom in Roetgen, deliveries worldwide.",
+    subtitle: "Showroom in the Frankfurt region, deliveries worldwide.",
     address: "Address",
     openingHours: "Opening hours",
     weekdays: "Monday – Friday",
@@ -345,9 +345,9 @@ const en = {
   },
   about: {
     title: "A German dealership built around performance",
-    subtitle: "Autohaus Motion GmbH — Roetgen, Germany",
+    subtitle: "Autohaus Motion GmbH — Frankfurt region, Germany",
     body1:
-      "Autohaus Motion was founded by enthusiasts who spent more weekends at the Nürburgring than behind a desk. That obsession still drives how we select every vehicle: mechanical integrity first, paperwork second, appearance third.",
+      "Autohaus Motion is opening a new chapter. Until now based in Düsseldorf, our team of car enthusiasts is moving to the Frankfurt region and into a new showroom, designed to present more vehicles and to welcome our clients in the best possible conditions. An address that matches our growth — and the same standard as on day one: mechanical integrity first, paperwork second, appearance third.",
     body2:
       "We buy across Europe — Germany first, but wherever the right car is, including outside it — inspect to a 150-point standard, and publish the full history of every car we list. What you read on the listing is what you get in the showroom.",
     valuesTitle: "What we stand for",
@@ -357,6 +357,10 @@ const en = {
     v2Body: "Our workshop signs off every car before it is advertised.",
     v3Title: "Long-term relationships",
     v3Body: "Servicing, resale and the next car — we stay with you after delivery.",
+    // The team at the foot of the page.
+    teamTitle: "The team",
+    teamIntro: "The people you will speak to on the phone and meet at the showroom.",
+    age: "{n} years old",
   },
   footer: {
     tagline: "German company based in Frankfurt",
@@ -470,6 +474,28 @@ const en = {
     catalogFull: "The maximum number of pinned listings has been reached. Unpin one to pin another.",
     catalogNoOther: "Every published listing is pinned.",
     catalogSaved: "Vehicles page updated",
+    // Who appears on the About page, and what it says of them.
+    teamPage: "About page",
+    teamArrange: "The team on the About page",
+    teamIntro: "Choose who appears at the bottom of the About page, and in which order. Only the function, the age and one line are published — never the e-mail address or the phone number.",
+    teamConsent: "Ask each colleague for written consent before publishing their profile and photo.",
+    teamShown: "Shown on the site",
+    teamShownHelp: "In this order. Drag a row by its grip to move it; the cross takes the person off the site.",
+    teamHidden: "Not shown",
+    teamHiddenHelp: "These accounts stay invisible on the site.",
+    teamShow: "Show",
+    teamHide: "Take off the site",
+    teamNoneShown: "Nobody is shown: the team section does not appear on the About page.",
+    teamNoOther: "The whole team is shown.",
+    teamSaved: "About page updated",
+    teamEdit: "Edit the public profile",
+    teamBirthDate: "Date of birth",
+    teamBirthDateHelp: "Only the age is shown, never the date.",
+    teamRole: "Function shown",
+    teamTagline: "One-line introduction",
+    teamTaglineHelp: "One sentence",
+    teamTranslations: "Translations (optional)",
+    teamTranslationsHelp: "A language left empty uses the text of a language that is filled.",
     publishedState: "Publication",
     visibility: "Visible on the website",
     featuredState: "Feature on the home page",

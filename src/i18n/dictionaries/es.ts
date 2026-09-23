@@ -7,13 +7,13 @@ const es: Dictionary = {
       "Concesionario alemán con sede en Fráncfort. Vehículos premium y deportivos seleccionados a la venta, además de soluciones de alquiler a largo plazo a medida.",
     // Search snippets. Kept apart from the page copy: a subtitle reads
     // well on screen but is too short to fill a result.
-    vehicles: "Nuestro stock de coches premium y deportivos, todos revisados, certificados y listos para rodar. Entrega en todo el mundo desde Roetgen.",
+    vehicles: "Nuestro stock de coches premium y deportivos, todos revisados, certificados y listos para rodar. Entrega en todo el mundo desde nuestro showroom en la región de Fráncfort.",
     rental: "Alquiler a largo plazo con una cuota mensual fija que cubre el vehículo, el mantenimiento, la garantía y la asistencia. De 24 a 60 meses.",
-    about: "Autohaus Motion GmbH, concesionario alemán en Roetgen, cerca de Aquisgrán. Coches premium y deportivos, en venta y alquiler a largo plazo.",
-    contact: "Hable con nuestro equipo sobre un coche, un alquiler a largo plazo o su vehículo actual. Showroom en Bundesstraße 124, Roetgen. Entrega en todo el mundo.",
+    about: "Autohaus Motion GmbH, concesionario alemán en la región de Fráncfort. Coches premium y deportivos, en venta y alquiler a largo plazo.",
+    contact: "Hable con nuestro equipo sobre un coche, un alquiler a largo plazo o su vehículo actual. Showroom en la región de Fráncfort. Entrega en todo el mundo.",
     // Short enough that the title template does not push it past what a
     // result shows; the page keeps its longer heading on screen.
-    aboutTitle: "Quiénes somos — Roetgen",
+    aboutTitle: "Quiénes somos — nuestra historia y nuestro equipo",
     // Closes a listing snippet built from the facts when the listing has no
     // written description of its own.
     listingSuffix: "Revisado, certificado y listo para rodar. Entrega en todo el mundo.",
@@ -125,7 +125,7 @@ const es: Dictionary = {
     step2Title: "Habla con un comercial",
     step2Body: "Un asesor dedicado te responde en un día laborable.",
     step3Title: "Inspecciona y prueba",
-    step3Body: "Ven a Roetgen o solicita un vídeo completo del vehículo.",
+    step3Body: "Ven a nuestro showroom cerca de Fráncfort o solicita un vídeo completo del vehículo.",
     step4Title: "Conduce",
     step4Body: "Gestionamos trámites, matriculación y entrega de principio a fin.",
     ctaTitle: "¿Buscas un vehículo concreto?",
@@ -329,7 +329,7 @@ const es: Dictionary = {
   },
   contact: {
     title: "Contacto",
-    subtitle: "Showroom en Roetgen, entregas en todo el mundo.",
+    subtitle: "Showroom en la región de Fráncfort, entregas en todo el mundo.",
     address: "Dirección",
     openingHours: "Horario",
     weekdays: "Lunes – Viernes",
@@ -347,9 +347,9 @@ const es: Dictionary = {
   },
   about: {
     title: "Un concesionario alemán construido alrededor del rendimiento",
-    subtitle: "Autohaus Motion GmbH — Roetgen, Alemania",
+    subtitle: "Autohaus Motion GmbH — región de Fráncfort, Alemania",
     body1:
-      "Autohaus Motion nació de la mano de apasionados que pasaron más fines de semana en Nürburgring que detrás de un escritorio. Esa obsesión sigue guiando nuestra selección: primero la integridad mecánica, después la documentación y por último la estética.",
+      "Autohaus Motion abre un nuevo capítulo. Nuestro equipo de apasionados del automóvil, hasta ahora con sede en Düsseldorf, se traslada a la región de Fráncfort y a un nuevo showroom, pensado para exponer más vehículos y recibir a nuestros clientes en las mejores condiciones. Una dirección a la altura de nuestro crecimiento, y la misma exigencia que el primer día: primero la integridad mecánica, después la documentación y por último la estética.",
     body2:
       "Compramos en toda Europa — primero en Alemania, pero allí donde esté el coche adecuado, incluso fuera del continente —, revisamos con un estándar de 150 puntos y publicamos el historial completo de cada coche. Lo que lees en el anuncio es lo que encuentras en el showroom.",
     valuesTitle: "Nuestros compromisos",
@@ -359,6 +359,10 @@ const es: Dictionary = {
     v2Body: "Nuestro taller aprueba cada coche antes de publicarlo.",
     v3Title: "Relaciones duraderas",
     v3Body: "Mantenimiento, reventa y el siguiente coche: seguimos contigo después de la entrega.",
+    // The team at the foot of the page.
+    teamTitle: "El equipo",
+    teamIntro: "Las personas con las que hablará por teléfono y a las que conocerá en el showroom.",
+    age: "{n} años",
   },
   footer: {
     tagline: "Empresa alemana con sede en Fráncfort",
@@ -472,6 +476,28 @@ const es: Dictionary = {
     catalogFull: "Se ha alcanzado el número máximo de anuncios fijados. Quite uno para fijar otro.",
     catalogNoOther: "Todos los anuncios publicados están fijados.",
     catalogSaved: "Página Vehículos actualizada",
+    // Who appears on the About page, and what it says of them.
+    teamPage: "Página Quiénes somos",
+    teamArrange: "El equipo en la página Quiénes somos",
+    teamIntro: "Elija quién aparece al final de la página Quiénes somos, y en qué orden. Solo se publican el cargo, la edad y una frase — nunca el correo electrónico ni el teléfono.",
+    teamConsent: "Obtenga el consentimiento por escrito de cada colaborador antes de publicar su perfil y su foto.",
+    teamShown: "Visibles en el sitio",
+    teamShownHelp: "En este orden. Arrastre una fila por su asa para moverla; la cruz retira a la persona del sitio.",
+    teamHidden: "No visibles",
+    teamHiddenHelp: "Estas cuentas no aparecen en el sitio.",
+    teamShow: "Mostrar",
+    teamHide: "Retirar del sitio",
+    teamNoneShown: "No se muestra a nadie: la sección del equipo no aparece en la página Quiénes somos.",
+    teamNoOther: "Todo el equipo está visible.",
+    teamSaved: "Página Quiénes somos actualizada",
+    teamEdit: "Editar el perfil público",
+    teamBirthDate: "Fecha de nacimiento",
+    teamBirthDateHelp: "Solo se muestra la edad, nunca la fecha.",
+    teamRole: "Cargo visible",
+    teamTagline: "Frase de presentación",
+    teamTaglineHelp: "Una frase",
+    teamTranslations: "Traducciones (opcional)",
+    teamTranslationsHelp: "Un idioma vacío usa el texto de un idioma rellenado.",
     publishedState: "Publicación",
     visibility: "Visible en el sitio web",
     featuredState: "Destacar en la página de inicio",

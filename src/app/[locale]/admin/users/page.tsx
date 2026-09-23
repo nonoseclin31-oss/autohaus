@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getDictionary, resolveLocale, localePath, formatDate } from "@/i18n";
 import { getCurrentUser } from "@/lib/auth";
@@ -7,7 +8,7 @@ import { prisma } from "@/lib/prisma";
 import { label, ROLES, optionsFor, type Locale as TaxLocale } from "@/lib/taxonomy";
 import { setUserRole, toggleUserActive, deleteUser } from "@/app/actions/users";
 import { UserDialog, RoleLegend } from "@/components/admin/user-dialog";
-import { IconUser, IconTrash, IconCheckCircle, IconEyeOff, IconCar } from "@/components/icons";
+import { IconUser, IconUsers, IconTrash, IconCheckCircle, IconEyeOff, IconCar } from "@/components/icons";
 import { cn } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
@@ -40,7 +41,18 @@ export default async function AdminUsersPage({ params }: { params: Promise<{ loc
             {users.length} {t.common.results}
           </p>
         </div>
-        {manage ? <UserDialog locale={locale} /> : null}
+        {manage ? (
+          <div className="flex flex-wrap items-center gap-2">
+            <Link
+              href={localePath(locale, "/admin/users/team")}
+              className="btn btn-solid cursor-pointer"
+            >
+              <IconUsers size={17} />
+              {t.admin.teamPage}
+            </Link>
+            <UserDialog locale={locale} />
+          </div>
+        ) : null}
       </div>
 
       <RoleLegend locale={locale} />

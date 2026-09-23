@@ -454,6 +454,10 @@
     line-height: 1.05;
   }
 
+  /* French sets its guillemets off from the words with a narrow no-break
+     space; the browser's own French quotes run them into the text. */
+  q:lang(fr) { quotes: "«\202F" "\202F»" "“" "”"; }
+
   /* Playfair covers neither CJK nor Arabic, and a 1.05 Latin display line box
      crushes both scripts. This has to live in the components layer next to
      `.display` — the equivalent rule in @layer base loses to it. */

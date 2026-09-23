@@ -6,6 +6,8 @@ import { createSession, getCurrentUser, hashPassword, logActivity } from "@/lib/
 import { can, ROLE_KEYS } from "@/lib/rbac";
 import { toStr, toBool } from "@/lib/utils";
 import { resolveLocale } from "@/i18n";
+import { LOCALES } from "@/lib/taxonomy";
+import { readBirthDate, ROLE_MAX, TAGLINE_MAX, type AboutCopy } from "@/lib/team-copy";
 
 export type UserFormState = {
   status: "idle" | "error" | "success";
@@ -149,4 +151,81 @@ export async function toggleUserActive(formData: FormData): Promise<void> {
   await prisma.user.update({ where: { id }, data: { active: !target.active } });
   await logActivity(actor!.id, target.active ? "user.deactivated" : "user.activated", "User", id);
   revalidatePath(`/${locale}/admin/users`);
+}
+
+/* ─────────────────── The team on the About page ─────────────────── */
+
+export type TeamState = { status: "idle" | "saved" | "error" };
+
+/**
+ * Who appears on the About page, in which order, and what is said of them.
+ * ADMIN only — the same permission that creates and removes accounts, since
+ * putting a colleague's face and age on the public site is a decision about
+ * that colleague, not about the catalogue.
+ *
+ * The order is rewritten whole, as for the catalogue: anyone not on the form
+ * leaves the page. A profile's birth date and texts are only touched when the
+ * form carried them — hiding someone keeps what was written about them, so
+ * showing them again later does not mean writing it all again.
+ */
+export async function saveAboutTeam(_prev: TeamState, formData: FormData): Promise<TeamState> {
+  const actor = await getCurrentUser();
+  if (!actor || !can(actor.role, "user.manage")) return { status: "error" };
+
+  const locale = resolveLocale(toStr(formData.get("locale")));
+
+  const eligible = new Set(
+    (await prisma.user.findMany({ where: { active: true }, select: { id: true } })).map((row) => row.id),
+  );
+
+  const order: string[] = [];
+  for (const raw of formData.getAll("shown")) {
+    const id = String(raw);
+    if (!eligible.has(id) || order.includes(id)) continue;
+    order.push(id);
+  }
+
+  const profiles = new Map<string, { birthDate?: Date | null; aboutCopy?: string }>();
+  for (const id of order) {
+    const birthDate = readBirthDate(formData.get(`birthDate:${id}`));
+
+    let carried = false;
+    const copy: AboutCopy = {};
+    for (const loc of LOCALES) {
+      const role = formData.get(`role:${id}:${loc}`);
+      const tagline = formData.get(`tagline:${id}:${loc}`);
+      if (role !== null || tagline !== null) carried = true;
+      const entry = {
+        ...(role !== null && String(role).trim() ? { role: String(role).trim().slice(0, ROLE_MAX) } : {}),
+        ...(tagline !== null && String(tagline).trim()
+          ? { tagline: String(tagline).trim().replace(/\s+/g, " ").slice(0, TAGLINE_MAX) }
+          : {}),
+      };
+      if (entry.role || entry.tagline) copy[loc] = entry;
+    }
+
+    profiles.set(id, {
+      ...(birthDate !== undefined ? { birthDate } : {}),
+      ...(carried ? { aboutCopy: JSON.stringify(copy) } : {}),
+    });
+  }
+
+  await prisma.$transaction([
+    prisma.user.updateMany({ where: { aboutRank: { not: null } }, data: { aboutRank: null } }),
+    ...order.map((id, index) =>
+      prisma.user.update({ where: { id }, data: { aboutRank: index + 1, ...profiles.get(id) } }),
+    ),
+  ]);
+
+  await logActivity(
+    actor.id,
+    "update",
+    "about",
+    null,
+    `${order.length} ${order.length === 1 ? "person" : "people"} shown on the About page`,
+  );
+
+  revalidatePath(`/${locale}/admin/users/team`);
+  for (const loc of LOCALES) revalidatePath(`/${loc}/about`);
+  return { status: "saved" };
 }

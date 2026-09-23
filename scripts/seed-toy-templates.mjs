@@ -248,7 +248,8 @@ function payloadFor(toy) {
     // machine and are left for the listing.
     condition: "NEW",
     status: "AVAILABLE",
-    location: "52159 Roetgen",
+    // No location: where a machine stands belongs to the listing, and the
+    // listing falls back to the showroom address kept in the settings.
     registered: "on",
     serviceHistory: "on",
     accidentFree: "on",

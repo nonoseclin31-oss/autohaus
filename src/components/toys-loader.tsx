@@ -7,9 +7,11 @@ import { cn } from "@/lib/utils";
  * The dealership's splash is suppressed on this route and its brand loader is
  * swapped for this one, so this is the only thing a visitor sees while the
  * collection is fetched — and it is already the room they are arriving in:
- * the tide wash, the caustics, the condensed capitals. Reached through the
- * navigation, the crossing curtain plays first and this reads as its last
- * frame rather than as another screen interrupting it.
+ * the tide wash, the caustics, the condensed capitals.
+ *
+ * It is the loader for moving around inside Big Toys, and for a Big Toys page
+ * opened directly. It is never seen on the way in from the dealership: the
+ * crossing curtain is the entrance, and it holds until this has gone.
  *
  * `data-universe` is set here as well as by the layout, because a loading
  * boundary further up the tree renders before that layout exists.
@@ -21,6 +23,9 @@ export function ToysLoader({ fullscreen = false }: { fullscreen?: boolean }) {
   return (
     <div
       data-universe="toys"
+      // What the crossing curtain waits on: it stays down while this is on
+      // screen, so the visitor arriving through it never sees this one too.
+      data-toys-loader
       role="status"
       aria-live="polite"
       aria-label="Big Toys"

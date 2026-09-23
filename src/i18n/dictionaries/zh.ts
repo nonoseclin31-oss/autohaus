@@ -7,13 +7,13 @@ const zh: Dictionary = {
       "总部位于法兰克福的德国车行。精选高端与性能车辆现车销售，并提供量身定制的长期租赁方案。",
     // Search snippets. Kept apart from the page copy: a subtitle reads
     // well on screen but is too short to fill a result.
-    vehicles: "浏览我们的高端与性能车库存，每一辆均经过检测、认证并可立即上路。自罗特根展厅发货，配送至全球。",
+    vehicles: "浏览我们的高端与性能车库存，每一辆均经过检测、认证并可立即上路。自法兰克福地区展厅发货，配送至全球。",
     rental: "长期租赁，每月固定租金涵盖车辆、保养、质保与道路救援。租期 24 至 60 个月，费用透明无意外。",
-    about: "Autohaus Motion GmbH，位于德国亚琛附近罗特根的汽车经销商。在欧洲及更远处为您寻车，配送至全球。",
-    contact: "就购车、长期租赁或置换与我们联系。展厅位于罗特根 Bundesstraße 124，配送至全球。",
+    about: "Autohaus Motion GmbH，位于德国法兰克福地区的汽车经销商。在欧洲及更远处为您寻车，配送至全球。",
+    contact: "就购车、长期租赁或置换与我们联系。展厅位于法兰克福地区，配送至全球。",
     // Short enough that the title template does not push it past what a
     // result shows; the page keeps its longer heading on screen.
-    aboutTitle: "关于我们 — 德国罗特根",
+    aboutTitle: "关于我们 — 我们的故事与团队",
     // Closes a listing snippet built from the facts when the listing has no
     // written description of its own.
     listingSuffix: "已检测认证，可立即上路。配送至全球。",
@@ -125,7 +125,7 @@ const zh: Dictionary = {
     step2Title: "联系顾问",
     step2Body: "专属销售顾问将在一个工作日内答复。",
     step3Title: "验车试驾",
-    step3Body: "到访 Roetgen 展厅，或申请完整视频看车。",
+    step3Body: "到访我们位于法兰克福附近的展厅，或申请完整视频看车。",
     step4Title: "提车上路",
     step4Body: "手续、上牌与交付全程由我们完成。",
     ctaTitle: "在寻找特定车型？",
@@ -329,7 +329,7 @@ const zh: Dictionary = {
   },
   contact: {
     title: "联系我们",
-    subtitle: "展厅位于 Roetgen，配送覆盖全欧。",
+    subtitle: "展厅位于法兰克福地区，配送覆盖全欧。",
     address: "地址",
     openingHours: "营业时间",
     weekdays: "周一至周五",
@@ -347,9 +347,9 @@ const zh: Dictionary = {
   },
   about: {
     title: "一家以性能为核心的德国车行",
-    subtitle: "Autohaus Motion GmbH — 德国 Roetgen",
+    subtitle: "Autohaus Motion GmbH — 德国法兰克福地区",
     body1:
-      "Autohaus Motion 由一群车迷创立，他们在纽博格林赛道度过的周末远多于在办公桌前。这份执着至今仍决定着我们的选车标准：机械状态第一，文件记录第二，外观第三。",
+      "Autohaus Motion 开启新篇章。我们的汽车爱好者团队此前驻扎在杜塞尔多夫，如今迁往法兰克福地区，入驻全新展厅——更宽敞的空间可以展示更多车辆，也能以更好的条件接待每一位客户。新址与我们的成长相匹配，而标准一如既往：机械状态第一，文件记录第二，外观第三。",
     body2:
       "我们在欧洲各地采购车辆——首选德国，但只要车对，也会前往欧洲以外——按 150 项标准检测，并公开每辆车的完整历史。您在页面上看到的，就是展厅里那一辆。",
     valuesTitle: "我们的坚持",
@@ -359,6 +359,10 @@ const zh: Dictionary = {
     v2Body: "每辆车都经我们的车间放行后才会上架。",
     v3Title: "长期的客户关系",
     v3Body: "保养、置换与下一辆车——交付之后我们依然在您身边。",
+    // The team at the foot of the page.
+    teamTitle: "我们的团队",
+    teamIntro: "您在电话中沟通、在展厅见到的，就是他们。",
+    age: "{n}岁",
   },
   footer: {
     tagline: "总部位于法兰克福的德国企业",
@@ -472,6 +476,28 @@ const zh: Dictionary = {
     catalogFull: "置顶数量已达上限。请先取消一个置顶，再添加新的。",
     catalogNoOther: "所有已发布的车辆均已置顶。",
     catalogSaved: "车辆页面已更新",
+    // Who appears on the About page, and what it says of them.
+    teamPage: "“关于我们”页面",
+    teamArrange: "“关于我们”页面上的团队",
+    teamIntro: "选择哪些成员显示在“关于我们”页面底部，以及显示顺序。仅公开职务、年龄和一句介绍——绝不公开电子邮箱或电话。",
+    teamConsent: "发布同事的资料和照片前，请先取得本人的书面同意。",
+    teamShown: "在网站上显示",
+    teamShownHelp: "按此顺序显示。用手柄拖动可调整位置，点击叉号可将其从网站移除。",
+    teamHidden: "未显示",
+    teamHiddenHelp: "这些账户不会出现在网站上。",
+    teamShow: "显示",
+    teamHide: "从网站移除",
+    teamNoneShown: "目前没有显示任何成员：“关于我们”页面不会出现团队板块。",
+    teamNoOther: "所有成员均已显示。",
+    teamSaved: "“关于我们”页面已更新",
+    teamEdit: "编辑公开资料",
+    teamBirthDate: "出生日期",
+    teamBirthDateHelp: "只显示年龄，不显示日期。",
+    teamRole: "显示的职务",
+    teamTagline: "一句话介绍",
+    teamTaglineHelp: "一句话",
+    teamTranslations: "翻译（可选）",
+    teamTranslationsHelp: "未填写的语言将使用已填写语言的内容。",
     publishedState: "发布状态",
     visibility: "在网站上可见",
     featuredState: "在首页重点展示",

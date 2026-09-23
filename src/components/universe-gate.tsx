@@ -25,8 +25,32 @@ export type GatePhase = "idle" | "enter" | "leave";
 const COVERED = 560;
 /** Navigate just before that, so the swap happens out of sight. */
 const NAVIGATE_AT = 500;
+/** The earliest the curtain may lift — the word needs this long to land. */
 const LEAVE_AT = 900;
-const DONE_AT = 1620;
+/** How long lifting takes (see .gate-leave), plus a frame of margin. */
+const LEAVE_FOR = 720;
+/** How often to look whether the destination has finished loading. */
+const POLL = 50;
+/**
+ * The latest it lifts regardless. A curtain that never rose would be worse
+ * than a loading screen: past this, the visitor gets the loader rather than
+ * a wall.
+ */
+const GIVE_UP_AT = 12000;
+
+/**
+ * Whether the destination is on screen and finished.
+ *
+ * Both halves matter. Until the router has committed, the old page is still
+ * behind the curtain and there is no loader to see yet; once it has, the
+ * page may still be waiting for its data behind Big Toys' own loading
+ * screen, which is marked for exactly this question.
+ */
+function arrived(target: string): boolean {
+  const here = window.location.pathname;
+  if (here !== target && !here.startsWith(`${target}/`)) return false;
+  return !document.querySelector("[data-toys-loader]");
+}
 
 export function useUniverseGate() {
   const router = useRouter();
@@ -62,10 +86,28 @@ export function useUniverseGate() {
       // Warm the route while the curtain is still rising, so the wipe is not
       // paying for the fetch as well as the animation.
       router.prefetch(href);
+
+      // The curtain lifts when the page behind it is ready, not on a clock.
+      // It used to leave at a fixed 900ms: fine when the collection was
+      // already cached, but on a first visit over a phone connection the
+      // page was still loading — and lifting the curtain uncovered Big Toys'
+      // own loading screen, two entrances one after the other. Now the
+      // crossing is the only entrance: it holds until the page has arrived.
+      const target = new URL(href, window.location.href).pathname;
+      const started = performance.now();
+      const lift = () => {
+        const elapsed = performance.now() - started;
+        if (elapsed < GIVE_UP_AT && !arrived(target)) {
+          timers.current.push(setTimeout(lift, POLL));
+          return;
+        }
+        setPhase("leave");
+        timers.current.push(setTimeout(() => setPhase("idle"), LEAVE_FOR));
+      };
+
       timers.current.push(
         setTimeout(() => router.push(href), NAVIGATE_AT),
-        setTimeout(() => setPhase("leave"), LEAVE_AT),
-        setTimeout(() => setPhase("idle"), DONE_AT),
+        setTimeout(lift, LEAVE_AT),
       );
     },
     [clear, router],

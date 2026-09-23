@@ -23,6 +23,21 @@ model User {
   avatarUrl         String?
   locale            String    @default("fr")
   active            Boolean   @default(true)
+
+  // ── The public team section on the About page ──
+  /// Where this person sits in the team shown on the About page: 1 is the
+  /// first card. Null — the default for every account — keeps them off the
+  /// public site entirely. Only an administrator sets it.
+  aboutRank   Int?
+  /// Kept for the age on the About page, which is all that is ever shown of
+  /// it. Stored rather than the age itself, so the page does not go stale on
+  /// every birthday.
+  birthDate   DateTime?
+  /// The public function and one-line introduction, per language, as JSON:
+  /// {"fr": {"role": "…", "tagline": "…"}, "en": {…}}. A language left empty
+  /// falls back to one that is filled, so writing it once is enough.
+  aboutCopy   String    @default("{}")
+
   // Sessions are stateless JWTs, so a stolen cookie stays valid until it
   // expires. Stamping the moment a password changed lets any token issued
   // before it be rejected — which is what makes a reset actually evict
@@ -38,6 +53,8 @@ model User {
   activities   ActivityLog[]
   templates    VehicleTemplate[]
   toyTemplates ToyTemplate[]     @relation("ToyTemplateAuthor")
+
+  @@index([aboutRank])
 }
 
 model Vehicle {

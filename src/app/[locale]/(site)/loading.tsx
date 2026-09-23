@@ -1,8 +1,6 @@
-import { BrandLoader } from "@/components/brand-loader";
-import { ToysLoader } from "@/components/toys-loader";
-import { inToysUniverse } from "@/lib/route";
+import { UniverseLoader } from "@/components/universe-loader";
 
 /** Sits inside the site shell, so the header and footer stay put. */
-export default async function Loading() {
-  return (await inToysUniverse()) ? <ToysLoader /> : <BrandLoader />;
+export default function Loading() {
+  return <UniverseLoader />;
 }

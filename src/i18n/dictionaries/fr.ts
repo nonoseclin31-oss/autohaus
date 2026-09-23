@@ -7,13 +7,13 @@ const fr: Dictionary = {
       "Concessionnaire allemand basé à Francfort. Véhicules premium et sportifs sélectionnés à la vente, ainsi que des solutions de location longue durée sur mesure.",
     // Search snippets. Kept apart from the page copy: a subtitle reads
     // well on screen but is too short to fill a result.
-    vehicles: "Parcourez notre stock de véhicules premium et sportifs, tous contrôlés, certifiés et prêts à rouler. Livraison dans le monde entier depuis Roetgen.",
+    vehicles: "Parcourez notre stock de véhicules premium et sportifs, tous contrôlés, certifiés et prêts à rouler. Livraison dans le monde entier depuis notre showroom de la région de Francfort.",
     rental: "La location longue durée avec un loyer mensuel fixe couvrant le véhicule, l'entretien, la garantie et l'assistance. De 24 à 60 mois, sans surprise.",
-    about: "Autohaus Motion GmbH, concession allemande à Roetgen près d'Aix-la-Chapelle. Véhicules premium et sportifs recherchés en Europe et au-delà, livrés dans le monde entier.",
-    contact: "Parlez à notre équipe d'un véhicule, d'une location longue durée ou d'une reprise. Showroom Bundesstraße 124 à Roetgen, livraison dans le monde entier.",
+    about: "Autohaus Motion GmbH, concession allemande de la région de Francfort. Véhicules premium et sportifs recherchés en Europe et au-delà, livrés dans le monde entier.",
+    contact: "Parlez à notre équipe d'un véhicule, d'une location longue durée ou d'une reprise. Showroom dans la région de Francfort, livraison dans le monde entier.",
     // Short enough that the title template does not push it past what a
     // result shows; the page keeps its longer heading on screen.
-    aboutTitle: "Notre concession à Roetgen",
+    aboutTitle: "Notre histoire et notre équipe",
     // Closes a listing snippet built from the facts when the listing has no
     // written description of its own.
     listingSuffix: "Contrôlée, certifiée et prête à rouler. Livraison dans le monde entier.",
@@ -125,7 +125,7 @@ const fr: Dictionary = {
     step2Title: "Parlez à un conseiller",
     step2Body: "Un conseiller dédié vous répond sous un jour ouvré.",
     step3Title: "Inspectez & essayez",
-    step3Body: "Venez à Roetgen ou demandez une visite vidéo complète.",
+    step3Body: "Venez au showroom, près de Francfort, ou demandez une visite vidéo complète.",
     step4Title: "Repartez au volant",
     step4Body: "Démarches, immatriculation et livraison gérées de bout en bout.",
     ctaTitle: "Vous recherchez un véhicule précis ?",
@@ -329,7 +329,7 @@ const fr: Dictionary = {
   },
   contact: {
     title: "Nous contacter",
-    subtitle: "Showroom à Roetgen, livraisons dans le monde entier.",
+    subtitle: "Showroom dans la région de Francfort, livraisons dans le monde entier.",
     address: "Adresse",
     openingHours: "Horaires d'ouverture",
     weekdays: "Lundi – Vendredi",
@@ -347,9 +347,9 @@ const fr: Dictionary = {
   },
   about: {
     title: "Un concessionnaire allemand voué à la performance",
-    subtitle: "Autohaus Motion GmbH — Roetgen, Allemagne",
+    subtitle: "Autohaus Motion GmbH — région de Francfort, Allemagne",
     body1:
-      "À l'origine d'Autohaus Motion, des passionnés qui ont passé plus de week-ends au Nürburgring que derrière un bureau. Cette obsession guide encore notre sélection : l'intégrité mécanique d'abord, les documents ensuite, l'esthétique en dernier.",
+      "Autohaus Motion ouvre un nouveau chapitre. Jusqu'ici basée à Düsseldorf, notre équipe de passionnés d'automobile rejoint la région de Francfort et un nouveau showroom, pensé pour présenter davantage de véhicules et recevoir nos clients dans les meilleures conditions. Une adresse à la mesure de notre croissance — et la même exigence qu'au premier jour : l'intégrité mécanique d'abord, les documents ensuite, l'esthétique en dernier.",
     body2:
       "Nous achetons dans toute l'Europe — l'Allemagne d'abord, mais partout où se trouve la bonne voiture, y compris hors du continent — contrôlons selon un standard de 150 points et publions l'historique complet de chaque véhicule. Ce que vous lisez sur l'annonce, c'est ce que vous trouvez au showroom.",
     valuesTitle: "Nos engagements",
@@ -359,6 +359,10 @@ const fr: Dictionary = {
     v2Body: "Notre atelier valide chaque voiture avant sa mise en ligne.",
     v3Title: "Des relations durables",
     v3Body: "Entretien, revente et véhicule suivant — nous restons à vos côtés après la livraison.",
+    // The team at the foot of the page.
+    teamTitle: "L'équipe",
+    teamIntro: "Les personnes que vous aurez au téléphone et que vous rencontrerez au showroom.",
+    age: "{n} ans",
   },
   footer: {
     tagline: "Société allemande basée à Francfort",
@@ -472,6 +476,28 @@ const fr: Dictionary = {
     catalogFull: "Nombre maximal d'annonces épinglées atteint. Retirez-en une pour en épingler une autre.",
     catalogNoOther: "Toutes les annonces publiées sont épinglées.",
     catalogSaved: "Page Véhicules mise à jour",
+    // Who appears on the About page, and what it says of them.
+    teamPage: "Page À propos",
+    teamArrange: "L'équipe sur la page À propos",
+    teamIntro: "Choisissez qui apparaît en bas de la page À propos, et dans quel ordre. Seuls la fonction, l'âge et une phrase d'accroche sont publiés — jamais l'e-mail ni le téléphone.",
+    teamConsent: "Obtenez l'accord écrit de chaque collaborateur avant de publier son profil et sa photo.",
+    teamShown: "Affichés sur le site",
+    teamShownHelp: "Dans cet ordre. Faites glisser une ligne par sa poignée pour la déplacer ; la croix retire la personne du site.",
+    teamHidden: "Non affichés",
+    teamHiddenHelp: "Ces comptes restent invisibles sur le site.",
+    teamShow: "Afficher",
+    teamHide: "Retirer du site",
+    teamNoneShown: "Personne n'est affiché : la section équipe n'apparaît pas sur la page À propos.",
+    teamNoOther: "Toute l'équipe est affichée.",
+    teamSaved: "Page À propos mise à jour",
+    teamEdit: "Modifier le profil public",
+    teamBirthDate: "Date de naissance",
+    teamBirthDateHelp: "Seul l'âge est affiché, jamais la date.",
+    teamRole: "Fonction affichée",
+    teamTagline: "Phrase d'accroche",
+    teamTaglineHelp: "Une phrase",
+    teamTranslations: "Traductions (facultatif)",
+    teamTranslationsHelp: "Une langue laissée vide reprend le texte d'une langue remplie.",
     publishedState: "Publication",
     visibility: "Visible sur le site",
     featuredState: "Mettre en avant sur la page d'accueil",
