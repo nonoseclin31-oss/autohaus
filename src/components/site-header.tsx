@@ -75,16 +75,30 @@ export function SiteHeader({
             : "border-transparent bg-transparent",
         )}
       >
-        <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+        {/* The row is as wide as the page below it. With the phone number in
+            it, six French or Spanish links, the language, the theme and the
+            sign-in need more than that on the widest screens — the row then
+            widens rather than pushing its end off the screen. */}
+        <div
+          className={cn(
+            "mx-auto flex h-[72px] max-w-7xl items-center justify-between gap-3 px-4 sm:gap-4 sm:px-6 lg:px-8",
+            phone && "2xl:max-w-[96rem]",
+          )}
+        >
           <Link
             href={localePath(locale)}
             className="shrink-0 cursor-pointer transition-opacity duration-200 hover:opacity-85"
             aria-label={shortName}
           >
-            <Logo heightClass="h-[22px] sm:h-7 lg:h-8" priority />
+            {/* A touch smaller while the full menu shares a row capped at the
+                page width (1280–1535px); full size again above. */}
+            <Logo heightClass="h-[22px] sm:h-7 lg:h-8 xl:h-7 2xl:h-8" priority />
           </Link>
 
-          <nav className="hidden items-center gap-1 lg:flex" aria-label={nav.main}>
+          {/* From 1280px. Below that the six links do not fit beside the logo
+              in French, German or Spanish, and the overflow let the whole page
+              slide sideways — the menu button takes over instead. */}
+          <nav className="hidden items-center gap-0.5 xl:flex 2xl:gap-1" aria-label={nav.main}>
             {nav.items.map((item) => (
               <Link
                 key={item.href}
@@ -93,7 +107,9 @@ export function SiteHeader({
                 className={cn(
                   // whitespace-nowrap: German and Spanish nav labels wrap to a
                   // second line inside the header without it.
-                  "cursor-pointer whitespace-nowrap rounded-sm px-2.5 py-2 text-[0.8125rem] font-semibold uppercase tracking-[0.06em] transition-colors duration-200",
+                  // A little tighter below 1536px, where the row is capped at the
+                  // page width and Spanish needs every pixel of it.
+                  "cursor-pointer whitespace-nowrap rounded-sm px-2 py-2 text-[0.8125rem] font-semibold uppercase tracking-[0.06em] transition-colors duration-200 2xl:px-2.5",
                   item.universe
                     // The doorway is marked by one small champagne compass and
                     // nothing else. A framed chip said "different" loudly
@@ -112,7 +128,9 @@ export function SiteHeader({
             ))}
           </nav>
 
-          <div className="flex items-center gap-2">
+          {/* A step tighter on a phone: at 360px the logo, theme, language and
+              menu button otherwise overran the row by a few pixels. */}
+          <div className="flex items-center gap-1.5 sm:gap-2">
             {phone ? (
               <a
                 href={`tel:${phone.replace(/\s/g, "")}`}
@@ -128,7 +146,7 @@ export function SiteHeader({
 
             <Link
               href={localePath(locale, "/login")}
-              className="btn btn-ghost btn-sm hidden cursor-pointer sm:inline-flex"
+              className="btn btn-ghost btn-sm hidden shrink-0 cursor-pointer whitespace-nowrap sm:inline-flex"
             >
               <IconUser size={15} />
               {nav.login}
@@ -139,7 +157,7 @@ export function SiteHeader({
               onClick={() => setOpen(true)}
               aria-label={nav.menu}
               aria-expanded={open}
-              className="inline-flex cursor-pointer items-center justify-center rounded-sm border border-line p-2.5 text-fg transition-colors duration-200 hover:border-line-strong lg:hidden"
+              className="inline-flex cursor-pointer items-center justify-center rounded-sm border border-line p-2.5 text-fg transition-colors duration-200 hover:border-line-strong xl:hidden"
             >
               <IconMenu size={20} />
             </button>
@@ -150,7 +168,7 @@ export function SiteHeader({
 
       {/* Mobile drawer */}
       {open ? (
-        <div className="fixed inset-0 z-50 lg:hidden">
+        <div className="fixed inset-0 z-50 xl:hidden">
           <button
             type="button"
             aria-label={nav.close}

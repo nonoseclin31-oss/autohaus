@@ -25,7 +25,10 @@ export default async function SiteLayout({
   const openedInToys = await inToysUniverse();
 
   return (
-    <div className="flex min-h-screen flex-col">
+    // overflow-x-clip: nothing may make the page wider than the screen. One
+    // element that did let a navigation scroll the whole site sideways, and
+    // clip — unlike hidden — leaves the sticky header working.
+    <div className="flex min-h-screen flex-col overflow-x-clip">
       <SplashScreen suppressed={openedInToys} />
       <SiteHeader
         locale={locale}

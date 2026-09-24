@@ -59,7 +59,9 @@ export function LanguageSwitcher({
       >
         <IconGlobe size={17} />
         <span className="uppercase tracking-wider">{locale}</span>
-        <IconChevronDown size={14} className={cn("transition-transform duration-200", open && "rotate-180")} />
+        {/* The globe and the code say "language" on their own; on a phone the
+            arrow's width is better spent keeping the header off the edge. */}
+        <IconChevronDown size={14} className={cn("hidden transition-transform duration-200 sm:block", open && "rotate-180")} />
       </button>
 
       {open ? (

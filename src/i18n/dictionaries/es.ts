@@ -34,7 +34,7 @@ const es: Dictionary = {
     rental: "Alquiler a largo plazo",
     bigToys: "Big Toys",
     services: "Servicios",
-    about: "Sobre nosotros",
+    about: "Nosotros",
     contact: "Contacto",
     admin: "Administración",
     login: "Iniciar sesión",
